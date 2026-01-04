@@ -96,7 +96,7 @@ class PlayerList
 
 	parsePlayer(sortKey, player)
 	{
-		player.isBuddy = g_Buddies.indexOf(player.name) != -1;
+		player.isBuddy = Engine.IsLobbyBuddy(player.name);
 
 		switch (sortKey)
 		{

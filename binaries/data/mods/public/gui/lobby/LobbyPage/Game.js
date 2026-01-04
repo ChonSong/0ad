@@ -187,7 +187,7 @@ class Game
 					playerRatingTotal += playerNickRating.rating || g_DefaultLobbyRating;
 
 				// Sort games with playing buddies above games with spectating buddies
-				if (hasBuddies < 2 && g_Buddies.indexOf(playerNickRating.nick) != -1)
+				if (hasBuddies < 2 && Engine.IsLobbyBuddy(playerNickRating.nick))
 					hasBuddies = player.Team == "observer" ? 1 : 2;
 			}
 

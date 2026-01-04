@@ -1,6 +1,6 @@
 [font="sans-bold-18"]0 A.D. Empires Ascendant Multiplayer Lobby Privacy Policy[/font]
 
-[font="sans-bold-14"]Document Date:[/font] 2025-04-10
+[font="sans-bold-14"]Document Date:[/font] 2026-10-07
 
 [font="sans-bold-16"]Personal data processed by Wildfire Games and purposes of processing:[/font]
 [font="sans-bold-14"]1. Player name[/font]
@@ -37,6 +37,10 @@ During a rated match, players send data relating to the game (such as the number
 Wildfire Games stores match statistics to:
  1. Verify the accuracy of the rating score and identify and enforce Terms of Service violations relating to that.
  2. Compute and publish community statistics to improve the game and the service, for example to improve the balancing of the game or to make certain aspects of the game more appealing.
+
+[font="sans-bold-14"]7. Buddies[/font]
+Players can mark other players as buddies to distinguish them from all other players.
+Wildfire Games stores each player's buddy list to ensure that it is available across different computers a player might be using.
 
 [font="sans-bold-14"]Security of processing:[/font]
 The transmission of personal data is secured using TLS encryption (GDPR 32).

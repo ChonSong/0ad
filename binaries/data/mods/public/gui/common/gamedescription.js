@@ -9,13 +9,6 @@ var g_DescriptionHighlight = "orange";
 var g_DefaultLobbyRating = 1200;
 
 /**
- * XEP-0172 doesn't restrict nicknames, but our lobby policy does.
- * So use this human readable delimiter to separate buddy names in the config file.
- */
-var g_BuddyListDelimiter = ",";
-
-
-/**
  * Returns the nickname without the lobby rating.
  */
 function splitRatingFromNick(playerName)
@@ -23,11 +16,6 @@ function splitRatingFromNick(playerName)
 	const result = /^(\S+) \((\d+)\)$/g.exec(playerName);
 	return { "nick": result ? result[1] : playerName, "rating": result ? +result[2] : "" };
 }
-
-/**
- * Array of playernames that the current user has marked as buddies.
- */
-var g_Buddies = Engine.ConfigDB_GetValue("user", "lobby.buddies").split(g_BuddyListDelimiter);
 
 /**
  * Denotes which players are a lobby buddy of the current user.
@@ -119,7 +107,7 @@ function formatPlayerInfo(playerDataArray, playerStates)
 		playerDescriptions[teamIdx].push(sprintf(playerDescription, {
 			"playerName":
 			coloredText(
-				(g_Buddies.indexOf(playerNick) != -1 ? g_BuddySymbol + " " : "") +
+				(Engine.IsLobbyBuddy(playerNick) ? g_BuddySymbol + " " : "") +
 				escapeText(playerData.Name),
 				(typeof getPlayerColor === 'function' ?
 					(isAI ? "white" : getPlayerColor(playerNick)) :

@@ -11,9 +11,10 @@ class BuddyButton
 		this.toggleBuddyButton = Engine.GetGUIObjectByName("toggleBuddyButton");
 		this.toggleBuddyButton.onPress = this.onPress.bind(this);
 
-		const rebuild = this.rebuild.bind(this);
-		xmppMessages.registerXmppMessageHandler("system", "connected", rebuild);
-		xmppMessages.registerXmppMessageHandler("system", "disconnected", rebuild);
+		const rebuildAndNotify = this.rebuildAndNotify.bind(this);
+		xmppMessages.registerXmppMessageHandler("system", "connected", rebuildAndNotify);
+		xmppMessages.registerXmppMessageHandler("system", "disconnected", rebuildAndNotify);
+		xmppMessages.registerXmppMessageHandler("roster", "change", rebuildAndNotify);
 
 		this.rebuild();
 	}
@@ -31,12 +32,19 @@ class BuddyButton
 
 	rebuild()
 	{
-		this.toggleBuddyButton.caption =
-			g_Buddies.indexOf(this.playerName) != -1 ?
-				this.UnmarkString :
-				this.MarkString;
+		const isBuddy = !!this.playerName && Engine.IsLobbyBuddy(this.playerName);
+
+		this.toggleBuddyButton.caption = isBuddy ? this.UnmarkString : this.MarkString;
 
 		this.toggleBuddyButton.enabled = Engine.IsXmppClientConnected() && !!this.playerName && this.playerName != g_Nickname;
+	}
+
+	rebuildAndNotify()
+	{
+		this.rebuild();
+
+		for (const handler of this.buddyChangedHandlers)
+			handler();
 	}
 
 	/**
@@ -44,25 +52,13 @@ class BuddyButton
 	 */
 	onPress()
 	{
-		if (!this.playerName || this.playerName == g_Nickname || this.playerName.indexOf(g_BuddyListDelimiter) != -1)
+		if (!this.playerName || this.playerName == g_Nickname)
 			return;
 
-		const index = g_Buddies.indexOf(this.playerName);
-		if (index != -1)
-			g_Buddies.splice(index, 1);
+		if (Engine.IsLobbyBuddy(this.playerName))
+			Engine.LobbyRemoveBuddy(this.playerName);
 		else
-			g_Buddies.push(this.playerName);
-
-		Engine.ConfigDB_CreateAndSaveValue(
-			"user",
-			"lobby.buddies",
-			g_Buddies.filter(nick => nick).join(g_BuddyListDelimiter) || g_BuddyListDelimiter
-		);
-
-		this.rebuild();
-
-		for (const handler of this.buddyChangedHandlers)
-			handler();
+			Engine.LobbyAddBuddy(this.playerName);
 	}
 }
 

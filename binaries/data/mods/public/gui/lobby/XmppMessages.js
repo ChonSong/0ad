@@ -112,5 +112,8 @@ XmppMessages.prototype.MessageTypes = {
 		"profile",
 		"leaderboard",
 		"ratinglist"
+	],
+	"roster": [
+		"change"
 	]
 };

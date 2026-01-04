@@ -118,9 +118,10 @@ static CStr DebugName(CNetServerSession* session)
 
 CNetServerWorker::CNetServerWorker(const bool continueSavedGame, std::uint16_t port,
 	const bool useLobbyAuth, std::string password, std::string controllerSecret,
-	std::string initAttributes) :
+	std::string initAttributes, std::set<std::string> buddies) :
 	m_ContinuesSavedGame{continueSavedGame},
 	m_LobbyAuth{useLobbyAuth},
+	m_Buddies{std::move(buddies)},
 	m_ControllerSecret{std::move(controllerSecret)},
 	m_Password{std::move(password)}
 {
@@ -1078,17 +1079,9 @@ bool CNetServerWorker::OnAuthenticate(CNetServerSession* session, CFsmEvent<CNet
 			}
 			else if (observerLateJoin == "buddies")
 			{
-				std::wstringstream buddiesStream(wstring_from_utf8(
-					g_ConfigDB.Get("lobby.buddies", std::string{})));
-				CStrW buddy;
-				while (std::getline(buddiesStream, buddy, L','))
-				{
-					if (buddy == usernameWithoutRating)
-					{
-						isRejoining = true;
-						break;
-					}
-				}
+				const std::string name{usernameWithoutRating.ToUTF8().LowerCase()};
+				if (server.m_Buddies.count(name) > 0)
+					isRejoining = true;
 			}
 		}
 
@@ -1695,9 +1688,10 @@ void CNetServerWorker::SendHolePunchingMessage(const CStr& ipStr, std::uint16_t 
 
 
 CNetServer::CNetServer(const bool continueSavedGame, std::uint16_t port, const bool useLobbyAuth,
-	std::string password, std::string controllerSecret, std::string initAttributes) :
+	std::string password, std::string controllerSecret, std::string initAttributes,
+	std::set<std::string> buddies) :
 	m_Worker{continueSavedGame, port, useLobbyAuth, password, std::move(controllerSecret),
-		std::move(initAttributes)},
+		std::move(initAttributes), std::move(buddies)},
 	m_LobbyAuth{useLobbyAuth},
 	m_Password{std::move(password)}
 {

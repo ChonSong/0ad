@@ -39,6 +39,7 @@
 #include "scriptinterface/Request.h"
 #include "scriptinterface/StructuredClone.h"
 
+#include <algorithm>
 #include <ctime>
 #include <deque>
 #include <iostream>
@@ -51,6 +52,7 @@
 #include <js/Vector.h>
 #include <map>
 #include <optional>
+#include <set>
 #include <string>
 #include <tuple>
 #include <unicode/locid.h>
@@ -60,6 +62,8 @@
 
 namespace
 {
+constexpr const char* ROSTER_GROUP_NAME_BUDDIES{"buddies"};
+
 //debug
 #if 1
 #define DbgXMPP(x)
@@ -129,7 +133,7 @@ std::optional<gloox::MUCRoom> CreateMucRoom(gloox::MUCRoomHandler* handler, cons
 
 class XmppClient::Impl : public gloox::ConnectionListener, public gloox::MUCRoomHandler,
 	public gloox::IqHandler, public gloox::RegistrationHandler, public gloox::MessageHandler,
-	public gloox::Jingle::SessionHandler, public gloox::LogHandler
+	public gloox::Jingle::SessionHandler, public gloox::LogHandler, public gloox::RosterListener
 {
 public:
 	// Basic
@@ -161,6 +165,7 @@ public:
 	gloox::CertStatus m_certStatus;
 	bool m_initialLoadComplete;
 	bool m_regOpt;
+	std::set<std::string> m_Buddies;
 
 private:
 	/* Xmpp handlers */
@@ -216,6 +221,37 @@ private:
 	void handleSessionInitiation(gloox::Jingle::Session* session,
 		const gloox::Jingle::Session::Jingle* jingle);
 
+	/**
+	 * Rebuild m_Buddies from the roster.
+	 */
+	void UpdateBuddies();
+
+	/**
+	 * Move a pre-roster buddy list from the config into the roster, then drop
+	 * it from the config. Does nothing once that migration has happened.
+	 *
+	 * Must only be called once the roster has been received, since an empty
+	 * roster cannot be distinguished from one without buddies.
+	 */
+	void MigrateBuddyList();
+
+	/* Roster */
+	void handleItemAdded(const gloox::JID& jid) override;
+	void handleItemSubscribed(const gloox::JID& /*jid*/) override {}
+	void handleItemRemoved(const gloox::JID& jid) override;
+	void handleItemUpdated(const gloox::JID& jid) override;
+	void handleItemUnsubscribed(const gloox::JID& /*jid*/) override {}
+	void handleRoster(const gloox::Roster& /*roster*/) override;
+	void handleRosterPresence(const gloox::RosterItem& /*item*/, const std::string& /*resource*/, gloox::Presence::PresenceType /*presence*/, const std::string& /*msg*/) override {}
+	void handleSelfPresence(const gloox::RosterItem& /*item*/, const std::string& /*resource*/, gloox::Presence::PresenceType /*presence*/, const std::string& /*msg*/) override {}
+	bool handleSubscriptionRequest(const gloox::JID& /*jid*/, const std::string& /*msg*/) override { return false; }
+	bool handleUnsubscriptionRequest(const gloox::JID& /*jid*/, const std::string& /*msg*/) override { return false; }
+	void handleNonrosterPresence(const gloox::Presence& /*presence*/) override {}
+	void handleRosterError(const gloox::IQ& iq) override;
+#if GLOOXVERSION >= 0x010100
+	void handleRosterItemExchange(const gloox::JID& /*from*/, const gloox::RosterX* /*items*/) override {}
+#endif
+
 	template<typename... Args>
 	void CreateGUIMessage(
 		const std::string& type,
@@ -223,14 +259,16 @@ private:
 		const std::time_t time,
 		Args const&... args);
 
+public:
 	struct SPlayer {
 		SPlayer(const gloox::Presence::PresenceType presence, const gloox::MUCRoomRole role,
-			const std::string& rating)
-		: m_Presence(presence), m_Role(role), m_Rating(rating)
+			const std::string& bareJid, const std::string& rating)
+		: m_Presence(presence), m_Role(role), m_BareJid(bareJid), m_Rating(rating)
 		{
 		}
 		gloox::Presence::PresenceType m_Presence;
 		gloox::MUCRoomRole m_Role;
+		std::string m_BareJid;
 		std::string m_Rating;
 	};
 	using PlayerMap = std::map<std::string, SPlayer>;
@@ -335,6 +373,8 @@ XmppClient::Impl::Impl(const Script::Interface* scriptInterface, const std::stri
 
 	m_client.registerMessageHandler(this);
 
+	m_client.rosterManager()->registerRosterListener(this, false);
+
 	m_registration.registerRegistrationHandler(this);
 
 	// Uncomment to see the raw stanzas
@@ -428,6 +468,7 @@ void XmppClient::Impl::onDisconnect(gloox::ConnectionError error)
 	m_PlayerMap.clear();
 	m_PlayerMapUpdate = true;
 	m_HistoricGuiMessages.clear();
+	m_Buddies.clear();
 	m_initialLoadComplete = false;
 
 	CreateGUIMessage(
@@ -1190,7 +1231,7 @@ void XmppClient::Impl::handleMUCParticipantPresence(gloox::MUCRoom*, const gloox
 				m_PlayerMap.emplace(
 					std::piecewise_construct,
 					std::forward_as_tuple(participant.newNick),
-					std::forward_as_tuple(presence.presence(), participant.role, std::move(m_PlayerMap.at(nick).m_Rating)));
+					std::forward_as_tuple(presence.presence(), participant.role, participant.jid ? participant.jid->bare() : "", std::move(m_PlayerMap.at(nick).m_Rating)));
 			else
 				LOGERROR("Nickname changed to an existing nick!");
 
@@ -1282,12 +1323,16 @@ void XmppClient::Impl::handleMUCParticipantPresence(gloox::MUCRoom*, const gloox
 			m_PlayerMap.emplace(
 				std::piecewise_construct,
 				std::forward_as_tuple(nick),
-				std::forward_as_tuple(presence.presence(), participant.role, std::string()));
+				std::forward_as_tuple(presence.presence(), participant.role,
+					participant.jid ? participant.jid->bare() : "",
+					std::string()));
 		}
 		else
 		{
 			it->second.m_Presence = presence.presence();
 			it->second.m_Role = participant.role;
+			if (participant.jid)
+				it->second.m_BareJid = participant.jid->bare();
 		}
 	}
 
@@ -1510,4 +1555,140 @@ void XmppClient::Impl::handleSessionInitiation(gloox::Jingle::Session*,
 	}
 
 	g_NetServer->SendHolePunchingMessage(candidate.ip, candidate.port);
+}
+
+// ----------------------------------------------------------------------------
+//
+//							Roster
+//
+// ----------------------------------------------------------------------------
+
+namespace {
+// TODO: Helper only needed till split view is supported by all compilers.
+std::vector<std::string> splitBuddyList(std::string buddyList)
+{
+	std::vector<std::string> buddies{};
+	size_t posStart{0};
+	size_t posEnd{0};
+	while ((posEnd = buddyList.find(",", posStart)) != std::string::npos)
+	{
+		buddies.push_back(buddyList.substr(posStart, posEnd - posStart));
+		posStart = posEnd + 1;
+	}
+	buddies.push_back(buddyList.substr(posStart));
+	return buddies;
+}
+
+/**
+ * Whether the given roster item is one of the buddies tracked in the buddy list.
+ */
+bool IsBuddyRosterItem(const gloox::RosterItem& item)
+{
+	const gloox::StringList groups = item.groups();
+	return !item.name().empty() &&
+		std::find(groups.begin(), groups.end(), ROSTER_GROUP_NAME_BUDDIES) != groups.end();
+}
+} // namespace
+
+void XmppClient::AddBuddy(const std::string& nick)
+{
+	DbgXMPP("Add buddy: " + nick);
+	const auto it = m_Impl->m_PlayerMap.find(nick);
+
+	if (it == m_Impl->m_PlayerMap.end())
+		LOGWARNING("XmppClient: Can't add unknown player to roster: {}", nick);
+	else if (it->second.m_BareJid.empty())
+		LOGWARNING("XmppClient: Anonymous player can't be added to roster: {}", nick);
+	else
+		m_Impl->m_client.rosterManager()->add(it->second.m_BareJid, nick, gloox::StringList{ROSTER_GROUP_NAME_BUDDIES});
+}
+
+void XmppClient::RemoveBuddy(const std::string& nick)
+{
+	DbgXMPP("Remove buddy: " + nick);
+	const auto it = m_Impl->m_PlayerMap.find(nick);
+
+	if (it == m_Impl->m_PlayerMap.end())
+		LOGWARNING("XmppClient: Can't remove unknown player from roster: {}", nick);
+	else if (it->second.m_BareJid.empty())
+		LOGWARNING("XmppClient: Anonymous player can't be removed from roster: {}", nick);
+	else
+		m_Impl->m_client.rosterManager()->remove(it->second.m_BareJid);
+}
+
+bool XmppClient::IsBuddy(const std::string& nick) const
+{
+	return m_Impl->m_Buddies.find(CStr(nick).LowerCase()) != m_Impl->m_Buddies.end();
+}
+
+std::set<std::string> XmppClient::GetBuddies() const
+{
+	return m_Impl->m_Buddies;
+}
+
+void XmppClient::Impl::UpdateBuddies()
+{
+	m_Buddies.clear();
+	for (const auto& [jid, item] : *m_client.rosterManager()->roster())
+	{
+		if (IsBuddyRosterItem(*item))
+			m_Buddies.insert(CStr(item->name()).LowerCase());
+	}
+}
+
+void XmppClient::Impl::MigrateBuddyList()
+{
+	if (g_ConfigDB.Get("lobby.buddies.migrated", false))
+		return;
+
+	if (m_client.rosterManager()->roster()->empty())
+	{
+		const std::string buddyList{g_ConfigDB.Get("lobby.buddies", std::string{})};
+		for (const std::string& nick : splitBuddyList(buddyList))
+		{
+			if (nick.empty())
+				continue;
+
+			m_client.rosterManager()->add(nick + "@" + m_server, nick, gloox::StringList{ROSTER_GROUP_NAME_BUDDIES});
+		}
+	}
+
+	g_ConfigDB.RemoveValue(CFG_USER, "lobby.buddies");
+	g_ConfigDB.SetValueString(CFG_USER, "lobby.buddies.migrated", "true");
+	g_ConfigDB.WriteFile(CFG_USER);
+}
+
+void XmppClient::Impl::handleRoster(const gloox::Roster& /*roster*/)
+{
+	MigrateBuddyList();
+	UpdateBuddies();
+	CreateGUIMessage("roster", "change", std::time(nullptr));
+}
+
+void XmppClient::Impl::handleItemAdded(const gloox::JID& /*jid*/)
+{
+	UpdateBuddies();
+	CreateGUIMessage("roster", "change", std::time(nullptr));
+}
+
+void XmppClient::Impl::handleItemRemoved(const gloox::JID& jid)
+{
+	// gloox (1.0.28) calles this before before updating the roster which means
+	// calling UpdateBuddies here would still leave the removed buddy in
+	// m_Buddies; drop just that entry instead.
+	if (const gloox::RosterItem* item = m_client.rosterManager()->getRosterItem(jid); item && IsBuddyRosterItem(*item))
+		m_Buddies.erase(CStr(item->name()).LowerCase());
+
+	CreateGUIMessage("roster", "change", std::time(nullptr));
+}
+
+void XmppClient::Impl::handleItemUpdated(const gloox::JID& /*jid*/)
+{
+	UpdateBuddies();
+	CreateGUIMessage("roster", "change", std::time(nullptr));
+}
+
+void XmppClient::Impl::handleRosterError(const gloox::IQ& iq)
+{
+	LOGERROR("{}", iq.tag()->xml());
 }

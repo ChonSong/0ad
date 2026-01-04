@@ -20,6 +20,7 @@
 #include "JSInterface_Network.h"
 
 #include "lib/code_generation.h"
+#include "lib/config2.h"
 #include "lib/debug.h"
 #include "lib/utf8.h"
 #include "lobby/XmppClient.h"
@@ -45,6 +46,7 @@
 #include <js/TypeDecls.h>
 #include <js/Value.h>
 #include <optional>
+#include <set>
 #include <stdexcept>
 #include <string>
 #include <utility>
@@ -109,7 +111,18 @@ void StartNetworkHost(const CStrW& playerName, const std::uint16_t serverPort, c
 		HashCryptographically(password, hostJID + password + PS_SERIALIZATION_VERSION) : "";
 
 	const std::string secret = ps_generate_guid();
-	g_NetServer = new CNetServer(continueSavedGame, serverPort, hasLobby, hashedPassword, secret);
+
+	// Snapshot the host's buddies from the roster of the lobby they are
+	// connected to. Hosting without a lobby means there is no roster, so
+	// nobody is a buddy.
+	std::set<std::string> buddies;
+#if CONFIG2_LOBBY
+	if (hasLobby)
+		buddies = g_XmppClient->GetBuddies();
+#endif
+
+	g_NetServer = new CNetServer(continueSavedGame, serverPort, hasLobby, hashedPassword, secret,
+		{}, buddies);
 
 	// Generate a secret to identify the host client.
 

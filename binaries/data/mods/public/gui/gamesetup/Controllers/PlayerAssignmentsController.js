@@ -103,7 +103,8 @@ class PlayerAssignmentsController
 		{
 			const assignOption = Engine.ConfigDB_GetValue("user", this.ConfigAssignPlayers);
 			if (assignOption == "disabled" ||
-				assignOption == "buddies" && g_Buddies.indexOf(splitRatingFromNick(newAssignments[newGUID].name).nick) == -1)
+				assignOption == "buddies" &&
+				!Engine.IsLobbyBuddy(splitRatingFromNick(newAssignments[newGUID].name).nick))
 				return;
 		}
 

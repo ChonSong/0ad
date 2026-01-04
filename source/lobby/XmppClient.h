@@ -20,6 +20,8 @@
 
 #include <js/Value.h>
 #include <memory>
+#include <set>
+#include <string>
 
 namespace Script { class Interface; }
 namespace Script { class Request; }
@@ -68,6 +70,40 @@ public:
 
 	void SendMUCMessage(const std::string& message);
 	void SendStunEndpointToHost(const std::string& ip, std::uint16_t port, const std::string& hostJID);
+
+	/* Roster */
+
+	/**
+	 * Add the given nickname to the buddies of the current user.
+	 *
+	 * @param nick The nickname of a player in the lobby.
+	 */
+	void AddBuddy(const std::string& nick);
+
+	/**
+	 * Remove the given nickname from the buddies of the current user.
+	 *
+	 * @param nick The nickname of a player in the lobby.
+	 */
+	void RemoveBuddy(const std::string& nick);
+
+	/**
+	 * Whether the given nickname is a buddy of the current user.
+	 *
+	 * The buddies are stored in the XMPP roster of the connected lobby. Since
+	 * a nickname only identifies a user within one lobby, this is meaningless
+	 * without a connection and always returns false in that case.
+	 *
+	 * @param nick The nickname to look up, compared case-insensitively
+	 */
+	bool IsBuddy(const std::string& nick) const;
+
+	/**
+	 * Get the nicknames of all buddies of the current user.
+	 *
+	 * @returns The (lowercase) nicknames of the buddies in the lobby's roster
+	 */
+	std::set<std::string> GetBuddies() const;
 
 private:
 	class Impl;

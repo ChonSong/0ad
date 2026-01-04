@@ -51,6 +51,21 @@ bool HasXmppClient()
 	return g_XmppClient;
 }
 
+/**
+ * Whether the given nickname is a buddy of the current user.
+ *
+ * @param nick The nickname to look up, compared case-insensitively
+ */
+static bool IsLobbyBuddy([[maybe_unused]] const std::string& nick)
+{
+#if CONFIG2_LOBBY
+	return g_XmppClient && g_XmppClient->IsBuddy(nick);
+#else
+	// Without the lobby there is no roster to look the nickname up in.
+	return false;
+#endif
+}
+
 void SetRankedGame(bool isRanked)
 {
 	g_rankedGame = isRanked;
@@ -190,6 +205,7 @@ void RegisterScriptFunctions(const Script::Request& rq)
 {
 	// Lobby functions
 	Script::Function::Register<&HasXmppClient>(rq, "HasXmppClient");
+	Script::Function::Register<&IsLobbyBuddy>(rq, "IsLobbyBuddy");
 	Script::Function::Register<&SetRankedGame>(rq, "SetRankedGame");
 #if CONFIG2_LOBBY // Allow the lobby to be disabled
 	Script::Function::Register<&StartXmppClient>(rq, "StartXmppClient");
@@ -229,6 +245,10 @@ void RegisterScriptFunctions(const Script::Request& rq)
 	REGISTER_XMPP(GetRole, "LobbyGetPlayerRole");
 	REGISTER_XMPP(GetRating, "LobbyGetPlayerRating");
 	REGISTER_XMPP(GetSubject, "LobbyGetRoomSubject");
+
+	// Roster
+	REGISTER_XMPP(AddBuddy, "LobbyAddBuddy");
+	REGISTER_XMPP(RemoveBuddy, "LobbyRemoveBuddy");
 #undef REGISTER_XMPP
 
 	Script::Function::Register<&EncryptPassword>(rq, "EncryptPassword");

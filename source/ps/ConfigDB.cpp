@@ -55,7 +55,7 @@ void TriggerAllHooks(const std::multimap<CStr, std::function<void()>>& hooks, co
 // These entries will not be printed to logfiles, so that logfiles can be shared without leaking personal or sensitive data
 const std::unordered_set<std::string> g_UnloggedEntries = {
 	"lobby.password",
-	"lobby.buddies",
+	"lobby.buddies", // The buddy list of older versions, now stored in the server roster and removed on migration.
 	"userreport.id" // authentication token for GDPR personal data requests
 };
 

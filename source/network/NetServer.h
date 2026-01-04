@@ -29,6 +29,7 @@
 #include <js/Value.h>
 #include <mutex>
 #include <optional>
+#include <set>
 #include <string>
 #include <thread>
 #include <unordered_map>
@@ -135,7 +136,8 @@ private:
 	friend class CNetServer;
 
 	CNetServerWorker(const bool continuesSavedGame, std::uint16_t port, const bool useLobbyAuth,
-		std::string password, std::string controllerSecret, std::string initAttributes);
+		std::string password, std::string controllerSecret, std::string initAttributes,
+		std::set<std::string> buddies);
 	~CNetServerWorker();
 
 	bool CheckPassword(const std::string& password, const std::string& salt) const;
@@ -262,6 +264,13 @@ private:
 	 */
 	const bool m_LobbyAuth;
 
+	/**
+	 * The nicknames (lowercase) of the host's buddies at the time the game was
+	 * hosted, used to decide who may join after the game has started
+	 * (lateobserver authentication).
+	 */
+	const std::set<std::string> m_Buddies;
+
 	std::unique_ptr<ENetHost, DestroyHost> m_Host;
 	std::vector<std::unique_ptr<CNetServerSession>> m_Sessions;
 
@@ -356,7 +365,8 @@ class CNetServer
 	NONCOPYABLE(CNetServer);
 public:
 	CNetServer(const bool isSavedGame, std::uint16_t port, const bool useLobbyAuth = false,
-		std::string password = {}, std::string controllerSecret = {}, std::string initAttributes = {});
+		std::string password = {}, std::string controllerSecret = {}, std::string initAttributes = {},
+		std::set<std::string> buddies = {});
 
 	/**
 	 * Call from the GUI to asynchronously notify all clients that they should start loading the game.
