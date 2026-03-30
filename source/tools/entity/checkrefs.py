@@ -424,6 +424,16 @@ class CheckRefs:
                         elem = texture.find(tag)
                         if elem is not None and elem.text:
                             self.deps.append((fp, Path(f"art/textures/selection/{elem.text}")))
+                if (
+                    entity.find("Selectable") is not None
+                    and entity.find("Selectable").find("Overlay") is not None
+                    and entity.find("Selectable").find("Overlay").find("Outline") is not None
+                ):
+                    outline = entity.find("Selectable").find("Overlay").find("Outline")
+                    for tag in ("LineTexture", "LineTextureMask"):
+                        elem = outline.find(tag)
+                        if elem is not None and elem.text:
+                            self.deps.append((fp, Path(f"art/textures/selection/{elem.text}")))
                 if entity.find("Formation") is not None:
                     icon = entity.find("Formation").find("Icon")
                     if icon is not None and icon.text:
