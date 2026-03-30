@@ -784,16 +784,16 @@ class CheckRefs:
                                 "Found scrollbar without name in %s",
                                 self.vfs_to_relative_to_mods(fp),
                             )
-                        for el in sprite.attrib.items():
-                            if el == "image":
-                                if el.get("texture"):
-                                    self.deps.append(
-                                        (fp, Path(f"art/textures/ui/{el.get('texture')}"))
-                                    )
-                                elif el.get("backcolor"):
-                                    self.add_gui_color_attrib(el.get("backcolor"), fp)
-                            elif el == "effect" and el.get("add_color"):
-                                self.add_gui_color_attrib(el.get("color"), fp)
+                        for image in sprite.findall("image"):
+                            if image.get("texture"):
+                                self.deps.append(
+                                    (fp, Path(f"art/textures/ui/{image.get('texture')}"))
+                                )
+                            if image.get("backcolor"):
+                                self.add_gui_color_attrib(image.get("backcolor"), fp)
+                        for effect in sprite.findall("effect"):
+                            if effect.get("add_color"):
+                                self.add_gui_color_attrib(effect.get("color"), fp)
                 else:
                     bio = BytesIO()
                     xml.write(bio)
