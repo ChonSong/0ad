@@ -803,7 +803,7 @@ class CheckRefs:
                                 self.add_gui_color_attrib(image.get("backcolor"), fp)
                         for effect in sprite.findall("effect"):
                             if effect.get("add_color"):
-                                self.add_gui_color_attrib(effect.get("color"), fp)
+                                self.add_gui_color_attrib(effect.get("add_color"), fp)
                 else:
                     bio = BytesIO()
                     xml.write(bio)
@@ -863,7 +863,7 @@ class CheckRefs:
             with open(ffp, encoding="utf-8") as f:
                 cheat = load(f)
             default_param = cheat.get("Data", {}).get("DefaultParameter", "")
-            if default_param.endswith(".ogg"):
+            if isinstance(default_param, str) and default_param.endswith(".ogg"):
                 self.deps.append((fp, Path(f"audio/music/{default_param}")))
 
     def add_tips(self):
@@ -932,6 +932,26 @@ class CheckRefs:
 
     def add_terrains(self):
         self.logger.info("Loading terrains...")
+        # These are the PNG filenames hardcoded in TerrainTextureManager::LoadAlphaMap().
+        # C++ loads them from art/textures/terrain/alphamaps/<type>/ where <type> comes
+        # from the terrain XML <alphamap> element, defaulting to "standard".
+        alphamap_fnames = [
+            "blendcircle.png",
+            "blendlshape.png",
+            "blendedge.png",
+            "blendedgecorner.png",
+            "blendedgetwocorners.png",
+            "blendfourcorners.png",
+            "blendtwooppositecorners.png",
+            "blendlshapecorner.png",
+            "blendtwocorners.png",
+            "blendcorner.png",
+            "blendtwoedges.png",
+            "blendthreecorners.png",
+            "blendushape.png",
+            "blendbad.png",
+        ]
+        alphamap_types_seen = set()
         for fp, ffp in self.find_files("art/terrains", "xml"):
             # ignore terrains.xml
             if str(fp).endswith("terrains.xml"):
@@ -945,6 +965,18 @@ class CheckRefs:
             if terrain.find("material") is not None:
                 material = terrain.find("material").text
                 self.deps.append((fp, Path(f"art/materials/{material}")))
+            alphamap_elem = terrain.find("alphamap")
+            alphamap_type = alphamap_elem.text if alphamap_elem is not None and alphamap_elem.text else "standard"
+            alphamap_types_seen.add(alphamap_type)
+            for fname in alphamap_fnames:
+                self.deps.append((fp, Path(f"art/textures/terrain/alphamaps/{alphamap_type}/{fname}")))
+        # "standard" is always loaded by C++ as the fallback even when no terrain
+        # specifies it explicitly, so ensure it is always tracked.
+        if "standard" not in alphamap_types_seen:
+            synthetic_fp = Path("art/textures/terrain/alphamaps/standard")
+            self.roots.append(synthetic_fp)
+            for fname in alphamap_fnames:
+                self.files.append(Path(f"art/textures/terrain/alphamaps/standard/{fname}"))
 
     def add_auras(self):
         self.logger.info("Loading auras...")
