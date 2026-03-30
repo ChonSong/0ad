@@ -152,6 +152,7 @@ class CheckRefs:
         self.add_terrains()
         self.add_auras()
         self.add_tips()
+        self.add_cpp_hardcoded_assets()
         self.check_deps()
         self.check_deps_gui_items()
         self.check_fonts()
@@ -829,6 +830,29 @@ class CheckRefs:
                 )
             ]
         )
+
+    def add_cpp_hardcoded_assets(self):
+        """Mark VFS assets that are loaded directly by C++ engine code as known-used.
+
+        The list of paths is maintained in cpp_hardcoded_assets.json alongside this
+        script. Each entry is a VFS path that may be provided by any mod layer;
+        all matching files across loaded mods are treated as roots so that mod-layer
+        overrides are not reported as unused.
+        """
+        json_path = Path(__file__).parent / "cpp_hardcoded_assets.json"
+        if not json_path.exists():
+            self.logger.warning("cpp_hardcoded_assets.json not found alongside checkrefs.py")
+            return
+        with open(json_path, encoding="utf-8") as f:
+            data = load(f)
+        for entry in data.get("files", []):
+            vfs_path = entry["path"]
+            for mod in self.mods:
+                candidate = self.vfs_root / mod / vfs_path
+                if candidate.exists():
+                    fp = Path(vfs_path)
+                    self.files.append(fp)
+                    self.roots.append(fp)
 
     def add_civs(self):
         self.logger.info("Loading civs...")
