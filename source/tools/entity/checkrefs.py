@@ -829,6 +829,32 @@ class CheckRefs:
                 civ = load(f)
             for music in civ.get("Music", []):
                 self.deps.append((fp, Path(f"audio/music/{music['File']}")))
+        self._add_default_music_tracks()
+
+    def _add_default_music_tracks(self):
+        """Add music tracks that are hardcoded as fallback defaults in gui/common/music.js
+        and audio files referenced in cheat definitions."""
+        music_js_fp = Path("gui/common/music.js")
+        music_js_ffp = None
+        for mod in self.mods:
+            candidate = self.vfs_root / mod / music_js_fp
+            if candidate.exists():
+                music_js_ffp = candidate
+        if music_js_ffp is not None:
+            self.files.append(music_js_fp)
+            self.roots.append(music_js_fp)
+            content = music_js_ffp.read_text(encoding="utf-8")
+            for track in re.findall(r'"([^"]+\.ogg)"', content):
+                self.deps.append((music_js_fp, Path(f"audio/music/{track}")))
+
+        for fp, ffp in self.find_files("simulation/data/cheats", "json"):
+            self.files.append(fp)
+            self.roots.append(fp)
+            with open(ffp, encoding="utf-8") as f:
+                cheat = load(f)
+            default_param = cheat.get("Data", {}).get("DefaultParameter", "")
+            if default_param.endswith(".ogg"):
+                self.deps.append((fp, Path(f"audio/music/{default_param}")))
 
     def add_tips(self):
         self.logger.info("Loading tips...")
