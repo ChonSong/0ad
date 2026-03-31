@@ -827,7 +827,19 @@ class CheckRefs:
 
     def add_gui_data(self):
         self.logger.info("Loading GUI data...")
-        self.files.extend([fp for (fp, ffp) in self.find_files("gui", "js")])
+        # Regex to find literal (non-dynamic) sprite paths in JS that end with a
+        # known texture extension. Excludes strings containing JS interpolation
+        # operators (+, ${, `), which would mean the path is only a prefix.
+        js_sprite_regex = re.compile(
+            r'["\'](?:stretched|cropped)[^"\']*?:([^"\'$`+]*\.(?:'
+            + "|".join(re.escape(ext) for ext in self.supportedTextureFormats)
+            + r'))["\']'
+        )
+        for fp, ffp in self.find_files("gui", "js"):
+            self.files.append(fp)
+            content = ffp.read_text(encoding="utf-8")
+            for m in js_sprite_regex.finditer(content):
+                self.deps.append((fp, Path(f"art/textures/ui/{m.group(1)}")))
         self.files.extend([fp for (fp, ffp) in self.find_files("gamesettings", "js")])
         self.files.extend([fp for (fp, ffp) in self.find_files("autostart", "js")])
         self.roots.extend([fp for (fp, ffp) in self.find_files("autostart", "js")])
@@ -875,6 +887,11 @@ class CheckRefs:
                 civ = load(f)
             for music in civ.get("Music", []):
                 self.deps.append((fp, Path(f"audio/music/{music['File']}")))
+            code = civ.get("Code")
+            if code:
+                self.deps.append(
+                    (fp, Path(f"art/textures/ui/session/icons/bkg/background_circle_{code}.png"))
+                )
         self._add_default_music_tracks()
 
     def _add_default_music_tracks(self):
