@@ -40,6 +40,7 @@ class CheckRefs:
             "scrollbars": [],
             "tooltips": [],
             "colors": [],
+            "icons": [],
         }
         self.deps_gui_items: dict[str, list[tuple[Path, str]]] = {
             "gui_objects": [],
@@ -770,9 +771,20 @@ class CheckRefs:
                                 self.gui_items["colors"].append(obj.get("name"))
                             else:
                                 self.logger.warning(
-                                    "Found scrollbar without name in %s",
+                                    "Found color without name in %s",
                                     self.vfs_to_relative_to_mods(fp),
                                 )
+                        elif obj.tag == "icon":
+                            if "name" in obj.attrib:
+                                self.gui_items["icons"].append(obj.get("name"))
+                            else:
+                                self.logger.warning(
+                                    "Found icon without name in %s",
+                                    self.vfs_to_relative_to_mods(fp),
+                                )
+                            for attr, val in obj.attrib.items():
+                                if "sprite" in attr:
+                                    self.add_gui_sprite_attrib(val, fp)
 
                 elif name == "styles":
                     for style in root_xml.findall("style"):
