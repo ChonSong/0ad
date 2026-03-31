@@ -420,9 +420,7 @@ class CheckRefs:
                         self.deps.append(
                             (
                                 fp,
-                                Path(
-                                    f"art/textures/ui/session/icons/minimap/{minimap_icon.text}"
-                                ),
+                                Path(f"art/textures/ui/session/icons/minimap/{minimap_icon.text}"),
                             )
                         )
                 if (
@@ -855,9 +853,9 @@ class CheckRefs:
         # Strings containing JS dynamic operators (+, ${, `) are excluded.
         js_sprite_regex = re.compile(
             r'["\'](?:'
-            r'(?:(?:stretched|cropped|texture)[^"\']*?:)([^"\'$`+]*\.(?:' + ext_pattern + r'))'
-            r'|(?:art/textures/ui/)([^"\'$`+]*\.(?:' + ext_pattern + r'))'
-            r'|session/([^"\'$`+]*\.(?:' + ext_pattern + r'))'
+            r'(?:(?:stretched|cropped|texture)[^"\']*?:)([^"\'$`+]*\.(?:' + ext_pattern + r"))"
+            r'|(?:art/textures/ui/)([^"\'$`+]*\.(?:' + ext_pattern + r"))"
+            r'|session/([^"\'$`+]*\.(?:' + ext_pattern + r"))"
             r')["\']'
         )
         for fp, ffp in self.find_files("gui", "js"):
@@ -964,12 +962,16 @@ class CheckRefs:
             if not ffp.exists():
                 continue
             content = ffp.read_text(encoding="utf-8")
-            g_stances_match = re.search(r"var g_Stances\s*=\s*\{(.*?)^};", content, re.DOTALL | re.MULTILINE)
+            g_stances_match = re.search(
+                r"var g_Stances\s*=\s*\{(.*?)^};", content, re.DOTALL | re.MULTILINE
+            )
             if not g_stances_match:
                 continue
             stances_block = g_stances_match.group(1)
             # Extract each top-level stance entry (name followed by a brace-delimited block).
-            for stance_match in re.finditer(r'^\t"([a-z_-]+)"\s*:\s*\{([^}]*)\}', stances_block, re.MULTILINE | re.DOTALL):
+            for stance_match in re.finditer(
+                r'^\t"([a-z_-]+)"\s*:\s*\{([^}]*)\}', stances_block, re.MULTILINE | re.DOTALL
+            ):
                 stance = stance_match.group(1)
                 stance_body = stance_match.group(2)
                 if re.search(r'"selectable"\s*:\s*true', stance_body):
@@ -1017,8 +1019,10 @@ class CheckRefs:
         self._add_default_music_tracks()
 
     def _add_default_music_tracks(self):
-        """Add music tracks that are hardcoded as fallback defaults in gui/common/music.js
-        and audio files referenced in cheat definitions."""
+        """Add music tracks that are hardcoded as fallback defaults in gui/common/music.js.
+
+        Also adds audio files referenced in cheat definitions.
+        """
         music_js_fp = Path("gui/common/music.js")
         music_js_ffp = None
         for mod in self.mods:
@@ -1150,10 +1154,16 @@ class CheckRefs:
                 material = terrain.find("material").text
                 self.deps.append((fp, Path(f"art/materials/{material}")))
             alphamap_elem = terrain.find("alphamap")
-            alphamap_type = alphamap_elem.text if alphamap_elem is not None and alphamap_elem.text else "standard"
+            alphamap_type = (
+                alphamap_elem.text
+                if alphamap_elem is not None and alphamap_elem.text
+                else "standard"
+            )
             alphamap_types_seen.add(alphamap_type)
             for fname in alphamap_fnames:
-                self.deps.append((fp, Path(f"art/textures/terrain/alphamaps/{alphamap_type}/{fname}")))
+                self.deps.append(
+                    (fp, Path(f"art/textures/terrain/alphamaps/{alphamap_type}/{fname}"))
+                )
         # "standard" is always loaded by C++ as the fallback even when no terrain
         # specifies it explicitly, so ensure it is always tracked.
         if "standard" not in alphamap_types_seen:
@@ -1184,9 +1194,7 @@ class CheckRefs:
                 resource = load(f)
             code = resource.get("code")
             if code:
-                self.deps.append(
-                    (fp, Path(f"art/textures/ui/session/icons/resources/{code}.png"))
-                )
+                self.deps.append((fp, Path(f"art/textures/ui/session/icons/resources/{code}.png")))
 
     def add_status_effects(self):
         self.logger.info("Loading status effects...")
