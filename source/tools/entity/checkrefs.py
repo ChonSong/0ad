@@ -152,6 +152,8 @@ class CheckRefs:
         self.add_techs()
         self.add_terrains()
         self.add_auras()
+        self.add_resources()
+        self.add_status_effects()
         self.add_tips()
         self.add_cpp_hardcoded_assets()
         self.check_deps()
@@ -407,6 +409,22 @@ class CheckRefs:
                             self.deps.append(
                                 (fp, Path(f"art/textures/ui/session/portraits/{icon.text}"))
                             )
+                    rank = entity.find("Identity").find("Rank")
+                    if rank is not None and rank.text:
+                        self.deps.append(
+                            (fp, Path(f"art/textures/ui/session/icons/ranks/{rank.text}.png"))
+                        )
+                if entity.find("Minimap") is not None:
+                    minimap_icon = entity.find("Minimap").find("Icon")
+                    if minimap_icon is not None and minimap_icon.text:
+                        self.deps.append(
+                            (
+                                fp,
+                                Path(
+                                    f"art/textures/ui/session/icons/minimap/{minimap_icon.text}"
+                                ),
+                            )
+                        )
                 if (
                     entity.find("Heal") is not None
                     and entity.find("Heal").find("RangeOverlay") is not None
@@ -827,19 +845,43 @@ class CheckRefs:
 
     def add_gui_data(self):
         self.logger.info("Loading GUI data...")
-        # Regex to find literal (non-dynamic) sprite paths in JS that end with a
-        # known texture extension. Excludes strings containing JS interpolation
-        # operators (+, ${, `), which would mean the path is only a prefix.
+        ext_pattern = "|".join(re.escape(ext) for ext in self.supportedTextureFormats)
+        # Finds literal sprite/texture paths in JS. Three forms are matched:
+        # 1. "stretched:path", "cropped:...:path", "texture:path" — the last `:` segment
+        #    is the path relative to art/textures/ui/.
+        # 2. Bare "session/path.ext" — used as a component that gets a modifier prefix
+        #    prepended at runtime (e.g. prototype sprite assignments, civPhaseEmblems).
+        # 3. Full "art/textures/ui/path.ext" — literal full VFS path used in simulation JS.
+        # Strings containing JS dynamic operators (+, ${, `) are excluded.
         js_sprite_regex = re.compile(
-            r'["\'](?:stretched|cropped)[^"\']*?:([^"\'$`+]*\.(?:'
-            + "|".join(re.escape(ext) for ext in self.supportedTextureFormats)
-            + r'))["\']'
+            r'["\'](?:'
+            r'(?:(?:stretched|cropped|texture)[^"\']*?:)([^"\'$`+]*\.(?:' + ext_pattern + r'))'
+            r'|(?:art/textures/ui/)([^"\'$`+]*\.(?:' + ext_pattern + r'))'
+            r'|session/([^"\'$`+]*\.(?:' + ext_pattern + r'))'
+            r')["\']'
         )
         for fp, ffp in self.find_files("gui", "js"):
             self.files.append(fp)
             content = ffp.read_text(encoding="utf-8")
             for m in js_sprite_regex.finditer(content):
-                self.deps.append((fp, Path(f"art/textures/ui/{m.group(1)}")))
+                # group(1): modifier-prefixed path, group(2): full art path,
+                # group(3): bare session/ path
+                texture_file = m.group(1) or m.group(2) or ("session/" + m.group(3))
+                self.deps.append((fp, Path(f"art/textures/ui/{texture_file}")))
+        self._add_unit_action_icon_deps()
+        # Scan simulation/helpers and globalscripts JS for literal texture paths.
+        # These files are engine-loaded by C++ unconditionally, so they are registered
+        # as roots (not just files) so the graph traversal visits their texture deps.
+        for scan_dir in ("simulation/components", "simulation/helpers", "globalscripts"):
+            for fp, ffp in self.find_files(scan_dir, "js"):
+                self.files.append(fp)
+                self.roots.append(fp)
+                content = ffp.read_text(encoding="utf-8")
+                for m in js_sprite_regex.finditer(content):
+                    texture_file = m.group(1) or m.group(2) or ("session/" + m.group(3))
+                    self.deps.append((fp, Path(f"art/textures/ui/{texture_file}")))
+        self._add_status_bar_icon_deps()
+        self._add_stance_icon_deps()
         self.files.extend([fp for (fp, ffp) in self.find_files("gamesettings", "js")])
         self.files.extend([fp for (fp, ffp) in self.find_files("autostart", "js")])
         self.roots.extend([fp for (fp, ffp) in self.find_files("autostart", "js")])
@@ -854,6 +896,86 @@ class CheckRefs:
                 )
             ]
         )
+
+    def _add_unit_action_icon_deps(self):
+        """Track session/icons/ textures referenced via short names in unit_actions.js.
+
+        unit_actions.js defines action objects with an "icon" property whose value is
+        a bare filename (e.g. "garrison.png"). selection_panels.js then constructs the
+        sprite as "stretched:session/icons/" + action.icon, so checkrefs never sees
+        the full path. This method extracts all such short icon names and registers
+        the corresponding texture deps.
+        """
+        unit_actions_fp = Path("gui/session/unit_actions.js")
+        for mod in self.mods:
+            ffp = self.vfs_root / mod / unit_actions_fp
+            if not ffp.exists():
+                continue
+            content = ffp.read_text(encoding="utf-8")
+            icon_name_regex = re.compile(
+                r'"icon"\s*:\s*"([^"$`+]*\.(?:'
+                + "|".join(re.escape(ext) for ext in self.supportedTextureFormats)
+                + r'))"'
+            )
+            for m in icon_name_regex.finditer(content):
+                icon_name = m.group(1)
+                # Short names without a "/" are relative to session/icons/;
+                # names already containing "/" are used as-is relative to session/.
+                if "/" not in icon_name:
+                    self.deps.append(
+                        (unit_actions_fp, Path(f"art/textures/ui/session/icons/{icon_name}"))
+                    )
+
+    def _add_status_bar_icon_deps(self):
+        """Track session/icons/{type}_bg.png and {type}_fg.png for StatusBars.js bar types.
+
+        StatusBars.js constructs paths as "art/textures/ui/session/icons/" + type + "_bg.png"
+        where type is a string literal passed to AddBar(). Extract these literals with a
+        targeted regex.
+        """
+        status_bars_fp = Path("simulation/components/StatusBars.js")
+        for mod in self.mods:
+            ffp = self.vfs_root / mod / status_bars_fp
+            if not ffp.exists():
+                continue
+            content = ffp.read_text(encoding="utf-8")
+            bar_type_regex = re.compile(r'AddBar\([^,]+,\s*[^,]+,\s*"([a-z_]+)"')
+            for m in bar_type_regex.finditer(content):
+                bar_type = m.group(1)
+                for suffix in ("_bg", "_fg"):
+                    self.deps.append(
+                        (
+                            status_bars_fp,
+                            Path(f"art/textures/ui/session/icons/{bar_type}{suffix}.png"),
+                        )
+                    )
+
+    def _add_stance_icon_deps(self):
+        """Track session/icons/stances/{stance}.png for selectable stances in UnitAI.js.
+
+        selection_panels.js constructs stance icon paths as
+        "stretched:session/icons/stances/" + stance + ".png" where the stance keys
+        come from the g_Stances object in UnitAI.js. Only stances with "selectable": true
+        appear in the UI and therefore need an icon texture.
+        """
+        unit_ai_fp = Path("simulation/components/UnitAI.js")
+        for mod in self.mods:
+            ffp = self.vfs_root / mod / unit_ai_fp
+            if not ffp.exists():
+                continue
+            content = ffp.read_text(encoding="utf-8")
+            g_stances_match = re.search(r"var g_Stances\s*=\s*\{(.*?)^};", content, re.DOTALL | re.MULTILINE)
+            if not g_stances_match:
+                continue
+            stances_block = g_stances_match.group(1)
+            # Extract each top-level stance entry (name followed by a brace-delimited block).
+            for stance_match in re.finditer(r'^\t"([a-z_-]+)"\s*:\s*\{([^}]*)\}', stances_block, re.MULTILINE | re.DOTALL):
+                stance = stance_match.group(1)
+                stance_body = stance_match.group(2)
+                if re.search(r'"selectable"\s*:\s*true', stance_body):
+                    self.deps.append(
+                        (unit_ai_fp, Path(f"art/textures/ui/session/icons/stances/{stance}.png"))
+                    )
 
     def add_cpp_hardcoded_assets(self):
         """Mark VFS assets that are loaded directly by C++ engine code as known-used.
@@ -964,6 +1086,9 @@ class CheckRefs:
 
     def add_techs(self):
         self.logger.info("Loading techs...")
+        # phase_village.json, phase_town.json, phase_city.json etc. correspond to
+        # panel_phase_emblems_{name}.png used in selection_details.js.
+        phase_tech_regex = re.compile(r"^phase_([a-z]+)$")
         for fp, ffp in self.find_files("simulation/data/technologies", "json"):
             self.files.append(fp)
             with open(ffp, encoding="utf-8") as f:
@@ -982,6 +1107,12 @@ class CheckRefs:
                 self.deps.append((fp, Path(f"simulation/data/technologies/{tech['top']}.json")))
             if tech.get("bottom"):
                 self.deps.append((fp, Path(f"simulation/data/technologies/{tech['bottom']}.json")))
+            phase_match = phase_tech_regex.match(fp.stem)
+            if phase_match:
+                phase_name = phase_match.group(1)
+                self.deps.append(
+                    (fp, Path(f"art/textures/ui/session/panel_phase_emblems_{phase_name}.png"))
+                )
 
     def add_terrains(self):
         self.logger.info("Loading terrains...")
@@ -1043,6 +1174,32 @@ class CheckRefs:
             for prop in ("lineTexture", "lineTextureMask"):
                 if range_overlay.get(prop):
                     self.deps.append((fp, Path(f"art/textures/selection/{range_overlay[prop]}")))
+
+    def add_resources(self):
+        self.logger.info("Loading resources...")
+        for fp, ffp in self.find_files("simulation/data/resources", "json"):
+            self.files.append(fp)
+            self.roots.append(fp)
+            with open(ffp, encoding="utf-8") as f:
+                resource = load(f)
+            code = resource.get("code")
+            if code:
+                self.deps.append(
+                    (fp, Path(f"art/textures/ui/session/icons/resources/{code}.png"))
+                )
+
+    def add_status_effects(self):
+        self.logger.info("Loading status effects...")
+        for fp, ffp in self.find_files("simulation/data/status_effects", "json"):
+            self.files.append(fp)
+            self.roots.append(fp)
+            with open(ffp, encoding="utf-8") as f:
+                effect = load(f)
+            icon = effect.get("icon")
+            if icon:
+                self.deps.append(
+                    (fp, Path(f"art/textures/ui/session/icons/status_effects/{icon}.png"))
+                )
 
     def check_deps(self):
         self.logger.info("Looking for missing files...")
