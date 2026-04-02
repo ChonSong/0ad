@@ -858,6 +858,13 @@ class CheckRefs:
             r'|session/([^"\'$`+]*\.(?:' + ext_pattern + r"))"
             r')["\']'
         )
+        # Finds literal audio paths in JS: "audio/path/file.ogg".
+        # Excludes dynamic strings containing +, ${, or backtick.
+        js_audio_regex = re.compile(
+            r'["\']'
+            r'(audio/[^"\'$`+]*\.(?:' + re.escape(self.supportedAudioFormats) + r"))"
+            r'["\']'
+        )
         for fp, ffp in self.find_files("gui", "js"):
             self.files.append(fp)
             content = ffp.read_text(encoding="utf-8")
@@ -866,6 +873,8 @@ class CheckRefs:
                 # group(3): bare session/ path
                 texture_file = m.group(1) or m.group(2) or ("session/" + m.group(3))
                 self.deps.append((fp, Path(f"art/textures/ui/{texture_file}")))
+            for m in js_audio_regex.finditer(content):
+                self.deps.append((fp, Path(m.group(1))))
         self._add_unit_action_icon_deps()
         # Scan simulation/helpers and globalscripts JS for literal texture paths.
         # These files are engine-loaded by C++ unconditionally, so they are registered
@@ -878,6 +887,8 @@ class CheckRefs:
                 for m in js_sprite_regex.finditer(content):
                     texture_file = m.group(1) or m.group(2) or ("session/" + m.group(3))
                     self.deps.append((fp, Path(f"art/textures/ui/{texture_file}")))
+                for m in js_audio_regex.finditer(content):
+                    self.deps.append((fp, Path(m.group(1))))
         self._add_status_bar_icon_deps()
         self._add_stance_icon_deps()
         self.files.extend([fp for (fp, ffp) in self.find_files("gamesettings", "js")])
