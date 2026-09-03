@@ -92,7 +92,8 @@ std::pair<bool, CActorDef&> CObjectManager::FindActorDef(const CStrW& actorName)
 		// In case of failure, load a placeholder - we want to have an actor around for hotloading.
 		// (this will leave garbage actors in the object manager if loading files with typos in the name,
 		// but that's unlikely to be a large memory problem).
-		LOGERROR("CObjectManager::FindActorDef(): Cannot find actor '%s'", utf8_from_wstring(actorName));
+		LOGERROR("CObjectManager::FindActorDef(): Cannot find actor '{}'",
+			utf8_from_wstring(actorName));
 		actor->LoadErrorPlaceholder(pathname);
 		success = false;
 	}

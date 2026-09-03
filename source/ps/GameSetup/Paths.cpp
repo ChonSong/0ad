@@ -181,7 +181,7 @@ Paths::Paths(const CmdLineArgs& args)
 		std::error_code ec{};
 		const std::filesystem::path cpath{std::filesystem::canonical(rpath, ec)};
 		if (ec)
-			LOGERROR("Failed to get absolute path of argv0, reason: %s", ec.message());
+			LOGERROR("Failed to get absolute path of argv0, reason: {}", ec.message());
 		else
 			pathname = OsPath(cpath.wstring());
 	}
@@ -189,7 +189,7 @@ Paths::Paths(const CmdLineArgs& args)
 	// make sure it's valid
 	if(!std::filesystem::is_regular_file(pathname.string()))
 	{
-		LOGERROR("Cannot find executable (expected at '%s')", pathname.string8());
+		LOGERROR("Cannot find executable (expected at '{}')", pathname.string8());
 		WARN_IF_ERR(StatusFromErrno());
 	}
 

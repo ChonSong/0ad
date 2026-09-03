@@ -297,7 +297,8 @@ inline off_t goBackToLineBeginning(std::istream* replayStream, const OsPath& fil
 
 		if (!replayStream->good())
 		{
-			LOGERROR("Unknown error when returning to the last line (%i of %lu) of %s", currentPos, fileSize, fileName.string8().c_str());
+			LOGERROR("Unknown error when returning to the last line ({} of {}) of {}", currentPos,
+				fileSize, fileName.string8());
 			return -1;
 		}
 
@@ -311,7 +312,7 @@ inline off_t goBackToLineBeginning(std::istream* replayStream, const OsPath& fil
 		replayStream->seekg(-2, std::ios_base::cur);
 	}
 
-	LOGERROR("Infinite loop when going back to a line beginning in %s", fileName.string8().c_str());
+	LOGERROR("Infinite loop when going back to a line beginning in {}", fileName.string8());
 	return -1;
 }
 
@@ -340,7 +341,8 @@ inline int getReplayDuration(std::istream* replayStream, const OsPath& fileName,
 
 		if (!replayStream->good())
 		{
-			LOGERROR("Read error when determining replay duration at %i of %llu in %s", currentPosition - 2, fileSize, fileName.string8().c_str());
+			LOGERROR("Read error when determining replay duration at {} of {} in {}",
+				currentPosition - 2, fileSize, fileName.string8());
 			return -1;
 		}
 
@@ -356,7 +358,7 @@ inline int getReplayDuration(std::istream* replayStream, const OsPath& fileName,
 		replayStream->seekg(currentPosition - 2, std::ios_base::beg);
 	}
 
-	LOGERROR("Infinite loop when determining replay duration for %s", fileName.string8().c_str());
+	LOGERROR("Infinite loop when determining replay duration for {}", fileName.string8());
 	return -1;
 }
 
@@ -381,7 +383,7 @@ JS::Value VisualReplay::LoadReplayData(const Script::Interface& scriptInterface,
 	CStr type;
 	if (!(*replayStream >> type).good())
 	{
-		LOGERROR("Couldn't open %s.", replayFile.string8().c_str());
+		LOGERROR("Couldn't open {}.", replayFile.string8());
 		SAFE_DELETE(replayStream);
 		return JS::NullValue();
 	}
@@ -400,7 +402,7 @@ JS::Value VisualReplay::LoadReplayData(const Script::Interface& scriptInterface,
 	JS::RootedValue attribs(rq.cx);
 	if (!Script::ParseJSON(rq, header, &attribs))
 	{
-		LOGERROR("Couldn't parse replay header of %s", replayFile.string8().c_str());
+		LOGERROR("Couldn't parse replay header of {}", replayFile.string8());
 		SAFE_DELETE(replayStream);
 		return JS::NullValue();
 	}

@@ -205,7 +205,7 @@ const std::vector<const Mod::ModData*> Mod::GetEnabledModsData() const
 		// This ought be impossible, but let's handle it anyways since it's not a reason to crash.
 		if (!data)
 		{
-			LOGERROR("Unavailable mod '%s' was enabled.", mod);
+			LOGERROR("Unavailable mod '{}' was enabled.", mod);
 			continue;
 		}
 

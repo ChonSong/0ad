@@ -205,8 +205,8 @@ void CDecalRData::RenderDecals(
 			}(itTechBegin->shaderEffect), defines)};
 		if (!techBase)
 		{
-			LOGERROR("Terrain renderer failed to load shader effect (%s)\n",
-				itTechBegin->shaderEffect.c_str());
+			LOGERROR("Terrain renderer failed to load shader effect ({})\n",
+				itTechBegin->shaderEffect.string());
 			continue;
 		}
 

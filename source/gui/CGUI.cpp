@@ -321,7 +321,7 @@ JSObject* CGUI::CallPageInit(const Script::Request& rq, Script::StructuredClone 
 	JS::RootedValue returnValue{rq.cx};
 	if (!Script::Function::Call(rq, newNamespace, "init", &returnValue, initDataVal, hotloadDataVal))
 	{
-		LOGERROR("GUI page '%s': Failed to call init() function", scriptName);
+		LOGERROR("GUI page '{}': Failed to call init() function", scriptName);
 		return nullptr;
 	}
 
@@ -348,7 +348,7 @@ JSObject* CGUI::TickObjects(const Script::Request& rq, Script::StructuredClone i
 		}
 		catch(const std::exception& e)
 		{
-		      LOGERROR("%s", e.what());
+		      LOGERROR("{}", e.what());
 		}
 		++m_LoadModuleResult->iterator;
 		sendingPromise = CallPageInit(rq, initData, hotloadData, scriptName);
@@ -415,7 +415,7 @@ void CGUI::AddObject(IGUIObject& parent, std::unique_ptr<IGUIObject> child)
 
 	if (m_pAllObjects.find(child->m_Name) != m_pAllObjects.end())
 	{
-		LOGERROR("Can't register more than one object of the name %s", child->m_Name.c_str());
+		LOGERROR("Can't register more than one object of the name {}", child->m_Name);
 		return;
 	}
 
@@ -447,7 +447,11 @@ IGUIObject* CGUI::FindObjectByName(const CStr& Name) const
 {
 	IGUIObject* obj = TryFindObjectByName(Name);
 	if (obj == nullptr)
-		LOGERROR("Failed to get GUI object by name: object '%s' not found. Note: Use 'Engine.TryGetGUIObjectByName' to query for potentially non-existent objects instead.", Name);
+	{
+		LOGERROR("Failed to get GUI object by name: object '{}' not found. Note: Use "
+			"'Engine.TryGetGUIObjectByName' to query for potentially non-existent objects instead.",
+			Name);
+	}
 
 	return obj;
 }
@@ -593,7 +597,7 @@ void CGUI::LoadXmlFile(const VfsPath& Filename, std::unordered_set<VfsPath>& Pat
 	else if (root_name == "setup")
 		Xeromyces_ReadRootSetup(xeroFile, node);
 	else
-		LOGERROR("CGUI::LoadXmlFile encountered an unknown XML root node type: %s", root_name.data());
+		LOGERROR("CGUI::LoadXmlFile encountered an unknown XML root node type: {}", root_name.data());
 }
 
 void CGUI::LoadedXmlFiles()
@@ -676,7 +680,7 @@ void CGUI::Xeromyces_ReadObject(const XMBData& xmb, XMBElement element, IGUIObje
 
 	if (!object)
 	{
-		LOGERROR("GUI: Unrecognized object type \"%s\"", type.c_str());
+		LOGERROR("GUI: Unrecognized object type \"{}\"", type);
 		return;
 	}
 
@@ -734,7 +738,8 @@ void CGUI::Xeromyces_ReadObject(const XMBData& xmb, XMBElement element, IGUIObje
 
 			if (name.starts_with("__"))
 			{
-				LOGERROR("GUI: Names starting with '__' are reserved for the engine (object: %s)", name.c_str());
+				LOGERROR("GUI: Names starting with '__' are reserved for the engine (object: {})",
+					name);
 				continue;
 			}
 
@@ -789,7 +794,8 @@ void CGUI::Xeromyces_ReadObject(const XMBData& xmb, XMBElement element, IGUIObje
 				CVFSFile scriptfile;
 				if (scriptfile.Load(g_VFS, filename) != PSRETURN_OK)
 				{
-					LOGERROR("Error opening GUI script action file '%s'", utf8_from_wstring(filename));
+					LOGERROR("Error opening GUI script action file '{}'",
+						utf8_from_wstring(filename));
 					continue;
 				}
 
@@ -826,7 +832,8 @@ void CGUI::Xeromyces_ReadObject(const XMBData& xmb, XMBElement element, IGUIObje
 			CStr attributeName(child.GetAttributes().GetNamedItem(attr_id)); // Read the attribute name.
 			if (attributeName.empty())
 			{
-				LOGERROR("GUI: 'translatableAttribute' XML element with empty 'id' XML attribute found. (object: %s)", object->GetPresentableName().c_str());
+				LOGERROR("GUI: 'translatableAttribute' XML element with empty 'id' XML attribute "
+					"found. (object: {})", object->GetPresentableName());
 				continue;
 			}
 
@@ -849,7 +856,8 @@ void CGUI::Xeromyces_ReadObject(const XMBData& xmb, XMBElement element, IGUIObje
 			CStr attributeName(child.GetAttributes().GetNamedItem(attr_id)); // Read the attribute name.
 			if (attributeName.empty())
 			{
-				LOGERROR("GUI: 'attribute' XML element with empty 'id' XML attribute found. (object: %s)", object->GetPresentableName().c_str());
+				LOGERROR("GUI: 'attribute' XML element with empty 'id' XML attribute found. "
+					"(object: {})", object->GetPresentableName());
 				continue;
 			}
 
@@ -882,20 +890,24 @@ void CGUI::Xeromyces_ReadObject(const XMBData& xmb, XMBElement element, IGUIObje
 				CXeromyces xeroIncluded;
 				if (xeroIncluded.Load(g_VFS, filename, "gui") != PSRETURN_OK)
 				{
-					LOGERROR("GUI: Error reading included XML: '%s'", utf8_from_wstring(filename));
+					LOGERROR("GUI: Error reading included XML: '{}'",
+						utf8_from_wstring(filename));
 					continue;
 				}
 
 				XMBElement node = xeroIncluded.GetRoot();
 				if (node.GetNodeName() != xeroIncluded.GetElementID("object"))
 				{
-					LOGERROR("GUI: Error reading included XML: '%s', root element must have be of type 'object'.", utf8_from_wstring(filename));
+					LOGERROR("GUI: Error reading included XML: '{}', root element must have "
+						"be of type 'object'.", utf8_from_wstring(filename));
 					continue;
 				}
 
 				if (nesting_depth+1 >= MAX_OBJECT_DEPTH)
 				{
-					LOGERROR("GUI: Too many nested GUI includes. Probably caused by a recursive include attribute. Abort rendering '%s'.", utf8_from_wstring(filename));
+					LOGERROR("GUI: Too many nested GUI includes. Probably caused by a recursive "
+						"include attribute. Abort rendering '{}'.",
+						utf8_from_wstring(filename));
 					continue;
 				}
 
@@ -906,7 +918,9 @@ void CGUI::Xeromyces_ReadObject(const XMBData& xmb, XMBElement element, IGUIObje
 			{
 				if (nesting_depth+1 >= MAX_OBJECT_DEPTH)
 				{
-					LOGERROR("GUI: Too many nested GUI includes. Probably caused by a recursive include attribute. Abort rendering '%s'.", utf8_from_wstring(directory));
+					LOGERROR("GUI: Too many nested GUI includes. Probably caused by a recursive "
+						"include attribute. Abort rendering '{}'.",
+						utf8_from_wstring(directory));
 					continue;
 				}
 
@@ -920,14 +934,15 @@ void CGUI::Xeromyces_ReadObject(const XMBData& xmb, XMBElement element, IGUIObje
 					CXeromyces xeroIncluded;
 					if (xeroIncluded.Load(g_VFS, path, "gui") != PSRETURN_OK)
 					{
-						LOGERROR("GUI: Error reading included XML: '%s'", path.string8());
+						LOGERROR("GUI: Error reading included XML: '{}'", path.string8());
 						continue;
 					}
 
 					XMBElement node = xeroIncluded.GetRoot();
 					if (node.GetNodeName() != xeroIncluded.GetElementID("object"))
 					{
-						LOGERROR("GUI: Error reading included XML: '%s', root element must have be of type 'object'.", path.string8());
+						LOGERROR("GUI: Error reading included XML: '{}', root element must "
+							"have be of type 'object'.", path.string8());
 						continue;
 					}
 					Xeromyces_ReadObject(xeroIncluded, node, *object, NameSubst, Paths,
@@ -936,13 +951,17 @@ void CGUI::Xeromyces_ReadObject(const XMBData& xmb, XMBElement element, IGUIObje
 
 			}
 			else
-				LOGERROR("GUI: 'include' XML element must have valid 'file' or 'directory' attribute found. (object %s)", object->GetPresentableName().c_str());
+				LOGERROR("GUI: 'include' XML element must have valid 'file' or 'directory' "
+					"attribute found. (object {})", object->GetPresentableName());
 		}
 		else
 		{
 			// Try making the object read the tag.
 			if (!object->HandleAdditionalChildren(xmb, child))
-				LOGERROR("GUI: (object: %s) Reading unknown children for its type", object->GetPresentableName().c_str());
+			{
+				LOGERROR("GUI: (object: {}) Reading unknown children for its type",
+					object->GetPresentableName().c_str());
+			}
 		}
 	}
 
@@ -1017,7 +1036,7 @@ void CGUI::Xeromyces_ReadScript(const XMBData& xmb, XMBElement element, std::uno
 			m_ScriptInterface->LoadGlobalScriptFile(fileAttr);
 		}
 		else
-			LOGERROR("GUI: Script path %s is not a file path", fileAttr.ToUTF8().c_str());
+			LOGERROR("GUI: Script path {} is not a file path", fileAttr.ToUTF8());
 	}
 
 	// If there is a "directory" attribute, read all JS files in that directory
@@ -1036,7 +1055,7 @@ void CGUI::Xeromyces_ReadScript(const XMBData& xmb, XMBElement element, std::uno
 			}
 		}
 		else
-			LOGERROR("GUI: Script path %s is not a directory path", directoryAttr.ToUTF8().c_str());
+			LOGERROR("GUI: Script path {} is not a directory path", directoryAttr.ToUTF8());
 	}
 
 	CStr code(element.GetText());
@@ -1119,7 +1138,10 @@ void CGUI::Xeromyces_ReadImage(const XMBData& xmb, XMBElement element, CGUISprit
 		{
 			CRect rect;
 			if (!ParseString<CRect>(this, attr_value, rect))
-				LOGERROR("GUI: Error parsing '%s' (\"%s\")", attr_name, utf8_from_wstring(attr_value));
+			{
+				LOGERROR("GUI: Error parsing '{}' (\"{}\")", attr_name,
+					utf8_from_wstring(attr_value));
+			}
 			else
 				image->m_TexturePlacementInFile = rect;
 		}
@@ -1127,7 +1149,10 @@ void CGUI::Xeromyces_ReadImage(const XMBData& xmb, XMBElement element, CGUISprit
 		{
 			float val;
 			if (!ParseString<float>(this, attr_value, val))
-				LOGERROR("GUI: Error parsing '%s' (\"%s\")", attr_name, utf8_from_wstring(attr_value));
+			{
+				LOGERROR("GUI: Error parsing '{}' (\"{}\")", attr_name,
+					utf8_from_wstring(attr_value));
+			}
 			else
 				image->m_FixedHAspectRatio = val;
 		}
@@ -1135,7 +1160,10 @@ void CGUI::Xeromyces_ReadImage(const XMBData& xmb, XMBElement element, CGUISprit
 		{
 			bool b;
 			if (!ParseString<bool>(this, attr_value, b))
-				LOGERROR("GUI: Error parsing '%s' (\"%s\")", attr_name, utf8_from_wstring(attr_value));
+			{
+				LOGERROR("GUI: Error parsing '{}' (\"{}\")", attr_name,
+					utf8_from_wstring(attr_value));
+			}
 			else
 				image->m_RoundCoordinates = b;
 		}
@@ -1148,12 +1176,18 @@ void CGUI::Xeromyces_ReadImage(const XMBData& xmb, XMBElement element, CGUISprit
 			else if (attr_value == L"clamp_to_edge")
 				image->m_AddressMode = Renderer::Backend::Sampler::AddressMode::CLAMP_TO_EDGE;
 			else
-				LOGERROR("GUI: Error parsing '%s' (\"%s\")", attr_name, utf8_from_wstring(attr_value));
+			{
+				LOGERROR("GUI: Error parsing '{}' (\"{}\")", attr_name,
+					utf8_from_wstring(attr_value));
+			}
 		}
 		else if (attr_name == "backcolor")
 		{
 			if (!ParseString<CGUIColor>(this, attr_value, image->m_BackColor))
-				LOGERROR("GUI: Error parsing '%s' (\"%s\")", attr_name, utf8_from_wstring(attr_value));
+			{
+				LOGERROR("GUI: Error parsing '{}' (\"{}\")", attr_name,
+					utf8_from_wstring(attr_value));
+			}
 		}
 		else
 			debug_warn(L"Invalid data - DTD shouldn't allow this");
@@ -1188,7 +1222,7 @@ void CGUI::Xeromyces_ReadEffects(const XMBData& xmb, XMBElement element, SGUIIma
 		if (attr_name == "add_color")
 		{
 			if (!effects.m_AddColor.ParseString(*this, attr.Value, 0))
-				LOGERROR("GUI: Error parsing '%s' (\"%s\")", attr_name, attr.Value);
+				LOGERROR("GUI: Error parsing '{}' (\"{}\")", attr_name, attr.Value);
 		}
 		else if (attr_name == "grayscale")
 			effects.m_Greyscale = true;
@@ -1242,7 +1276,7 @@ void CGUI::Xeromyces_ReadScrollBarStyle(const XMBData& xmb, XMBElement element)
 		{
 			bool b;
 			if (!ParseString<bool>(this, attr_value.FromUTF8(), b))
-				LOGERROR("GUI: Error parsing '%s' (\"%s\")", attr_name, attr_value);
+				LOGERROR("GUI: Error parsing '{}' (\"{}\")", attr_name, attr_value);
 			else
 				scrollbar.m_UseEdgeButtons = b;
 		}
@@ -1250,7 +1284,7 @@ void CGUI::Xeromyces_ReadScrollBarStyle(const XMBData& xmb, XMBElement element)
 		{
 			float f;
 			if (!ParseString<float>(this, attr_value.FromUTF8(), f))
-				LOGERROR("GUI: Error parsing '%s' (\"%s\")", attr_name, attr_value);
+				LOGERROR("GUI: Error parsing '{}' (\"{}\")", attr_name, attr_value);
 			else
 				scrollbar.m_Width = f;
 		}
@@ -1258,7 +1292,7 @@ void CGUI::Xeromyces_ReadScrollBarStyle(const XMBData& xmb, XMBElement element)
 		{
 			float f;
 			if (!ParseString<float>(this, attr_value.FromUTF8(), f))
-				LOGERROR("GUI: Error parsing '%s' (\"%s\")", attr_name, attr_value);
+				LOGERROR("GUI: Error parsing '{}' (\"{}\")", attr_name, attr_value);
 			else
 				scrollbar.m_MinimumBarSize = f;
 		}
@@ -1266,7 +1300,7 @@ void CGUI::Xeromyces_ReadScrollBarStyle(const XMBData& xmb, XMBElement element)
 		{
 			float f;
 			if (!ParseString<float>(this, attr_value.FromUTF8(), f))
-				LOGERROR("GUI: Error parsing '%s' (\"%s\")", attr_name, attr_value);
+				LOGERROR("GUI: Error parsing '{}' (\"{}\")", attr_name, attr_value);
 			else
 				scrollbar.m_MaximumBarSize = f;
 		}
@@ -1329,7 +1363,7 @@ void CGUI::Xeromyces_ReadIcon(const XMBData& xmb, XMBElement element)
 		{
 			CSize2D size;
 			if (!ParseString<CSize2D>(this, attr_value.FromUTF8(), size))
-				LOGERROR("Error parsing '%s' (\"%s\") inside <icon>.", attr_name, attr_value);
+				LOGERROR("Error parsing '{}' (\"{}\") inside <icon>.", attr_name, attr_value);
 			else
 				icon.m_Size = size;
 		}
@@ -1388,7 +1422,7 @@ void CGUI::Xeromyces_ReadColor(const XMBData& xmb, XMBElement element)
 			std::forward_as_tuple(color.r, color.g, color.b, color.a));
 	}
 	else
-		LOGERROR("GUI: Unable to create custom color '%s'. Invalid color syntax.", name.c_str());
+		LOGERROR("GUI: Unable to create custom color '{}'. Invalid color syntax.", name);
 }
 
 CGUI::ModuleArtifact::ModuleArtifact(const Script::Request& rq, VfsPath filename):

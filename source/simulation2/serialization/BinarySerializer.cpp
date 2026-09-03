@@ -72,7 +72,7 @@ static std::uint8_t GetArrayType(js::Scalar::Type arrayType)
 	case js::Scalar::Uint8Clamped:
 		return SCRIPT_TYPED_ARRAY_UINT8_CLAMPED;
 	default:
-		LOGERROR("Cannot serialize unrecognized typed array view: %d", static_cast<int>(arrayType));
+		LOGERROR("Cannot serialize unrecognized typed array view: {}", static_cast<int>(arrayType));
 		throw PSERROR_Serialize_InvalidScriptValue();
 	}
 }
@@ -322,7 +322,8 @@ void CBinarySerializerScriptImpl::HandleScriptVal(const Script::Request& rq, JS:
 			else
 			{
 				// Unrecognized class
-				LOGERROR("Cannot serialize JS objects with unrecognized class '%s'", jsclass->name);
+				LOGERROR("Cannot serialize JS objects with unrecognized class '{}'",
+					jsclass->name);
 				throw PSERROR_Serialize_InvalidScriptValue();
 			}
 		}
@@ -395,7 +396,7 @@ void CBinarySerializerScriptImpl::HandleScriptVal(const Script::Request& rq, JS:
 			}
 		}
 
-		LOGERROR("Cannot serialize JS objects of type 'function': %s", utf8_from_wstring(funcname));
+		LOGERROR("Cannot serialize JS objects of type 'function': {}", utf8_from_wstring(funcname));
 		throw PSERROR_Serialize_InvalidScriptValue();
 	}
 	case JSTYPE_STRING:
@@ -500,7 +501,7 @@ std::uint32_t CBinarySerializerScriptImpl::GetScriptBackrefTag(const Script::Req
 		if (!m_ScriptBackrefTags.put(JS::Heap<JSObject*>(obj.get()), ++m_ScriptBackrefsNext))
 		{
 			JS::RootedValue objval(rq.cx, JS::ObjectValue(*obj.get()));
-			LOGERROR("BinarySerializer: error at insertion. Object was %s", Script::ToString(rq, &objval));
+			LOGERROR("BinarySerializer: error at insertion. Object was {}", Script::ToString(rq, &objval));
 			return 0;
 		}
 		// Return 0 to mean "you have to serialize this object";

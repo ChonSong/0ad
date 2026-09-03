@@ -1,4 +1,4 @@
-/* Copyright (C) 2025 Wildfire Games.
+/* Copyright (C) 2026 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -224,7 +224,7 @@ void ISoundManager::CloseGame()
 
 void CSoundManager::al_ReportError(ALenum err, const char* caller, int line)
 {
-	LOGERROR("OpenAL error: %s; called from %s (line %d)\n", alGetString(err), caller, line);
+	LOGERROR("OpenAL error: {}; called from {} (line {})\n", alGetString(err), caller, line);
 }
 
 void CSoundManager::al_check(const char* caller, int line)
@@ -348,7 +348,7 @@ Status CSoundManager::AlcInit()
 			}
 			else
 			{
-				LOGERROR("error in gensource = %d", err);
+				LOGERROR("error in gensource = {}", err);
 			}
 			delete[] sourceList;
 		}
@@ -364,7 +364,8 @@ Status CSoundManager::AlcInit()
 		debug_printf("Sound: AlcInit success, using %s\n", dev_name);
 	else
 	{
-		LOGERROR("Sound: AlcInit failed, m_Device=%p m_Context=%p dev_name=%s err=%x\n", (void *)m_Device, (void *)m_Context, dev_name, err);
+		LOGERROR("Sound: AlcInit failed, m_Device={} m_Context={} dev_name={} err={:x}\n",
+			static_cast<void*>(m_Device), static_cast<void*>(m_Context), dev_name, err);
 
 // FIXME Hack to get around exclusive access to the sound device
 #if OS_UNIX
@@ -658,7 +659,7 @@ void CSoundManager::PlayAsGroup(const VfsPath& groupPath, const CVector3D& sourc
 		group = new CSoundGroup();
 		if (!group->LoadSoundGroup(L"audio/" + groupPath.string()))
 		{
-			LOGERROR("Failed to load sound group '%s'", groupPath.string8());
+			LOGERROR("Failed to load sound group '{}'", groupPath.string8());
 			delete group;
 			group = NULL;
 		}
@@ -848,7 +849,7 @@ void CSoundManager::RunHardwareDetection()
 	else
 	{
 		const char* failMsg = "Failed to query audio device names";
-		LOGERROR(failMsg);
+		LOGERROR("{}", failMsg);
 		m_SoundCardNames = failMsg;
 	}
 

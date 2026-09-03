@@ -83,7 +83,7 @@ constexpr std::array<std::wstring_view, 2> MAPS{L"simulation/"sv, L"maps/"sv};
 	}\
 	/* unknown failure. We output an error message. */\
 	else if (err < 0)\
-		LOGERROR("Unknown failure in VFS %i", err );
+		LOGERROR("Unknown failure in VFS {}", err );
 	/* else: success */
 
 

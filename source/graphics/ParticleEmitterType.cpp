@@ -285,7 +285,7 @@ bool CParticleEmitterType::Load(const VfsPath& path)
 		std::numeric_limits<uint16_t>::max() / 6};
 	if (maximumNumberOfParticles > maximumSupportedNumberOfParticles)
 	{
-		LOGERROR("Too many particles per particle system: '%s' (%u/%u)",
+		LOGERROR("Too many particles per particle system: '{}' ({}/{})",
 			path.string8(), maximumNumberOfParticles, maximumSupportedNumberOfParticles);
 		m_MaxParticles = maximumSupportedNumberOfParticles;
 	}
@@ -398,7 +398,7 @@ bool CParticleEmitterType::LoadXML(const VfsPath& path)
 	PSRETURN ret = XeroFile.Load(g_VFS, path, "particle");
 	if (ret != PSRETURN_OK)
 	{
-		LOGERROR("Failed to load particle: '%s'", path.string8());
+		LOGERROR("Failed to load particle: '{}'", path.string8());
 		return false;
 	}
 

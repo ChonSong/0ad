@@ -225,7 +225,7 @@ CNetMessage* CNetMessageFactory::CreateMessage(const void* pData,
 		break;
 
 	default:
-		LOGERROR("CNetMessageFactory::CreateMessage(): Unknown message type '%d' received",
+		LOGERROR("CNetMessageFactory::CreateMessage(): Unknown message type '{}' received",
 			static_cast<int>(header.GetType()));
 		break;
 	}

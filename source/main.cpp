@@ -203,7 +203,7 @@ static Input::Reaction MainInputHandler(const SDL_Event& ev)
 		installer.Install(std::string(dropped_filedir), g_ScriptContext, true);
 		SDL_free(dropped_filedir);
 		if (installer.GetInstalledMods().empty())
-			LOGERROR("Failed to install mod %s", dropped_filedir);
+			LOGERROR("Failed to install mod {}", dropped_filedir);
 		else
 		{
 			LOGMESSAGE("Installed mod {}", installer.GetInstalledMods().front());
@@ -683,7 +683,7 @@ static void RunGameOrAtlas(const std::span<const char* const> argv)
 			{
 				CModInstaller::ModInstallationResult result = installer.Install(modPath, g_ScriptContext, true);
 				if (result != CModInstaller::ModInstallationResult::SUCCESS)
-					LOGERROR("Failed to install '%s'", modPath.string8().c_str());
+					LOGERROR("Failed to install '{}'", modPath.string8());
 			}
 
 			installedMods = installer.GetInstalledMods();

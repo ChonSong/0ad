@@ -206,7 +206,7 @@ void CGUIManager::SGUIPage::LoadPage(Script::Context& scriptContext)
 
 	if (root.GetNodeName() != elmt_page)
 	{
-		LOGERROR("GUI page '%s' must have root element <page>", utf8_from_wstring(m_Name));
+		LOGERROR("GUI page '{}' must have root element <page>", utf8_from_wstring(m_Name));
 		return;
 	}
 
@@ -215,7 +215,8 @@ void CGUIManager::SGUIPage::LoadPage(Script::Context& scriptContext)
 	{
 		if (node.GetNodeName() != elmt_include)
 		{
-			LOGERROR("GUI page '%s' must only have <include> elements inside <page>", utf8_from_wstring(m_Name));
+			LOGERROR("GUI page '{}' must only have <include> elements inside <page>",
+				utf8_from_wstring(m_Name));
 			continue;
 		}
 
@@ -497,7 +498,7 @@ const CParamNode& CGUIManager::GetTemplate(const std::string& templateName)
 {
 	const CParamNode& templateRoot = m_TemplateLoader.GetTemplateFileData(templateName).GetOnlyChild();
 	if (!templateRoot.IsOk())
-		LOGERROR("Invalid template found for '%s'", templateName.c_str());
+		LOGERROR("Invalid template found for '{}'", templateName);
 
 	return templateRoot;
 }

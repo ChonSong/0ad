@@ -58,7 +58,7 @@ static void relaxNGErrorHandler(void* /*userData*/,
 	if (message.length() > 0 && message[message.length()-1] == '\n')
 		message.erase(message.length()-1);
 
-	LOGERROR("RelaxNGValidator: Validation %s: %s:%d: %s",
+	LOGERROR("RelaxNGValidator: Validation {}: {}:{}: {}",
 		error->level == XML_ERR_WARNING ? "warning" : "error",
 		error->file, error->line, message.c_str());
 }
@@ -150,7 +150,7 @@ bool RelaxNGValidator::ValidateEncoded(const std::string& filename, const std::s
 	xmlDocPtr doc = xmlReadMemory(document.c_str(), (int)document.size(), filename.c_str(), NULL, XML_PARSE_NONET);
 	if (doc == NULL)
 	{
-		LOGERROR("RelaxNGValidator: Failed to parse document '%s'", filename.c_str());
+		LOGERROR("RelaxNGValidator: Failed to parse document '{}'", filename);
 		return false;
 	}
 
@@ -172,12 +172,15 @@ bool RelaxNGValidator::ValidateEncoded(xmlDocPtr doc) const
 	}
 	else if (ret > 0)
 	{
-		LOGERROR("RelaxNGValidator: Validation failed for '%s'", doc->name);
+		if (doc->name)
+			LOGERROR("RelaxNGValidator: Validation failed for '{}'", doc->name);
+		else
+			LOGERROR("RelaxNGValidator: Validation failed");
 		return false;
 	}
 	else
 	{
-		LOGERROR("RelaxNGValidator: Internal error %d", ret);
+		LOGERROR("RelaxNGValidator: Internal error {}", ret);
 		return false;
 	}
 }

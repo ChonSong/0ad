@@ -62,7 +62,7 @@ CTerrainPropertiesPtr CTerrainProperties::FromXML(const CTerrainPropertiesPtr& p
 	// Check that we've got the right kind of xml document
 	if (rootName != "Terrains")
 	{
-		LOGERROR("TerrainProperties: Loading %s: Root node is not terrains (found \"%s\")",
+		LOGERROR("TerrainProperties: Loading {}: Root node is not terrains (found \"{}\")",
 			pathname.string8(),
 			rootName);
 		return CTerrainPropertiesPtr();

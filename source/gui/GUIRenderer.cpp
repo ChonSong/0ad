@@ -92,7 +92,7 @@ void GUIRenderer::UpdateDrawCallCache(const CGUI& pGUI, DrawCalls& Calls, const 
 		// Check that this can be a special sprite.
 		if (SpriteName.find(":") == std::string::npos && SpriteName.find("color(") == std::string::npos)
 		{
-			LOGERROR("Trying to use a sprite that doesn't exist (\"%s\").", SpriteName.c_str());
+			LOGERROR("Trying to use a sprite that doesn't exist (\"{}\").", SpriteName);
 			return;
 		}
 
@@ -158,7 +158,7 @@ void GUIRenderer::UpdateDrawCallCache(const CGUI& pGUI, DrawCalls& Calls, const 
 			// Check color is valid
 			if (!CGUI::ParseString<CGUIColor>(&pGUI, value, *color))
 			{
-				LOGERROR("GUI: Error parsing sprite 'color' (\"%s\")", utf8_from_wstring(value));
+				LOGERROR("GUI: Error parsing sprite 'color' (\"{}\")", utf8_from_wstring(value));
 				return;
 			}
 
@@ -167,7 +167,7 @@ void GUIRenderer::UpdateDrawCallCache(const CGUI& pGUI, DrawCalls& Calls, const 
 
 		if (sprite->m_Images.empty())
 		{
-			LOGERROR("Trying to use a sprite that doesn't exist (\"%s\").", SpriteName.c_str());
+			LOGERROR("Trying to use a sprite that doesn't exist (\"{}\").", SpriteName);
 			return;
 		}
 

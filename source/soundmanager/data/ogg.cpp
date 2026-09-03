@@ -270,7 +270,7 @@ Status OpenOggNonstream(const PIVFS& vfs, const VfsPath& pathname, OggStreamPtr&
 	}
 	catch(const std::runtime_error& e)
 	{
-		LOGERROR(e.what());
+		LOGERROR("{}", e.what());
 		return ERR::IO;
 	}
 }

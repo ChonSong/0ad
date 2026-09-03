@@ -284,7 +284,7 @@ static void InitSDL()
 {
 	if(SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER|SDL_INIT_NOPARACHUTE) < 0)
 	{
-		LOGERROR("SDL library initialization failed: %s", SDL_GetError());
+		LOGERROR("SDL library initialization failed: {}", SDL_GetError());
 		throw PSERROR_System_SDLInitFailed();
 	}
 	atexit(SDL_Quit);
@@ -526,7 +526,8 @@ bool Init(const CmdLineArgs& args, int flags)
 			// In non-visual mode, fail entirely.
 			if (args.Has("autostart-nonvisual"))
 			{
-				LOGERROR("Trying to start with incompatible mods: %s.", boost::algorithm::join(g_Mods.GetIncompatibleMods(), ", "));
+				LOGERROR("Trying to start with incompatible mods: {}.",
+					boost::algorithm::join(g_Mods.GetIncompatibleMods(), ", "));
 				return false;
 			}
 		}
@@ -538,7 +539,8 @@ bool Init(const CmdLineArgs& args, int flags)
 		MountMods(Paths(args), g_Mods.GetEnabledMods());
 	else if (flags & INIT_NO_GUI)
 	{
-		LOGERROR("Trying to start with incompatible mods: %s.", boost::algorithm::join(g_Mods.GetIncompatibleMods(), ", "));
+		LOGERROR("Trying to start with incompatible mods: {}.",
+			boost::algorithm::join(g_Mods.GetIncompatibleMods(), ", "));
 		MountMods(Paths(args), { "mod", "public" });
 	}
 	else
@@ -558,7 +560,7 @@ bool Init(const CmdLineArgs& args, int flags)
 		}
 		catch (const CSimulation2::LoadScriptError& e)
 		{
-			LOGERROR("%s", e.what());
+			LOGERROR("{}", e.what());
 		}
 		return false;
 	}
@@ -681,7 +683,7 @@ CStr8 LoadSettingsOfScenarioMap(const VfsPath &mapPath)
 
 	if (INFO::OK != loadResult)
 	{
-		LOGERROR("LoadSettingsOfScenarioMap: Unable to load map file '%s'", mapPath.string8());
+		LOGERROR("LoadSettingsOfScenarioMap: Unable to load map file '{}'", mapPath.string8());
 		throw PSERROR_Game_World_MapLoadFailed("Unable to load map file, check the path for typos.");
 	}
 	XMBElement mapElement = mapFile.GetRoot();
@@ -760,7 +762,7 @@ bool Autostart(const CmdLineArgs& args)
 			const CParamNode& templateRoot{
 				templateLoader.GetTemplateFileData(templateName).GetOnlyChild()};
 			if (!templateRoot.IsOk())
-				LOGERROR("Invalid template found for '%s'", templateName.c_str());
+				LOGERROR("Invalid template found for '{}'", templateName);
 
 			return templateRoot;
 		}

@@ -658,7 +658,10 @@ bool CNetClient::HandleMessage(CNetMessage* message)
 	// Update FSM
 	bool ok = Update(message->GetType(), message);
 	if (!ok)
-		LOGERROR("Net client: Error running FSM update (type=%d state=%d)", (int)message->GetType(), (int)GetCurrState());
+	{
+		LOGERROR("Net client: Error running FSM update (type={} state={})",
+			static_cast<int>(message->GetType()), GetCurrState());
+	}
 	return ok;
 }
 

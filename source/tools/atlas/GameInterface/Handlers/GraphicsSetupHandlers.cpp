@@ -126,7 +126,7 @@ MESSAGEHANDLER(InitSDL)
 	//   http://trac.wxwidgets.org/ticket/9213
 	//   http://trac.wxwidgets.org/ticket/9215
 	if (SDL_GL_LoadLibrary(nullptr) && g_Logger)
-		LOGERROR("SDL failed to load GL library: '%s'", SDL_GetError());
+		LOGERROR("SDL failed to load GL library: '{}'", SDL_GetError());
 }
 
 MESSAGEHANDLER(InitGraphics)

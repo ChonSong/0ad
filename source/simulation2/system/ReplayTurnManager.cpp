@@ -99,7 +99,7 @@ void CReplayTurnManager::NotifyFinishedUpdate(turn_id_t turn, const UpdateCallba
 		return;
 
 	m_HasSyncError = true;
-	LOGERROR("Replay out of sync on turn %d", turn);
+	LOGERROR("Replay out of sync on turn {}", turn);
 
 	const Script::Interface& scriptInterface = m_Simulation2.GetScriptInterface();
 	Script::Request rq(scriptInterface);

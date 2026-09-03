@@ -109,19 +109,19 @@ public:
 		Tex tex;
 		if (tex.decode(shapeFile, size) != INFO::OK)
 		{
-			LOGERROR("Could not decode mouse event mask texture '%s'", spec);
+			LOGERROR("Could not decode mouse event mask texture '{}'", spec);
 			return nullptr;
 		}
 		if (tex.transform(TEX_DXT | TEX_MIPMAPS) != INFO::OK)
 		{
-			LOGERROR("Could not transform texture '%s'", spec);
+			LOGERROR("Could not transform texture '{}'", spec);
 			return nullptr;
 		}
 
 		// TODO > would be nice to downscale, maybe.
 		if (tex.m_Width == 0 || tex.m_Height == 0)
 		{
-			LOGERROR("Mouse event mask texture must have a non-null size ('%s')", spec);
+			LOGERROR("Mouse event mask texture must have a non-null size ('{}')", spec);
 			return nullptr;
 		}
 
@@ -185,7 +185,7 @@ bool CGUIMouseEventMask::DoFromString(const CStrW& Value)
 			return true;
 		}
 		else
-			LOGERROR("Could not create shape for: %s", spec);
+			LOGERROR("Could not create shape for: {}", spec);
 	}
 	else
 		LOGWARNING("Unknown clickable shape: {}", spec);

@@ -91,7 +91,7 @@ bool CGUISimpleSetting<CGUIColor>::DoFromJSVal(const Script::Request& rq, JS::Ha
 
 		if (!m_Setting.ParseString(m_Object.GetGUI(), name))
 		{
-			LOGERROR("Invalid color '%s'", name.c_str());
+			LOGERROR("Invalid color '{}'", name);
 			return false;
 		}
 		return true;

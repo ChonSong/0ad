@@ -325,7 +325,8 @@ bool CConfigDB::Reload(EConfigNamespace ns)
 		Status ret = g_VFS->LoadFile(m_ConfigFile[ns], buffer, buflen);
 		if (ret != INFO::OK)
 		{
-			LOGERROR("CConfigDB::Reload(): vfs_load for \"%s\" failed: return was %lld", m_ConfigFile[ns].string8(), (long long)ret);
+			LOGERROR("CConfigDB::Reload(): vfs_load for \"{}\" failed: return was {}",
+				m_ConfigFile[ns].string8(), static_cast<long long>(ret));
 			return false;
 		}
 	}
@@ -363,7 +364,8 @@ bool CConfigDB::Reload(EConfigNamespace ns)
 
 			if (pos == filebufend || *pos == '\n')
 			{
-				LOGERROR("Config header with missing close tag encountered on line %d in '%s'", line, m_ConfigFile[ns].string8());
+				LOGERROR("Config header with missing close tag encountered on line {} in '{}'",
+					line, m_ConfigFile[ns].string8());
 				header.clear();
 				++line;
 				continue;
@@ -374,7 +376,8 @@ bool CConfigDB::Reload(EConfigNamespace ns)
 			while (++pos < filebufend && *pos != '\n' && *pos != ';')
 				if (*pos != ' ' && *pos != '\r')
 				{
-					LOGERROR("Config settings on the same line as a header on line %d in '%s'", line, m_ConfigFile[ns].string8());
+					LOGERROR("Config settings on the same line as a header on line {} in '{}'",
+						line, m_ConfigFile[ns].string8());
 					break;
 				}
 			while (pos < filebufend && *pos != '\n')
@@ -395,7 +398,8 @@ bool CConfigDB::Reload(EConfigNamespace ns)
 					{
 						if (*pos == '\\' && ++pos == filebufend)
 						{
-							LOGERROR("Escape character at end of input (line %d in '%s')", line, m_ConfigFile[ns].string8());
+							LOGERROR("Escape character at end of input (line {} in '{}')",
+								line, m_ConfigFile[ns].string8());
 							break;
 						}
 
@@ -424,7 +428,10 @@ bool CConfigDB::Reload(EConfigNamespace ns)
 				}
 			}
 			if (quoted) // We ignore the invalid parameter
-				LOGERROR("Unmatched quote while parsing config file '%s' on line %d", m_ConfigFile[ns].string8(), line);
+			{
+				LOGERROR("Unmatched quote while parsing config file '{}' on line {}",
+					m_ConfigFile[ns].string8(), line);
+			}
 			else if (!value.empty())
 				values.push_back(value);
 			value.clear();
@@ -464,7 +471,7 @@ bool CConfigDB::Reload(EConfigNamespace ns)
 	}
 
 	if (!name.empty())
-		LOGERROR("Config file does not have a new line after the last config setting '%s'", name);
+		LOGERROR("Config file does not have a new line after the last config setting '{}'", name);
 
 	m_Map[ns].swap(newMap);
 	m_HasChanges[ns] = false;
@@ -509,7 +516,8 @@ bool CConfigDB::WriteFile(EConfigNamespace ns, const VfsPath& path) const
 	Status ret = g_VFS->CreateFile(path, {buf.get(), len});
 	if (ret < 0)
 	{
-		LOGERROR("CConfigDB::WriteFile(): CreateFile \"%s\" failed (error: %d)", path.string8(), (int)ret);
+		LOGERROR("CConfigDB::WriteFile(): CreateFile \"{}\" failed (error: {})", path.string8(),
+			static_cast<int>(ret));
 		return false;
 	}
 

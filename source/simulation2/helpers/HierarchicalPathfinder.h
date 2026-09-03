@@ -167,7 +167,7 @@ public:
 		if (it != m_PassClassMasks.end())
 			return it->second;
 
-		LOGERROR("Invalid passability class name '%s'", name.c_str());
+		LOGERROR("Invalid passability class name '{}'", name);
 		return 0;
 	}
 

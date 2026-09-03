@@ -291,7 +291,7 @@ std::unique_ptr<IDevice> CDevice::Create(SDL_Window* window)
 		device->m_Context = SDL_GL_CreateContext(device->m_Window);
 		if (!device->m_Context)
 		{
-			LOGERROR("SDL_GL_CreateContext failed: '%s'", SDL_GetError());
+			LOGERROR("SDL_GL_CreateContext failed: '{}'", SDL_GetError());
 			return nullptr;
 		}
 	}

@@ -1,4 +1,4 @@
-/* Copyright (C) 2025 Wildfire Games.
+/* Copyright (C) 2026 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -97,7 +97,7 @@ CSoundData* CSoundData::SoundDataFromOgg(const VfsPath& itemPath)
 
 	if (!oggAnswer->InitOggFile(itemPath))
 	{
-		LOGERROR("could not initialize ogg data at %s", itemPath.string8());
+		LOGERROR("could not initialize ogg data at {}", itemPath.string8());
 		delete oggAnswer;
 		return NULL;
 	}

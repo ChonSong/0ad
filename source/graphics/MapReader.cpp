@@ -1104,7 +1104,7 @@ void CXMLReader::ReadEntities(XMBElement entity, CSimulation2& sim)
 	if (ent == INVALID_ENTITY || player == INVALID_ENTITY)
 	{
 		// Don't add entities with invalid player IDs
-		LOGERROR("Failed to load entity template '%s'", utf8_from_wstring(TemplateName));
+		LOGERROR("Failed to load entity template '{}'", utf8_from_wstring(TemplateName));
 		return;
 	}
 	CmpPtr<ICmpPosition> cmpPosition(sim, ent);
@@ -1121,7 +1121,8 @@ void CXMLReader::ReadEntities(XMBElement entity, CSimulation2& sim)
 		if (cmpGarrisonHolder)
 			cmpGarrisonHolder->SetInitEntities(std::move(Garrison));
 		else
-			LOGERROR("CXMLMapReader::ReadEntities() entity '%d' of player '%d' has no GarrisonHolder component and thus cannot garrison units.", ent, PlayerID);
+			LOGERROR("CXMLMapReader::ReadEntities() entity '{}' of player '{}' has no "
+				"GarrisonHolder component and thus cannot garrison units.", ent, PlayerID);
 	}
 
 	// Needs to be before ownership changes to prevent initialising
@@ -1132,7 +1133,8 @@ void CXMLReader::ReadEntities(XMBElement entity, CSimulation2& sim)
 		if (cmpTurretHolder)
 			cmpTurretHolder->SetInitEntities(std::move(Turrets));
 		else
-			LOGERROR("CXMLMapReader::ReadEntities() entity '%d' of player '%d' has no TurretHolder component and thus cannot use turrets.", ent, PlayerID);
+			LOGERROR("CXMLMapReader::ReadEntities() entity '{}' of player '{}' has no "
+				"TurretHolder component and thus cannot use turrets.", ent, PlayerID);
 	}
 
 	CmpPtr<ICmpOwnership> cmpOwnership(sim, ent);
@@ -1377,7 +1379,7 @@ int CMapReader::ParseTerrain()
 		if (Script::GetProperty(rq, val, prop, std::forward<decltype(out)>(out)))
 			return;
 
-		LOGERROR("CMapReader::ParseTerrain() failed to get '%s' property", prop);
+		LOGERROR("CMapReader::ParseTerrain() failed to get '{}' property", prop);
 		throw PSERROR_Game_World_MapLoadFailed(
 			"Error parsing terrain data.\nCheck application log for details");
 	};
@@ -1477,7 +1479,7 @@ PS::Loader::Task CMapReader::ParseEntities()
 		entity_id_t ent = sim.AddEntity(currEnt.templateName, currEnt.entityID);
 		if (ent == INVALID_ENTITY || player == INVALID_ENTITY)
 		{	// Don't add entities with invalid player IDs
-			LOGERROR("Failed to load entity template '%s'", utf8_from_wstring(currEnt.templateName));
+			LOGERROR("Failed to load entity template '{}'", utf8_from_wstring(currEnt.templateName));
 		}
 		else
 		{

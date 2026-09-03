@@ -125,7 +125,7 @@ void CSwapChain::Present()
 	// We have to check GL errors after SwapBuffer to avoid possible
 	// synchronizations during rendering.
 	if (GLenum err = glGetError())
-		ONCE(LOGERROR("GL error 0x%04x occurred", err));
+		ONCE(LOGERROR("GL error {:#04x} occurred", err));
 }
 
 } // namespace GL

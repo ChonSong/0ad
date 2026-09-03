@@ -104,7 +104,7 @@ void IGUIObject::UnregisterChild(IGUIObject* child)
 void IGUIObject::RegisterSetting(const CStr& Name, IGUISetting* setting)
 {
 	if (SettingExists(Name))
-		LOGERROR("The setting '%s' already exists on the object '%s'!", Name.c_str(), GetPresentableName().c_str());
+		LOGERROR("The setting '{}' already exists on the object '{}'!", Name, GetPresentableName());
 	else
 		m_Settings.emplace(Name, setting);
 }
@@ -112,7 +112,8 @@ void IGUIObject::RegisterSetting(const CStr& Name, IGUISetting* setting)
 void IGUIObject::ReregisterSetting(const CStr& Name, IGUISetting* setting)
 {
 	if (!SettingExists(Name))
-		LOGERROR("The setting '%s' must already exist on the object '%s'!", Name.c_str(), GetPresentableName().c_str());
+		LOGERROR("The setting '{}' must already exist on the object '{}'!", Name,
+			GetPresentableName());
 	else
 		m_Settings.at(Name) = setting;
 }
@@ -127,7 +128,8 @@ bool IGUIObject::SetSettingFromString(const CStr& Setting, const CStrW& Value, c
 	const std::map<CStr, IGUISetting*>::iterator it = m_Settings.find(Setting);
 	if (it == m_Settings.end())
 	{
-		LOGERROR("GUI object '%s' has no property called '%s', can't set parse and set value '%s'", GetPresentableName().c_str(), Setting.c_str(), Value.ToUTF8().c_str());
+		LOGERROR("GUI object '{}' has no property called '{}', can't set parse and set value '{}'",
+			GetPresentableName(), Setting, Value.ToUTF8());
 		return false;
 	}
 	return it->second->FromString(Value, SendMessage);
@@ -287,7 +289,7 @@ bool IGUIObject::ApplyStyle(const CStr& StyleName)
 {
 	if (!m_pGUI.HasStyle(StyleName))
 	{
-		LOGERROR("IGUIObject: Trying to use style '%s' that doesn't exist.", StyleName.c_str());
+		LOGERROR("IGUIObject: Trying to use style '{}' that doesn't exist.", StyleName);
 		return false;
 	}
 
@@ -349,7 +351,7 @@ void IGUIObject::RegisterScriptHandler(const CStr& eventName, const CStr& Code, 
 	JS::RootedFunction func(rq.cx, JS::CompileFunction(rq.cx, emptyScopeChain, options, buf, paramCount, paramNames, src));
 	if (func == nullptr)
 	{
-		LOGERROR("RegisterScriptHandler: Failed to compile the script for %s", eventName.c_str());
+		LOGERROR("RegisterScriptHandler: Failed to compile the script for {}", eventName);
 		return;
 	}
 
@@ -467,7 +469,7 @@ bool IGUIObject::ScriptEvent(const CStr& eventName,
 
 	if (!JS_CallFunctionValue(rq.cx, obj, handlerVal, paramData, &result))
 	{
-		LOGERROR("Errors executing script event \"%s\"", eventName.c_str());
+		LOGERROR("Errors executing script event \"{}\"", eventName);
 		Script::Exception::CatchPending(rq);
 		return false;
 	}

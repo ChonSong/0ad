@@ -146,7 +146,10 @@ ModelDefRData::ModelDefRData(const CModelDefPtr& modelDef)
 	// number of bones per model is 32.
 	// Add 1 to NumBones because of the special 'root' bone.
 	if (modelDef->GetNumBones() + 1 > 192)
-		LOGERROR("Model '%s' has too many bones %zu/192", modelDef->GetName().string8().c_str(), modelDef->GetNumBones() + 1);
+	{
+		LOGERROR("Model '{}' has too many bones {}/192", modelDef->GetName().string8(),
+			modelDef->GetNumBones() + 1);
+	}
 	ENSURE(modelDef->GetNumBones() + 1 <= 192);
 
 	m_BlendJoints.format = Renderer::Backend::Format::R8G8B8A8_UINT;

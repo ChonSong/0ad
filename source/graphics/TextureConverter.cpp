@@ -157,7 +157,7 @@ CTextureConverter::SettingsFile* CTextureConverter::LoadSettings(const VfsPath& 
 
 	if (root.GetNodeName() != el_textures)
 	{
-		LOGERROR("Invalid texture settings file \"%s\" (unrecognized root element)", path.string8());
+		LOGERROR("Invalid texture settings file \"{}\" (unrecognized root element)", path.string8());
 		return NULL;
 	}
 
@@ -189,7 +189,7 @@ CTextureConverter::SettingsFile* CTextureConverter::LoadSettings(const VfsPath& 
 					else if (v == "alpha")
 						p.settings.format = FMT_ALPHA;
 					else
-						LOGERROR("Invalid attribute value <file format='%s'>", v.c_str());
+						LOGERROR("Invalid attribute value <file format='{}'>", v);
 				}
 				else if (attr.Name == at_mipmap)
 				{
@@ -199,7 +199,7 @@ CTextureConverter::SettingsFile* CTextureConverter::LoadSettings(const VfsPath& 
 					else if (v == "false")
 						p.settings.mipmap = MIP_FALSE;
 					else
-						LOGERROR("Invalid attribute value <file mipmap='%s'>", v.c_str());
+						LOGERROR("Invalid attribute value <file mipmap='{}'>", v);
 				}
 				else if (attr.Name == at_normal)
 				{
@@ -209,7 +209,7 @@ CTextureConverter::SettingsFile* CTextureConverter::LoadSettings(const VfsPath& 
 					else if (v == "false")
 						p.settings.normal = NORMAL_FALSE;
 					else
-						LOGERROR("Invalid attribute value <file normal='%s'>", v.c_str());
+						LOGERROR("Invalid attribute value <file normal='{}'>", v);
 				}
 				else if (attr.Name == at_alpha)
 				{
@@ -221,7 +221,7 @@ CTextureConverter::SettingsFile* CTextureConverter::LoadSettings(const VfsPath& 
 					else if (v == "transparency")
 						p.settings.alpha = ALPHA_TRANSPARENCY;
 					else
-						LOGERROR("Invalid attribute value <file alpha='%s'>", v.c_str());
+						LOGERROR("Invalid attribute value <file alpha='{}'>", v);
 				}
 				else if (attr.Name == at_filter)
 				{
@@ -233,7 +233,7 @@ CTextureConverter::SettingsFile* CTextureConverter::LoadSettings(const VfsPath& 
 					else if (v == "kaiser")
 						p.settings.filter = FILTER_KAISER;
 					else
-						LOGERROR("Invalid attribute value <file filter='%s'>", v.c_str());
+						LOGERROR("Invalid attribute value <file filter='{}'>", v);
 				}
 				else if (attr.Name == at_kaiserwidth)
 				{
@@ -249,7 +249,8 @@ CTextureConverter::SettingsFile* CTextureConverter::LoadSettings(const VfsPath& 
 				}
 				else
 				{
-					LOGERROR("Invalid attribute name <file %s='...'>", XeroFile.GetAttributeString(attr.Name));
+					LOGERROR("Invalid attribute name <file {}='...'>",
+						XeroFile.GetAttributeString(attr.Name));
 				}
 			}
 
@@ -330,7 +331,7 @@ bool CTextureConverter::ConvertTexture(const CTexturePtr& texture, const VfsPath
 	size_t fileSize;
 	if (m_VFS->LoadFile(src, file, fileSize) < 0)
 	{
-		LOGERROR("Failed to load texture \"%s\"", src.string8());
+		LOGERROR("Failed to load texture \"{}\"", src.string8());
 		return false;
 	}
 
@@ -338,13 +339,14 @@ bool CTextureConverter::ConvertTexture(const CTexturePtr& texture, const VfsPath
 	const Status decodeStatus = tex.decode(file, fileSize);
 	if (decodeStatus != INFO::OK)
 	{
-		LOGERROR("Failed to decode texture \"%s\" %s", src.string8(), GetStatusAsString(decodeStatus).c_str());
+		LOGERROR("Failed to decode texture \"{}\" {}", src.string8(),
+			GetStatusAsString(decodeStatus));
 		return false;
 	}
 
 	if (!std::has_single_bit(tex.m_Width) || !std::has_single_bit(tex.m_Height))
 	{
-		LOGERROR("Texture to convert \"%s\" should have width and height be power of two: %zux%zu",
+		LOGERROR("Texture to convert \"{}\" should have width and height be power of two: {}x{}",
 			src.string8(), tex.m_Width, tex.m_Height);
 		return false;
 	}
@@ -357,7 +359,7 @@ bool CTextureConverter::ConvertTexture(const CTexturePtr& texture, const VfsPath
 		// Convert to uncompressed 8-bit with no mipmaps
 		if (tex.transform_to((tex.m_Flags | TEX_GREY) & ~(TEX_DXT | TEX_MIPMAPS | TEX_ALPHA)) < 0)
 		{
-			LOGERROR("Failed to transform texture \"%s\"", src.string8());
+			LOGERROR("Failed to transform texture \"{}\"", src.string8());
 			return false;
 		}
 	}
@@ -366,7 +368,7 @@ bool CTextureConverter::ConvertTexture(const CTexturePtr& texture, const VfsPath
 		// Convert to uncompressed BGRA with no mipmaps
 		if (tex.transform_to((tex.m_Flags | TEX_BGR | TEX_ALPHA) & ~(TEX_DXT | TEX_MIPMAPS)) < 0)
 		{
-			LOGERROR("Failed to transform texture \"%s\"", src.string8());
+			LOGERROR("Failed to transform texture \"{}\"", src.string8());
 			return false;
 		}
 	}
@@ -491,7 +493,7 @@ bool CTextureConverter::ConvertTexture(const CTexturePtr& texture, const VfsPath
 	return true;
 
 #else // CONFIG2_NVTT
-	LOGERROR("Failed to convert texture \"%s\" (NVTT not available)", src.string8());
+	LOGERROR("Failed to convert texture \"{}\" (NVTT not available)", src.string8());
 	return false;
 #endif // !CONFIG2_NVTT
 }

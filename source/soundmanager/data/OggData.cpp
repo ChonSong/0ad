@@ -82,7 +82,7 @@ bool COggData::InitOggFile(const VfsPath& itemPath)
 	ALenum err{alGetError()};
 	if (err != AL_NO_ERROR)
 	{
-		LOGERROR("Failed to create initial buffer. OpenAL error: %s\n", alGetString(err));
+		LOGERROR("Failed to create initial buffer. OpenAL error: {}\n", alGetString(err));
 		return false;
 	}
 

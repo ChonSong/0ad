@@ -53,7 +53,7 @@ CTerrainTextureEntry::CTerrainTextureEntry(CTerrainPropertiesPtr properties, con
 	CXeromyces XeroFile;
 	if (XeroFile.Load(g_VFS, path, "terrain_texture") != PSRETURN_OK)
 	{
-		LOGERROR("Terrain xml not found (%s)", path.string8());
+		LOGERROR("Terrain xml not found ({})", path.string8());
 		return;
 	}
 
@@ -75,7 +75,8 @@ CTerrainTextureEntry::CTerrainTextureEntry(CTerrainPropertiesPtr properties, con
 
 	if (root.GetNodeName() != el_terrain)
 	{
-		LOGERROR("Invalid terrain format (unrecognized root element '%s')", XeroFile.GetElementString(root.GetNodeName()));
+		LOGERROR("Invalid terrain format (unrecognized root element '{}')",
+			XeroFile.GetElementString(root.GetNodeName()));
 		return;
 	}
 

@@ -515,7 +515,7 @@ bool ModIo::AdvanceRequest(const Script::Interface& scriptInterface)
 			CModInstaller installer(paths.UserData() / "mods", paths.Cache());
 			CModInstaller::ModInstallationResult result = installer.Install(m_DownloadFilePath, g_ScriptContext, false);
 			if (result != CModInstaller::ModInstallationResult::SUCCESS)
-				LOGERROR("Failed to install '%s'", m_DownloadFilePath.string8().c_str());
+				LOGERROR("Failed to install '{}'", m_DownloadFilePath.string8());
 			g_Mods.UpdateAvailableMods(scriptInterface);
 		}
 		break;
@@ -562,7 +562,10 @@ bool ModIo::VerifyDownloadedFile(std::string& err)
 		const std::uint64_t fileSize{static_cast<std::uint64_t>(std::filesystem::file_size(
 			std::filesystem::path(m_DownloadFilePath.string()), ec))};
 		if (ec)
-			LOGERROR("Failed to get filesize for '%s', reason: %s", m_DownloadFilePath.string8().c_str(), ec.message());
+		{
+			LOGERROR("Failed to get filesize for '{}', reason: {}", m_DownloadFilePath.string8(),
+				ec.message());
+		}
 		const std::uint64_t expectedFileSize{std::stoull(
 			m_ModData[m_DownloadModID].properties.at("filesize"))};
 

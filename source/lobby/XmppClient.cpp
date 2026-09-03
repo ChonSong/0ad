@@ -587,7 +587,7 @@ void XmppClient::SendIqRegisterGame(const Script::Request& rq, JS::HandleValue d
 		std::string value;
 		if (!Script::GetProperty(rq, data, p.c_str(), value))
 		{
-			LOGERROR("Could not parse attribute '%s' as string.", p);
+			LOGERROR("Could not parse attribute '{}' as string.", p);
 			return;
 		}
 		game->addAttribute(p, value);
@@ -1398,7 +1398,7 @@ void XmppClient::SetPresence(const std::string& presence)
 	else IF("offline", Unavailable);
 	// The others are not to be set
 #undef IF
-	else LOGERROR("Unknown presence '%s'", presence.c_str());
+	else LOGERROR("Unknown presence '{}'", presence);
 }
 
 /**

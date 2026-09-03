@@ -1,4 +1,4 @@
-/* Copyright (C) 2025 Wildfire Games.
+/* Copyright (C) 2026 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -33,7 +33,8 @@ namespace Renderer::Backend::Vulkan { class CTexture; }
 		const VkResult result = (EXPR); \
 		if (result != VK_SUCCESS) \
 		{ \
-			LOGERROR(#EXPR " returned %d (%s) instead of VK_SUCCESS", static_cast<int>(result), Utilities::GetVkResultName(result)); \
+			LOGERROR(#EXPR " returned {} ({}) instead of VK_SUCCESS", static_cast<int>(result), \
+				Utilities::GetVkResultName(result)); \
 			ENSURE(false && #EXPR); \
 		} \
 	} while (0)
@@ -44,7 +45,8 @@ namespace Renderer::Backend::Vulkan { class CTexture; }
 		const VkResult result = (EXPR); \
 		if (result != VK_SUCCESS) \
 		{ \
-			LOGERROR(#EXPR " returned %d (%s) instead of VK_SUCCESS (%s:%d)", static_cast<int>(result), Utilities::GetVkResultName(result), __func__, __LINE__); \
+			LOGERROR(#EXPR " returned {} ({}) instead of VK_SUCCESS ({}:{})", \
+				static_cast<int>(result), Utilities::GetVkResultName(result), __func__, __LINE__); \
 			return nullptr; \
 		} \
 	} while (0)

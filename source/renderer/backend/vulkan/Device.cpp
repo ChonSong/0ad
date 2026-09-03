@@ -174,7 +174,7 @@ VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(
 			LOGMESSAGE("Vulkan: {}", callbackData->pMessage);
 	}
 	else if (messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT)
-		LOGERROR("Vulkan: %s", callbackData->pMessage);
+		LOGERROR("Vulkan: {}", callbackData->pMessage);
 
 	return VK_FALSE;
 }
@@ -305,7 +305,7 @@ std::unique_ptr<CDevice> CDevice::Create(SDL_Window* window)
 		else if (createInstanceResult == VK_ERROR_LAYER_NOT_PRESENT)
 			LOGERROR("Can't create Vulkan instance: layer not present.");
 		else
-			LOGERROR("Unknown error during Vulkan instance creation: %d (%s)",
+			LOGERROR("Unknown error during Vulkan instance creation: {} ({})",
 				static_cast<int>(createInstanceResult), Utilities::GetVkResultName(createInstanceResult));
 		return nullptr;
 	}
@@ -530,7 +530,7 @@ std::unique_ptr<CDevice> CDevice::Create(SDL_Window* window)
 		else if (createDeviceResult == VK_ERROR_EXTENSION_NOT_PRESENT)
 			LOGERROR("Can't create Vulkan device: extension not present.");
 		else
-			LOGERROR("Unknown error during Vulkan device creation: %d (%s)",
+			LOGERROR("Unknown error during Vulkan device creation: {} ({})",
 				static_cast<int>(createDeviceResult), Utilities::GetVkResultName(createDeviceResult));
 		return nullptr;
 	}
@@ -572,8 +572,8 @@ std::unique_ptr<CDevice> CDevice::Create(SDL_Window* window)
 		vmaCreateAllocator(&allocatorCreateInfo, &device->m_VMAAllocator);
 	if (createVMAAllocatorResult != VK_SUCCESS)
 	{
-		LOGERROR("Failed to create VMA allocator: %d (%s)",
-			static_cast<int>(createVMAAllocatorResult), Utilities::GetVkResultName(createVMAAllocatorResult));
+		LOGERROR("Failed to create VMA allocator: {} ({})", static_cast<int>(createVMAAllocatorResult),
+			Utilities::GetVkResultName(createVMAAllocatorResult));
 		return nullptr;
 	}
 

@@ -70,13 +70,13 @@ CModInstaller::ModInstallationResult CModInstaller::Install(
 	{
 		if (CopyFile(mod, modTemp, true) != INFO::OK)
 		{
-			LOGERROR("Failed to copy '%s' to '%s'", mod.string8().c_str(), modTemp.string8().c_str());
+			LOGERROR("Failed to copy '{}' to '{}'", mod.string8(), modTemp.string8());
 			return FAIL_ON_MOD_COPY;
 		}
 	}
 	else if (RenameFile(mod, modTemp) != INFO::OK)
 	{
-		LOGERROR("Failed to rename '%s' into '%s'", mod.string8().c_str(), modTemp.string8().c_str());
+		LOGERROR("Failed to rename '{}' into '{}'", mod.string8(), modTemp.string8());
 		return FAIL_ON_MOD_MOVE;
 	}
 
@@ -117,7 +117,7 @@ CModInstaller::ModInstallationResult CModInstaller::Install(
 	CreateDirectories(modDir, 0700);
 	if (RenameFile(modTemp, modPath) != INFO::OK)
 	{
-		LOGERROR("Failed to rename '%s' into '%s'", modTemp.string8().c_str(), modPath.string8().c_str());
+		LOGERROR("Failed to rename '{}' into '{}'", modTemp.string8(), modPath.string8());
 		return FAIL_ON_MOD_MOVE;
 	}
 

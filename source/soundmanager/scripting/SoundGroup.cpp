@@ -261,7 +261,8 @@ static void HandleError(const std::wstring& message, const VfsPath& pathname, St
 	if (err == ERR::AGAIN)
 		return;
 
-	LOGERROR("%s: pathname=%s, error=%s", utf8_from_wstring(message), pathname.string8(), GetStatusAsString(err).c_str());
+	LOGERROR("{}: pathname={}, error={}", utf8_from_wstring(message), pathname.string8(),
+		GetStatusAsString(err));
 }
 
 void CSoundGroup::PlayNext(const CVector3D& position, entity_id_t source)
@@ -349,7 +350,8 @@ bool CSoundGroup::LoadSoundGroup(const VfsPath& pathnameXML)
 
 	if (root.GetNodeName() != el_soundgroup)
 	{
-		LOGERROR("Invalid SoundGroup format (unrecognized root element '%s')", XeroFile.GetElementString(root.GetNodeName()));
+		LOGERROR("Invalid SoundGroup format (unrecognized root element '{}')",
+			XeroFile.GetElementString(root.GetNodeName()));
 		return false;
 	}
 

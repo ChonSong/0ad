@@ -840,7 +840,7 @@ void CRenderer::RenderScreenShot(const bool needsPresent)
 			realPath.string8().c_str());
 	}
 	else
-		LOGERROR("Error writing screenshot to '%s'", filename.string8());
+		LOGERROR("Error writing screenshot to '{}'", filename.string8());
 }
 
 void CRenderer::RenderBigScreenShot(const bool needsPresent)
@@ -979,7 +979,7 @@ void CRenderer::RenderBigScreenShot(const bool needsPresent)
 			realPath.string8().c_str());
 	}
 	else
-		LOGERROR("Error writing screenshot to '%s'", filename.string8());
+		LOGERROR("Error writing screenshot to '{}'", filename.string8());
 
 	free(tileData);
 }

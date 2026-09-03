@@ -145,7 +145,7 @@ bool CObjectBase::Load(const CXeromyces& XeroFile, const XMBElement& root)
 
 			if (currentGroup.size() == 0)
 			{
-				LOGERROR("Actor group has zero variants ('%s')", m_Identifier);
+				LOGERROR("Actor group has zero variants ('{}')", m_Identifier);
 				return false;
 			}
 		}
@@ -203,7 +203,8 @@ bool CObjectBase::LoadVariant(const CXeromyces& XeroFile, const XMBElement& vari
 
 	if (variant.GetNodeName() != el_variant)
 	{
-		LOGERROR("Invalid variant format (unrecognized root element '%s')", XeroFile.GetElementString(variant.GetNodeName()));
+		LOGERROR("Invalid variant format (unrecognized root element '{}')",
+			XeroFile.GetElementString(variant.GetNodeName()));
 		return false;
 	}
 
@@ -224,7 +225,7 @@ bool CObjectBase::LoadVariant(const CXeromyces& XeroFile, const XMBElement& vari
 			}
 			else
 			{
-				LOGERROR("Could not open path %s", attr.Value);
+				LOGERROR("Could not open path {}", attr.Value);
 				return false;
 			}
 			// Continue loading extra definitions in this variant to allow nested files
@@ -852,8 +853,8 @@ bool CActorDef::Load(const VfsPath& pathname)
 
 	if (root.GetNodeName() != el_actor && root.GetNodeName() != el_qualitylevels)
 	{
-		LOGERROR("Invalid actor format (actor '%s', unrecognized root element '%s')",
-				 pathname.string8().c_str(), XeroFile.GetElementString(root.GetNodeName()));
+		LOGERROR("Invalid actor format (actor '{}', unrecognized root element '{}')",
+			pathname.string8(), XeroFile.GetElementString(root.GetNodeName()));
 		return false;
 	}
 
@@ -864,7 +865,7 @@ bool CActorDef::Load(const VfsPath& pathname)
 		std::unique_ptr<CObjectBase> base = std::make_unique<CObjectBase>(m_ObjectManager, *this, MAX_QUALITY);
 		if (!base->Load(XeroFile, root))
 		{
-			LOGERROR("Invalid actor (actor '%s')", pathname.string8());
+			LOGERROR("Invalid actor (actor '{}')", pathname.string8());
 			return false;
 		}
 		m_ObjectBases.emplace_back(std::move(base));
@@ -875,8 +876,8 @@ bool CActorDef::Load(const VfsPath& pathname)
 		{
 			if (attr.Name == at_version && attr.Value.ToInt() != 1)
 			{
-				LOGERROR("Invalid actor format (actor '%s', version %i is not supported)",
-						 pathname.string8().c_str(), attr.Value.ToInt());
+				LOGERROR("Invalid actor format (actor '{}', version {} is not supported)",
+						 pathname.string8(), attr.Value.ToInt());
 				return false;
 			}
 		}
@@ -901,12 +902,14 @@ bool CActorDef::Load(const VfsPath& pathname)
 					int v = GetQuality(attr.Value);
 					if (v > MAX_QUALITY)
 					{
-						LOGERROR("Quality levels can only go up to %i (file %s)", MAX_QUALITY, pathname.string8());
+						LOGERROR("Quality levels can only go up to {} (file {})",
+							MAX_QUALITY, pathname.string8());
 						return false;
 					}
 					if (v <= quality)
 					{
-						LOGERROR("Elements must be in increasing quality order (file %s)", pathname.string8());
+						LOGERROR("Elements must be in increasing quality order (file {})",
+							pathname.string8());
 						return false;
 					}
 					quality = v;
@@ -931,12 +934,13 @@ bool CActorDef::Load(const VfsPath& pathname)
 			{
 				if (inlineActor.GetNodeName() == -1)
 				{
-					LOGERROR("Actor quality level refers to inline definition, but no inline definition found (file %s)", pathname.string8());
+					LOGERROR("Actor quality level refers to inline definition, but no inline "
+						"definition found (file {})", pathname.string8());
 					return false;
 				}
 				if (!base->Load(XeroFile, inlineActor))
 				{
-					LOGERROR("Invalid inline actor (actor '%s')", pathname.string8());
+					LOGERROR("Invalid inline actor (actor '{}')", pathname.string8());
 					return false;
 				}
 
@@ -945,7 +949,7 @@ bool CActorDef::Load(const VfsPath& pathname)
 			{
 				if (!base->Load(XeroFile, actor))
 				{
-					LOGERROR("Invalid actor (actor '%s')", pathname.string8());
+					LOGERROR("Invalid actor (actor '{}')", pathname.string8());
 					return false;
 				}
 			}
@@ -965,18 +969,21 @@ bool CActorDef::Load(const VfsPath& pathname)
 					const XMBElement& root = XeroActor.GetRoot();
 					if (root.GetNodeName() == XeroActor.GetElementID("qualitylevels"))
 					{
-						LOGERROR("Included actors cannot define quality levels (opening %s from file %s)", file, pathname.string8());
+						LOGERROR("Included actors cannot define quality levels (opening {} "
+							"from file {})", file, pathname.string8());
 						return false;
 					}
 					if (!base->Load(XeroActor, root))
 					{
-						LOGERROR("Invalid actor (actor '%s' loaded from '%s')", file, pathname.string8());
+						LOGERROR("Invalid actor (actor '{}' loaded from '{}')", file,
+							pathname.string8());
 						return false;
 					}
 				}
 				else
 				{
-					LOGERROR("Could not open actor file at path %s (file %s)", file, pathname.string8());
+					LOGERROR("Could not open actor file at path {} (file {})", file,
+						pathname.string8());
 					return false;
 				}
 				m_UsedFiles.insert(file);
@@ -985,7 +992,8 @@ bool CActorDef::Load(const VfsPath& pathname)
 		}
 		if (quality != MAX_QUALITY)
 		{
-			LOGERROR("The highest quality level must be %i, but the highest level found was %i (file %s)", MAX_QUALITY, quality, pathname.string8().c_str());
+			LOGERROR("The highest quality level must be {}, but the highest level found was {} "
+				"(file {})", MAX_QUALITY, quality, pathname.string8());
 			return false;
 		}
 	}
@@ -997,7 +1005,8 @@ bool CActorDef::Load(const VfsPath& pathname)
 	ENSURE(splits.size() >= 1);
 	if (splits.size() > MAX_LEVELS_PER_ACTOR_DEF)
 	{
-		LOGERROR("Too many quality levels (%i) for actor %s (max %i)", splits.size(), pathname.string8().c_str(), MAX_LEVELS_PER_ACTOR_DEF);
+		LOGERROR("Too many quality levels ({}) for actor {} (max {})", splits.size(),
+			pathname.string8(), MAX_LEVELS_PER_ACTOR_DEF);
 		return false;
 	}
 

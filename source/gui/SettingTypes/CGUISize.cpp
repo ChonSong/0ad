@@ -1,4 +1,4 @@
-/* Copyright (C) 2025 Wildfire Games.
+/* Copyright (C) 2026 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -109,19 +109,19 @@ bool CGUISize::FromString(const CStr& Value)
 			++coord;
 			break;
 		default:
-			LOGERROR("CGUISize definition may only include numbers. Your input: '%s'", Value.c_str());
+			LOGERROR("CGUISize definition may only include numbers. Your input: '{}'", Value);
 			return false;
 		}
 		if (coord > 3)
 		{
-			LOGERROR("Too many CGUISize parameters (4 max). Your input: '%s'", Value.c_str());
+			LOGERROR("Too many CGUISize parameters (4 max). Your input: '{}'", Value);
 			return false;
 		}
 	}
 
 	if (coord < 3)
 	{
-		LOGERROR("Too few CGUISize parameters (4 min). Your input: '%s'", Value.c_str());
+		LOGERROR("Too few CGUISize parameters (4 min). Your input: '{}'", Value);
 		return false;
 	}
 

@@ -63,10 +63,8 @@ void CNetServerTurnManager::NotifyFinishedClientCommands(CNetServerSession& sess
 	// Clients must advance one turn at a time
 	if (turn != m_ClientsData[client].readyTurn + 1)
 	{
-		LOGERROR("NotifyFinishedClientCommands: Client %d (%s) is ready for turn %d, but expected %d",
-			client,
-			utf8_from_wstring(session.GetUserName()).c_str(),
-			turn,
+		LOGERROR("NotifyFinishedClientCommands: Client {} ({}) is ready for turn {}, but expected {}",
+			client, utf8_from_wstring(session.GetUserName()), turn,
 			m_ClientsData[client].readyTurn + 1);
 
 		session.Disconnect(NDR_INCORRECT_READY_TURN_COMMANDS);
@@ -119,11 +117,8 @@ void CNetServerTurnManager::NotifyFinishedClientUpdate(CNetServerSession& sessio
 	// Clients must advance one turn at a time
 	if (turn != m_ClientsData[client].simulatedTurn + 1)
 	{
-		LOGERROR("NotifyFinishedClientUpdate: Client %d (%s) is ready for turn %d, but expected %d",
-			client,
-			utf8_from_wstring(playername).c_str(),
-			turn,
-			m_ClientsData[client].simulatedTurn + 1);
+		LOGERROR("NotifyFinishedClientUpdate: Client {} ({}) is ready for turn {}, but expected {}",
+			client, utf8_from_wstring(playername), turn, m_ClientsData[client].simulatedTurn + 1);
 
 		session.Disconnect(NDR_INCORRECT_READY_TURN_SIMULATED);
 		return;

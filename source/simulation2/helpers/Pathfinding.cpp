@@ -184,7 +184,7 @@ PathfinderPassability::PathfinderPassability(pass_class_t mask, const CParamNode
 			m_Obstructions = FOUNDATION;
 		else
 		{
-			LOGERROR("Invalid value for Obstructions in pathfinder.xml for pass class %d", mask);
+			LOGERROR("Invalid value for Obstructions in pathfinder.xml for pass class {}", mask);
 			m_Obstructions = NONE;
 		}
 	}

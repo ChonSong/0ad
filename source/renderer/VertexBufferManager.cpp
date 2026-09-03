@@ -1,4 +1,4 @@
-/* Copyright (C) 2025 Wildfire Games.
+/* Copyright (C) 2026 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -168,7 +168,7 @@ CVertexBufferManager::Handle CVertexBufferManager::AllocateChunk(
 
 	if (!result)
 	{
-		LOGERROR("Failed to create backend buffer (%zu*%zu)", vertexSize, numberOfVertices);
+		LOGERROR("Failed to create backend buffer ({}*{})", vertexSize, numberOfVertices);
 		return Handle();
 	}
 

@@ -168,7 +168,7 @@ private:
 
 				if (!m_ScriptInterface.LoadGlobalScriptFile(p))
 				{
-					LOGERROR("CMapGenerationCallbacks::LoadScripts: Failed to load script '%s'",
+					LOGERROR("CMapGenerationCallbacks::LoadScripts: Failed to load script '{}'",
 						p.string8());
 					return false;
 				}
@@ -178,9 +178,8 @@ private:
 		{
 			// Some error reading directory
 			wchar_t error[200];
-			LOGERROR(
-				"CMapGenerationCallbacks::LoadScripts: Error reading scripts in directory '%s': %s",
-				path.string8(),
+			LOGERROR("CMapGenerationCallbacks::LoadScripts: Error reading scripts in directory "
+				"'{}': {}", path.string8(),
 				utf8_from_wstring(StatusDescription(ret, error, ARRAY_SIZE(error))));
 			return false;
 		}
@@ -196,7 +195,7 @@ private:
 		std::vector<std::uint16_t> heightmap;
 		if (LoadHeightmapImageVfs(filename, heightmap) != INFO::OK)
 		{
-			LOGERROR("Could not load heightmap file '%s'", filename.string8());
+			LOGERROR("Could not load heightmap file '{}'", filename.string8());
 			return JS::UndefinedValue();
 		}
 
@@ -300,7 +299,7 @@ private:
 		const CParamNode& templateRoot =
 			m_TemplateLoader.GetTemplateFileData(templateName).GetOnlyChild();
 		if (!templateRoot.IsOk())
-			LOGERROR("Invalid template found for '%s'", templateName.c_str());
+			LOGERROR("Invalid template found for '{}'", templateName);
 
 		return templateRoot;
 	}
@@ -407,7 +406,7 @@ Script::StructuredClone RunMapGenerationScript(const StopToken stopToken, std::a
 		bool hasGenerator;
 		if (!JS_HasProperty(rq.cx, nsAsObject, GENERATOR_NAME, &hasGenerator))
 		{
-			LOGERROR("RunMapGenerationScript: failed to search `%s` in the module-namespace.",
+			LOGERROR("RunMapGenerationScript: failed to search `{}` in the module-namespace.",
 				GENERATOR_NAME);
 			return nullptr;
 		}

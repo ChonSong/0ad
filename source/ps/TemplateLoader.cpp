@@ -1,4 +1,4 @@
-/* Copyright (C) 2025 Wildfire Games.
+/* Copyright (C) 2026 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -54,7 +54,7 @@ bool CTemplateLoader::LoadTemplateFile(CParamNode& node, std::string_view templa
 	// Handle infinite loops more gracefully than running out of stack space and crashing
 	if (depth > 100)
 	{
-		LOGERROR("Probable infinite inheritance loop in entity template '%s'", templateName);
+		LOGERROR("Probable infinite inheritance loop in entity template '{}'", templateName);
 		return false;
 	}
 
@@ -192,7 +192,7 @@ const CParamNode& CTemplateLoader::GetTemplateFileData(const std::string& templa
 	CParamNode ret;
 	if (!LoadTemplateFile(ret, templateName, false, 0))
 	{
-		LOGERROR("Failed to load entity template '%s'", templateName.c_str());
+		LOGERROR("Failed to load entity template '{}'", templateName);
 		return NULL_NODE;
 	}
 	return m_TemplateFileData.insert_or_assign(templateName, ret).first->second;

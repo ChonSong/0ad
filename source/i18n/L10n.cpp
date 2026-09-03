@@ -119,7 +119,7 @@ void ReadPoIntoDictionary(const std::string& poContent, tinygettext::Dictionary*
 	}
 	catch (std::exception& e)
 	{
-		LOGERROR("[Localization] Exception while reading virtual PO file: %s", e.what());
+		LOGERROR("[Localization] Exception while reading virtual PO file: {}", e.what());
 	}
 }
 
@@ -472,7 +472,7 @@ std::string L10n::FormatMillisecondsIntoDateString(const UDate milliseconds, con
 	icu::UnicodeString unicodeFormat = icu::UnicodeString::fromUTF8(formatString.c_str());
 	icu::SimpleDateFormat dateFormat{unicodeFormat, status};
 	if (U_FAILURE(status))
-		LOGERROR("Error creating SimpleDateFormat: %s", u_errorName(status));
+		LOGERROR("Error creating SimpleDateFormat: {}", u_errorName(status));
 
 	status = U_ZERO_ERROR;
 	std::unique_ptr<icu::Calendar> calendar{
@@ -481,7 +481,7 @@ std::string L10n::FormatMillisecondsIntoDateString(const UDate milliseconds, con
 			icu::Calendar::createInstance(*icu::TimeZone::getGMT(), m_CurrentLocale, status)};
 
 	if (U_FAILURE(status))
-		LOGERROR("Error creating calendar: %s", u_errorName(status));
+		LOGERROR("Error creating calendar: {}", u_errorName(status));
 
 	dateFormat.adoptCalendar(calendar.release());
 	dateFormat.format(milliseconds, dateString);
@@ -540,7 +540,7 @@ Status L10n::ReloadChangedFile(const VfsPath& path)
 	CVFSFile file;
 	if (file.Load(g_VFS, path) != PSRETURN_OK)
 	{
-		LOGERROR("Failed to read translations from '%s'", path.string8());
+		LOGERROR("Failed to read translations from '{}'", path.string8());
 		return ERR::FAIL;
 	}
 

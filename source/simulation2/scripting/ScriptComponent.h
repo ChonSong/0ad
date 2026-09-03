@@ -56,7 +56,7 @@ public:
 		Script::Request rq(m_ScriptInterface);
 		if (Script::Function::Call(rq, GetInstance(), funcname, ret, params...))
 			return ret;
-		LOGERROR("Error calling component script function %s", funcname);
+		LOGERROR("Error calling component script function {}", funcname);
 		return R();
 	}
 
@@ -66,7 +66,7 @@ public:
 	{
 		Script::Request rq(m_ScriptInterface);
 		if (!Script::Function::Call(rq, GetInstance(), funcname, ret, params...))
-			LOGERROR("Error calling component script function %s", funcname);
+			LOGERROR("Error calling component script function {}", funcname);
 	}
 
 	template<typename... Ts>
@@ -74,7 +74,7 @@ public:
 	{
 		Script::Request rq(m_ScriptInterface);
 		if (!Script::Function::CallVoid(rq, GetInstance(), funcname, params...))
-			LOGERROR("Error calling component script function %s", funcname);
+			LOGERROR("Error calling component script function {}", funcname);
 	}
 
 private:

@@ -214,7 +214,7 @@ bool error(JSContext* cx, unsigned int argc, JS::Value* vp)
 	std::wstring str;
 	if (!Script::FromJSVal(rq, args[0], str))
 		return false;
-	LOGERROR("%s", utf8_from_wstring(str));
+	LOGERROR("{}", utf8_from_wstring(str));
 	args.rval().setUndefined();
 	return true;
 }
@@ -467,7 +467,7 @@ bool Interface::LoadGlobalScripts()
 	for (const VfsPath& path : pathnames)
 		if (!LoadGlobalScriptFile(path))
 		{
-			LOGERROR("LoadGlobalScripts: Failed to load script %s", path.string8());
+			LOGERROR("LoadGlobalScripts: Failed to load script {}", path.string8());
 			return false;
 		}
 
@@ -716,7 +716,7 @@ bool Interface::LoadGlobalScriptFile(const VfsPath& path) const
 {
 	if (!VfsFileExists(path))
 	{
-		LOGERROR("File '%s' does not exist", path.string8());
+		LOGERROR("File '{}' does not exist", path.string8());
 		return false;
 	}
 
@@ -726,7 +726,7 @@ bool Interface::LoadGlobalScriptFile(const VfsPath& path) const
 
 	if (ret != PSRETURN_OK)
 	{
-		LOGERROR("Failed to load file '%s': %s", path.string8(), GetErrorString(ret));
+		LOGERROR("Failed to load file '{}': {}", path.string8(), GetErrorString(ret));
 		return false;
 	}
 

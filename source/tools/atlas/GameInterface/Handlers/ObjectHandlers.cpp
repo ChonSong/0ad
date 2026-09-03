@@ -1077,7 +1077,7 @@ BEGIN_COMMAND(DeleteObjects)
 			entity_id_t ent = sim.AddEntity(oldObjects[i].templateName.FromUTF8(), oldObjects[i].entityID);
 			if (ent == INVALID_ENTITY)
 			{
-				LOGERROR("Failed to load entity template '%s'", oldObjects[i].templateName.c_str());
+				LOGERROR("Failed to load entity template '{}'", oldObjects[i].templateName);
 			}
 			else
 			{

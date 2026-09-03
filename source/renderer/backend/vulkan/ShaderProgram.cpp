@@ -77,7 +77,7 @@ VkShaderModule CreateShaderModule(CDevice* device, const VfsPath& path)
 	CVFSFile file;
 	if (file.Load(g_VFS, path) != PSRETURN_OK)
 	{
-		LOGERROR("Failed to load shader file: '%s'", path.string8());
+		LOGERROR("Failed to load shader file: '{}'", path.string8());
 		return VK_NULL_HANDLE;
 	}
 
@@ -93,7 +93,7 @@ VkShaderModule CreateShaderModule(CDevice* device, const VfsPath& path)
 	const VkResult result = vkCreateShaderModule(device->GetVkDevice(), &createInfo, nullptr, &shaderModule);
 	if (result != VK_SUCCESS)
 	{
-		LOGERROR("Failed to create shader module from file: '%s' %d (%s)",
+		LOGERROR("Failed to create shader module from file: '{}' {} ({})",
 			path.string8(), static_cast<int>(result), Utilities::GetVkResultName(result));
 		return VK_NULL_HANDLE;
 	}
@@ -180,9 +180,9 @@ std::unique_ptr<CShaderProgram> CShaderProgram::Create(
 	const VfsPath programFilename = FindProgramMatchingDefines(xmlFilename, defines);
 	if (programFilename.empty())
 	{
-		LOGERROR("Program '%s' with required defines not found.", name);
+		LOGERROR("Program '{}' with required defines not found.", name);
 		for (const auto& pair : defines.GetMap())
-			LOGERROR("  \"%s\": \"%s\"", pair.first.c_str(), pair.second.c_str());
+			LOGERROR("  \"{}\": \"{}\"", pair.first.string(), pair.second.string());
 		return nullptr;
 	}
 	shaderProgram->m_FileDependencies.emplace_back(programFilename);
@@ -374,7 +374,7 @@ std::unique_ptr<CShaderProgram> CShaderProgram::Create(
 						}
 						else
 						{
-							LOGERROR("Unsupported binding: '%s'", type.c_str());
+							LOGERROR("Unsupported binding: '{}'", type);
 							return false;
 						}
 					}
@@ -391,7 +391,7 @@ std::unique_ptr<CShaderProgram> CShaderProgram::Create(
 			if (shaderProgram->m_PipelineBindPoint != VK_PIPELINE_BIND_POINT_MAX_ENUM &&
 				shaderProgram->m_PipelineBindPoint != VK_PIPELINE_BIND_POINT_GRAPHICS)
 			{
-				LOGERROR("Shader program can't mix different pipelines: '%s'.", name.c_str());
+				LOGERROR("Shader program can't mix different pipelines: '{}'.", name);
 				return nullptr;
 			}
 			shaderProgram->m_PipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
@@ -459,7 +459,7 @@ std::unique_ptr<CShaderProgram> CShaderProgram::Create(
 			if (shaderProgram->m_PipelineBindPoint != VK_PIPELINE_BIND_POINT_MAX_ENUM &&
 				shaderProgram->m_PipelineBindPoint != VK_PIPELINE_BIND_POINT_GRAPHICS)
 			{
-				LOGERROR("Shader program can't mix different pipelines: '%s'.", name.c_str());
+				LOGERROR("Shader program can't mix different pipelines: '{}'.", name);
 				return nullptr;
 			}
 			shaderProgram->m_PipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
@@ -495,7 +495,7 @@ std::unique_ptr<CShaderProgram> CShaderProgram::Create(
 			if (shaderProgram->m_PipelineBindPoint != VK_PIPELINE_BIND_POINT_MAX_ENUM &&
 				shaderProgram->m_PipelineBindPoint != VK_PIPELINE_BIND_POINT_COMPUTE)
 			{
-				LOGERROR("Shader program can't mix different pipelines: '%s'.", name.c_str());
+				LOGERROR("Shader program can't mix different pipelines: '{}'.", name);
 				return nullptr;
 			}
 			shaderProgram->m_PipelineBindPoint = VK_PIPELINE_BIND_POINT_COMPUTE;
@@ -622,7 +622,7 @@ std::unique_ptr<CShaderProgram> CShaderProgram::Create(
 		&shaderProgram->m_PipelineLayout);
 	if (result != VK_SUCCESS)
 	{
-		LOGERROR("Failed to create a pipeline layout: %d (%s)",
+		LOGERROR("Failed to create a pipeline layout: {} ({})",
 			static_cast<int>(result), Utilities::GetVkResultName(result));
 		return nullptr;
 	}

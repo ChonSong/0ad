@@ -94,7 +94,7 @@ void CWorld::RegisterInit(const CStrW& mapFile, const Script::Context& cx, JS::H
 		catch (PSERROR_File& err)
 		{
 			m_MapReader.reset();
-			LOGERROR("Failed to load map %s: %s", mapfilename.string8(), err.what());
+			LOGERROR("Failed to load map {}: {}", mapfilename.string8(), err.what());
 			throw PSERROR_Game_World_MapLoadFailed("Failed to load map.\nCheck application log for details.");
 		}
 	}

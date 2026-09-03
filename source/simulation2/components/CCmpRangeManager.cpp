@@ -1021,7 +1021,7 @@ public:
 	{
 		if (m_Queries.find(tag) == m_Queries.end())
 		{
-			LOGERROR("CCmpRangeManager: DestroyActiveQuery called with invalid tag %u", tag);
+			LOGERROR("CCmpRangeManager: DestroyActiveQuery called with invalid tag {}", tag);
 			return;
 		}
 
@@ -1033,7 +1033,7 @@ public:
 		std::map<tag_t, Query>::iterator it = m_Queries.find(tag);
 		if (it == m_Queries.end())
 		{
-			LOGERROR("CCmpRangeManager: EnableActiveQuery called with invalid tag %u", tag);
+			LOGERROR("CCmpRangeManager: EnableActiveQuery called with invalid tag {}", tag);
 			return;
 		}
 
@@ -1046,7 +1046,7 @@ public:
 		std::map<tag_t, Query>::iterator it = m_Queries.find(tag);
 		if (it == m_Queries.end())
 		{
-			LOGERROR("CCmpRangeManager: DisableActiveQuery called with invalid tag %u", tag);
+			LOGERROR("CCmpRangeManager: DisableActiveQuery called with invalid tag {}", tag);
 			return;
 		}
 
@@ -1059,7 +1059,7 @@ public:
 		std::map<tag_t, Query>::const_iterator it = m_Queries.find(tag);
 		if (it == m_Queries.end())
 		{
-			LOGERROR("CCmpRangeManager: IsActiveQueryEnabled called with invalid tag %u", tag);
+			LOGERROR("CCmpRangeManager: IsActiveQueryEnabled called with invalid tag {}", tag);
 			return false;
 		}
 
@@ -1116,7 +1116,7 @@ public:
 		std::map<tag_t, Query>::iterator it = m_Queries.find(tag);
 		if (it == m_Queries.end())
 		{
-			LOGERROR("CCmpRangeManager: ResetActiveQuery called with invalid tag %u", tag);
+			LOGERROR("CCmpRangeManager: ResetActiveQuery called with invalid tag {}", tag);
 			return r;
 		}
 

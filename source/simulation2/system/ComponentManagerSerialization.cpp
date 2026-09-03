@@ -1,4 +1,4 @@
-/* Copyright (C) 2025 Wildfire Games.
+/* Copyright (C) 2026 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -322,7 +322,7 @@ bool CComponentManager::DeserializeState(std::istream& stream)
 			ComponentTypeId ctid = LookupCID(ctname);
 			if (ctid == CID__Invalid)
 			{
-				LOGERROR("Deserialization saw unrecognized component type '%s'", ctname.c_str());
+				LOGERROR("Deserialization saw unrecognized component type '{}'", ctname);
 				return false;
 			}
 
@@ -349,7 +349,7 @@ bool CComponentManager::DeserializeState(std::istream& stream)
 			ComponentTypeId ctid = LookupCID(ctname);
 			if (ctid == CID__Invalid)
 			{
-				LOGERROR("Deserialization saw unrecognized component type '%s'", ctname.c_str());
+				LOGERROR("Deserialization saw unrecognized component type '{}'", ctname);
 				return false;
 			}
 
@@ -391,7 +391,7 @@ bool CComponentManager::DeserializeState(std::istream& stream)
 	}
 	catch (PSERROR_Deserialize& e)
 	{
-		LOGERROR("Deserialization failed: %s", e.what());
+		LOGERROR("Deserialization failed: {}", e.what());
 		return false;
 	}
 }

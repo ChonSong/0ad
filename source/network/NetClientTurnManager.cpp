@@ -142,7 +142,8 @@ void CNetClientTurnManager::OnSyncError(turn_id_t turn, const CStr& expectedHash
 		playerNamesStrings.push_back(name);
 	}
 
-	LOGERROR("Out-Of-Sync on turn %d\nPlayers: %s\nDumping state to %s", turn, playerNamesString.str().c_str(), oosdumpPath.string8());
+	LOGERROR("Out-Of-Sync on turn {}\nPlayers: {}\nDumping state to {}", turn,
+		playerNamesString.str(), oosdumpPath.string8());
 
 	m_NetClient.PushGuiMessage(
 		"type", "out-of-sync",

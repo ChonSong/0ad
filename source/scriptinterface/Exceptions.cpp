@@ -66,7 +66,7 @@ bool Exception::CatchPending(const Request& rq)
 	{
 		CStr error;
 		FromJSVal(rq, excn, error);
-		LOGERROR("JavaScript error: %s", error);
+		LOGERROR("JavaScript error: {}", error);
 		return true;
 	}
 
@@ -77,7 +77,7 @@ bool Exception::CatchPending(const Request& rq)
 	{
 		CStr error;
 		FromJSVal(rq, excn, error);
-		LOGERROR("JavaScript error: %s", error);
+		LOGERROR("JavaScript error: {}", error);
 		return true;
 	}
 
@@ -104,7 +104,7 @@ bool Exception::CatchPending(const Request& rq)
 			msg << "\n  " << line;
 	}
 
-	LOGERROR("%s", msg.str().c_str());
+	LOGERROR("{}", msg.str());
 	return true;
 }
 

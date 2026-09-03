@@ -448,7 +448,7 @@ std::vector<IComponent*> CComponentManager::Script_GetComponentsWithInterface(in
 CMessage* CComponentManager::ConstructMessage(int mtid, JS::HandleValue data)
 {
 	if (mtid == MT__Invalid || mtid > (int)m_MessageTypeIdsByName.size()) // (IDs start at 1 so use '>' here)
-		LOGERROR("PostMessage with invalid message type ID '%d'", mtid);
+		LOGERROR("PostMessage with invalid message type ID '{}'", mtid);
 
 	Script::Request rq(m_ScriptInterface);
 	if (mtid < MT__LastNative)
@@ -677,11 +677,11 @@ CComponentManager::ComponentTypeId CComponentManager::GetScriptWrapper(Interface
 	for (; iiit != m_InterfaceIdsByName.end(); ++iiit)
 		if (iiit->second == iid)
 		{
-			LOGERROR("No script wrapper found for interface id %d '%s'", iid, iiit->first.c_str());
+			LOGERROR("No script wrapper found for interface id {} '{}'", iid, iiit->first);
 			return CID__Invalid;
 		}
 
-	LOGERROR("No script wrapper found for interface id %d", iid);
+	LOGERROR("No script wrapper found for interface id {}", iid);
 	return CID__Invalid;
 }
 
@@ -759,7 +759,7 @@ IComponent* CComponentManager::ConstructComponent(CEntityHandle ent, ComponentTy
 	std::map<ComponentTypeId, ComponentType>::const_iterator it = m_ComponentTypesById.find(cid);
 	if (it == m_ComponentTypesById.end())
 	{
-		LOGERROR("Invalid component id %d", cid);
+		LOGERROR("Invalid component id {}", cid);
 		return NULL;
 	}
 
@@ -770,7 +770,7 @@ IComponent* CComponentManager::ConstructComponent(CEntityHandle ent, ComponentTy
 	std::unordered_map<entity_id_t, IComponent*>& emap1 = m_ComponentsByInterface[ct.iid];
 	if (emap1.find(ent.GetId()) != emap1.end())
 	{
-		LOGERROR("Multiple components for interface %d", ct.iid);
+		LOGERROR("Multiple components for interface {}", ct.iid);
 		return NULL;
 	}
 
@@ -905,13 +905,15 @@ entity_id_t CComponentManager::AddEntity(const std::wstring& templateName, entit
 		CComponentManager::ComponentTypeId cid = LookupCID(it->first);
 		if (cid == CID__Invalid)
 		{
-			LOGERROR("Unrecognized component type name '%s' in entity template '%s'", it->first, utf8_from_wstring(templateName));
+			LOGERROR("Unrecognized component type name '{}' in entity template '{}'", it->first,
+				utf8_from_wstring(templateName));
 			return INVALID_ENTITY;
 		}
 
 		if (!AddComponent(handle, cid, it->second))
 		{
-			LOGERROR("Failed to construct component type name '%s' in entity template '%s'", it->first, utf8_from_wstring(templateName));
+			LOGERROR("Failed to construct component type name '{}' in entity template '{}'",
+				it->first, utf8_from_wstring(templateName));
 			return INVALID_ENTITY;
 		}
 		// TODO: maybe we should delete already-constructed components if one of them fails?

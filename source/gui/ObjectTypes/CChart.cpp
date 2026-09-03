@@ -227,7 +227,7 @@ CSize2D CChart::AddFormattedValue(const CStrW& format, const float value, const 
 	}
 	else
 	{
-		LOGERROR("Unsupported chart format: " + format.EscapeToPrintableASCII());
+		LOGERROR("Unsupported chart format: {}", format.EscapeToPrintableASCII());
 		return CSize2D();
 	}
 

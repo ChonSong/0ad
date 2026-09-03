@@ -532,7 +532,7 @@ ModuleLoader::~ModuleLoader()
 	}
 	catch (const std::exception& e)
 	{
-		LOGERROR("%s", e.what());
+		LOGERROR("{}", e.what());
 		return nullptr;
 	}
 	catch (...)
@@ -557,7 +557,7 @@ ModuleLoader::~ModuleLoader()
 	}
 	catch (const std::exception& e)
 	{
-		LOGERROR("%s", e.what());
+		LOGERROR("{}", e.what());
 		return JS::FinishDynamicModuleImport(rq.cx, nullptr, referencingPrivate, moduleRequest,
 			promise);
 	}

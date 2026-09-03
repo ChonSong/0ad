@@ -817,7 +817,7 @@ std::vector<CStrW> CPostprocManager::GetPostEffects()
 
 	VfsPaths pathnames;
 	if (vfs::GetPathnames(g_VFS, folder, 0, pathnames) < 0)
-		LOGERROR("Error finding Post effects in '%s'", folder.string8());
+		LOGERROR("Error finding Post effects in '{}'", folder.string8());
 
 	for (const VfsPath& path : pathnames)
 		if (path.Extension() == L".xml")

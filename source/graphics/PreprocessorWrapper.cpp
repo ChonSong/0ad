@@ -64,7 +64,7 @@ struct MatchIncludeResult
 		while (lineEnd < source.size() && source[lineEnd] != '\n')
 			++lineEnd;
 		const size_t nextLineStart = lineEnd < source.size() ? lineEnd + 1 : source.size();
-		LOGERROR("Preprocessor error: %s: '%s'\n", message, std::string(line).c_str());
+		LOGERROR("Preprocessor error: {}: '{}'\n", message, line);
 		return MatchIncludeResult{false, true, nextLineStart, 0, 0};
 	}
 };
@@ -150,7 +150,8 @@ bool ResolveIncludesImpl(
 			CStr includeContent;
 			if (!includeCallback(path, includeContent))
 			{
-				LOGERROR("Preprocessor error: line %zu: Can't load #include file: '%s'", line, path.c_str());
+				LOGERROR("Preprocessor error: line {}: Can't load #include file: '{}'", line,
+					path);
 				return false;
 			}
 			it = includeCache.emplace(path, std::move(includeContent)).first;
@@ -174,9 +175,10 @@ bool ResolveIncludesImpl(
 void CPreprocessorWrapper::PyrogenesisShaderError(int iLine, const char* iError, const Ogre::CPreprocessor::Token* iToken)
 {
 	if (iToken)
-		LOGERROR("Preprocessor error: line %d: %s: '%s'\n", iLine, iError, std::string(iToken->String, iToken->Length).c_str());
+		LOGERROR("Preprocessor error: line {}: {}: '{}'\n", iLine, iError,
+			std::string_view(iToken->String, iToken->Length));
 	else
-		LOGERROR("Preprocessor error: line %d: %s\n", iLine, iError);
+		LOGERROR("Preprocessor error: line {}: {}\n", iLine, iError);
 }
 
 CPreprocessorWrapper::CPreprocessorWrapper()
@@ -219,7 +221,7 @@ bool CPreprocessorWrapper::TestConditional(const CStr& expr)
 
 	if (!output)
 	{
-		LOGERROR("Failed to parse conditional expression '%s'", expr.c_str());
+		LOGERROR("Failed to parse conditional expression '{}'", expr);
 		return false;
 	}
 

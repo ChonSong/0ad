@@ -1,4 +1,4 @@
-/* Copyright (C) 2025 Wildfire Games.
+/* Copyright (C) 2026 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -98,7 +98,8 @@ std::unique_ptr<CTexture> CTexture::Create(
 		ENSURE(type != Type::TEXTURE_2D_MULTISAMPLE);
 		if (!(formatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT))
 		{
-			LOGERROR("Format %d doesn't support sampling for optimal tiling.", static_cast<int>(imageFormat));
+			LOGERROR("Format {} doesn't support sampling for optimal tiling.",
+				static_cast<int>(imageFormat));
 			return nullptr;
 		}
 		usageFlags |= VK_IMAGE_USAGE_SAMPLED_BIT;
@@ -108,7 +109,8 @@ std::unique_ptr<CTexture> CTexture::Create(
 		ENSURE(type != Type::TEXTURE_2D_MULTISAMPLE);
 		if (!(formatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_STORAGE_IMAGE_BIT))
 		{
-			LOGERROR("Format %d doesn't support storage for optimal tiling.", static_cast<int>(imageFormat));
+			LOGERROR("Format {} doesn't support storage for optimal tiling.",
+				static_cast<int>(imageFormat));
 			return nullptr;
 		}
 		usageFlags |= VK_IMAGE_USAGE_STORAGE_BIT;
@@ -118,7 +120,8 @@ std::unique_ptr<CTexture> CTexture::Create(
 		ENSURE(device->IsFramebufferFormatSupported(format));
 		if (!(formatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BIT))
 		{
-			LOGERROR("Format %d doesn't support color attachment for optimal tiling.", static_cast<int>(imageFormat));
+			LOGERROR("Format {} doesn't support color attachment for optimal tiling.",
+				static_cast<int>(imageFormat));
 			return nullptr;
 		}
 		usageFlags |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
@@ -128,7 +131,8 @@ std::unique_ptr<CTexture> CTexture::Create(
 		ENSURE(IsDepthFormat(format));
 		if (!(formatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT))
 		{
-			LOGERROR("Format %d doesn't support depth stencil attachment for optimal tiling.", static_cast<int>(imageFormat));
+			LOGERROR("Format {} doesn't support depth stencil attachment for optimal tiling.",
+				static_cast<int>(imageFormat));
 			return nullptr;
 		}
 		usageFlags |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
@@ -179,7 +183,7 @@ std::unique_ptr<CTexture> CTexture::Create(
 		&texture->m_Image, &texture->m_Allocation, nullptr);
 	if (createImageResult != VK_SUCCESS)
 	{
-		LOGERROR("Failed to create VkImage: %d (%s)",
+		LOGERROR("Failed to create VkImage: {} ({})",
 			static_cast<int>(createImageResult), Utilities::GetVkResultName(createImageResult));
 		return nullptr;
 	}
@@ -342,7 +346,7 @@ std::unique_ptr<CTexture> CTexture::CreateReadback(
 		&texture->m_Image, &texture->m_Allocation, &texture->m_AllocationInfo);
 	if (createImageResult != VK_SUCCESS)
 	{
-		LOGERROR("Failed to create VkImage: %d (%s)",
+		LOGERROR("Failed to create VkImage: {} ({})",
 			static_cast<int>(createImageResult), Utilities::GetVkResultName(createImageResult));
 		return nullptr;
 	}

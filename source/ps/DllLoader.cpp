@@ -208,7 +208,7 @@ void DllLoader::LogLoadError(const char* errors)
 		LOGWARNING("DllLoader: {}", errors);
 		break;
 	case CLogger::Error:
-		LOGERROR("DllLoader: %s", errors);
+		LOGERROR("DllLoader: {}", errors);
 		break;
 	}
 }

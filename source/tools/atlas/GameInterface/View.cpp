@@ -497,7 +497,7 @@ AtlasViewActor* AtlasView::GetView_Actor()
 	}
 	catch (const CSimulation2::LoadScriptError& e)
 	{
-		LOGERROR("%s", e.what());
+		LOGERROR("{}", e.what());
 	}
 	return view_Actor;
 }

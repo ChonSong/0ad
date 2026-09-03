@@ -44,7 +44,7 @@ bool IsProtectedConfigName(const std::string& name)
 {
 	if (g_ProtectedConfigNames.find(name) != g_ProtectedConfigNames.end())
 	{
-		LOGERROR("Access denied (%s)", name.c_str());
+		LOGERROR("Access denied ({})", name);
 		return true;
 	}
 	return false;

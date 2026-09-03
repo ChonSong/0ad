@@ -52,7 +52,7 @@ void Script::ReadJSONFile(const Script::Request& rq, const VfsPath& path, JS::Mu
 {
 	if (!VfsFileExists(path))
 	{
-		LOGERROR("File '%s' does not exist", path.string8());
+		LOGERROR("File '{}' does not exist", path.string8());
 		return;
 	}
 
@@ -62,14 +62,14 @@ void Script::ReadJSONFile(const Script::Request& rq, const VfsPath& path, JS::Mu
 
 	if (ret != PSRETURN_OK)
 	{
-		LOGERROR("Failed to load file '%s': %s", path.string8(), GetErrorString(ret));
+		LOGERROR("Failed to load file '{}': {}", path.string8(), GetErrorString(ret));
 		return;
 	}
 
 	std::string content(file.DecodeUTF8()); // assume it's UTF-8
 
 	if (!ParseJSON(rq, content, out))
-		LOGERROR("Failed to parse '%s'", path.string8());
+		LOGERROR("Failed to parse '{}'", path.string8());
 }
 
 namespace

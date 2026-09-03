@@ -201,7 +201,7 @@ void CVideoMode::CCursor::SetCursor(const CStrW& name)
 		size_t size;
 		if (g_VFS->LoadFile(pathHotspotName, buffer, size) != INFO::OK)
 		{
-			LOGERROR("Can't load hotspot for cursor: %s", pathHotspotName.string8().c_str());
+			LOGERROR("Can't load hotspot for cursor: {}", pathHotspotName.string8());
 			return;
 		}
 		std::wstringstream s(std::wstring(reinterpret_cast<const wchar_t*>(buffer.get()), size));
@@ -214,7 +214,7 @@ void CVideoMode::CCursor::SetCursor(const CStrW& name)
 	size_t fileSize;
 	if (g_VFS->LoadFile(pathImageName, file, fileSize) != INFO::OK)
 	{
-		LOGERROR("Can't load image for cursor: %s", pathImageName.string8().c_str());
+		LOGERROR("Can't load image for cursor: {}", pathImageName.string8());
 		return;
 	}
 
@@ -245,7 +245,7 @@ void CVideoMode::CCursor::SetCursor(const CStrW& name)
 		0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
 	if (!m_CursorSurface)
 	{
-		LOGERROR("Can't create surface for cursor: %s", SDL_GetError());
+		LOGERROR("Can't create surface for cursor: {}", SDL_GetError());
 		return;
 	}
 	const float scale = g_VideoMode.GetScale();
@@ -257,7 +257,7 @@ void CVideoMode::CCursor::SetCursor(const CStrW& name)
 			0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
 		if (!scaledSurface)
 		{
-			LOGERROR("Can't create scaled surface forcursor: %s", SDL_GetError());
+			LOGERROR("Can't create scaled surface forcursor: {}", SDL_GetError());
 			return;
 		}
 		if (SDL_BlitScaled(m_CursorSurface, nullptr, scaledSurface, nullptr))
@@ -268,7 +268,7 @@ void CVideoMode::CCursor::SetCursor(const CStrW& name)
 	m_Cursor = SDL_CreateColorCursor(m_CursorSurface, hotspotX, hotspotY);
 	if (!m_Cursor)
 	{
-		LOGERROR("Can't create cursor: %s", SDL_GetError());
+		LOGERROR("Can't create cursor: {}", SDL_GetError());
 		return;
 	}
 
@@ -387,7 +387,8 @@ bool CVideoMode::SetVideoMode(int w, int h, int bpp, bool fullscreen)
 
 				if (forceGLMajorVersion < 1 || forceGLMinorVersion < 0)
 				{
-					LOGERROR("Unsupported force GL version: %d.%d", forceGLMajorVersion, forceGLMinorVersion);
+					LOGERROR("Unsupported force GL version: {}.{}", forceGLMajorVersion,
+						forceGLMinorVersion);
 				}
 				else
 				{
@@ -483,16 +484,16 @@ bool CVideoMode::SetVideoMode(int w, int h, int bpp, bool fullscreen)
 					}
 				}
 
-				LOGERROR("SetVideoMode failed in SDL_CreateWindow: %dx%d:%d %d (\"%s\")",
-					w, h, bpp, fullscreen ? 1 : 0, SDL_GetError());
+				LOGERROR("SetVideoMode failed in SDL_CreateWindow: {}x{}:{} {} (\"{}\")", w, h,
+					bpp, fullscreen ? 1 : 0, SDL_GetError());
 				return false;
 			}
 		}
 
 		if (SDL_SetWindowDisplayMode(m_Window, NULL) < 0)
 		{
-			LOGERROR("SetVideoMode failed in SDL_SetWindowDisplayMode: %dx%d:%d %d (\"%s\")",
-				w, h, bpp, fullscreen ? 1 : 0, SDL_GetError());
+			LOGERROR("SetVideoMode failed in SDL_SetWindowDisplayMode: {}x{}:{} {} (\"{}\")", w, h,
+				bpp, fullscreen, SDL_GetError());
 			return false;
 		}
 
@@ -523,8 +524,8 @@ bool CVideoMode::SetVideoMode(int w, int h, int bpp, bool fullscreen)
 
 			if (SDL_SetWindowFullscreen(m_Window, flags) < 0)
 			{
-				LOGERROR("SetVideoMode failed in SDL_SetWindowFullscreen: %dx%d:%d %d (\"%s\")",
-					w, h, bpp, fullscreen ? 1 : 0, SDL_GetError());
+				LOGERROR("SetVideoMode failed in SDL_SetWindowFullscreen: {}x{}:{} {} (\"{}\")", w,
+					h, bpp, fullscreen, SDL_GetError());
 				return false;
 			}
 		}
@@ -719,8 +720,8 @@ bool CVideoMode::TryCreateBackendDevice(SDL_Window* window)
 void CVideoMode::DowngradeBackendSettingAfterCreationFailure()
 {
 	const Renderer::Backend::Backend fallback = GetFallbackBackend(m_Backend);
-	LOGERROR("Unable to create device for %s backend, switching to %s.",
-		GetBackendName(m_Backend), GetBackendName(fallback));
+	LOGERROR("Unable to create device for {} backend, switching to {}.", GetBackendName(m_Backend),
+		GetBackendName(fallback));
 	m_Backend = fallback;
 }
 

@@ -1,4 +1,4 @@
-/* Copyright (C) 2025 Wildfire Games.
+/* Copyright (C) 2026 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -56,7 +56,7 @@ CModelDefPtr CMeshManager::GetMesh(const VfsPath& pathname)
 
 	if (pmdFilename.empty())
 	{
-		LOGERROR("Could not load mesh '%s'", pathname.string8());
+		LOGERROR("Could not load mesh '{}'", pathname.string8());
 		return CModelDefPtr();
 	}
 
@@ -68,7 +68,7 @@ CModelDefPtr CMeshManager::GetMesh(const VfsPath& pathname)
 	}
 	catch (PSERROR_File&)
 	{
-		LOGERROR("Could not load mesh '%s'", pmdFilename.string8());
+		LOGERROR("Could not load mesh '{}'", pmdFilename.string8());
 		return CModelDefPtr();
 	}
 }

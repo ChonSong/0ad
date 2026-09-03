@@ -65,7 +65,7 @@ CSkeletonAnimDef* CSkeletonAnimManager::GetAnimation(const VfsPath& pathname)
 	VfsPath psaFilename = m_ColladaManager.GetLoadablePath(name, CColladaManager::PSA);
 
 	if (psaFilename.empty())
-		LOGERROR("Could not load animation '%s'", pathname.string8());
+		LOGERROR("Could not load animation '{}'", pathname.string8());
 	else
 		try
 		{
@@ -73,7 +73,7 @@ CSkeletonAnimDef* CSkeletonAnimManager::GetAnimation(const VfsPath& pathname)
 		}
 		catch (PSERROR_File&)
 		{
-			LOGERROR("Could not load animation '%s'", psaFilename.string8());
+			LOGERROR("Could not load animation '{}'", psaFilename.string8());
 		}
 
 	if (def)
@@ -82,7 +82,10 @@ CSkeletonAnimDef* CSkeletonAnimManager::GetAnimation(const VfsPath& pathname)
 			pathname.string8());
 	}
 	else
-		LOGERROR("CSkeletonAnimManager::GetAnimation(%s): Failed loading, marked file as bad", pathname.string8());
+	{
+		LOGERROR("CSkeletonAnimManager::GetAnimation({}): Failed loading, marked file as bad",
+			pathname.string8());
+	}
 
 	// Add to map, NULL if failed to load - we won't try loading it again
 	return m_Animations.insert_or_assign(name, std::move(def)).first->second.get();

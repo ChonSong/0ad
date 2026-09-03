@@ -54,13 +54,14 @@ Status CNetFileTransferer::OnFileTransferResponse(const CFileTransferResponseMes
 	const FileReceiveTasksMap::iterator it = m_FileReceiveTasks.find(message.m_RequestID);
 	if (it == m_FileReceiveTasks.end())
 	{
-		LOGERROR("Net transfer: Unsolicited file transfer response (id=%lu)", message.m_RequestID);
+		LOGERROR("Net transfer: Unsolicited file transfer response (id={})", message.m_RequestID);
 		return ERR::FAIL;
 	}
 
 	if (message.m_Length == 0 || message.m_Length > MAX_FILE_TRANSFER_SIZE)
 	{
-		LOGERROR("Net transfer: Invalid size for file transfer response (length=%lu)", message.m_Length);
+		LOGERROR("Net transfer: Invalid size for file transfer response (length={})",
+			message.m_Length);
 		return ERR::FAIL;
 	}
 
@@ -80,7 +81,7 @@ Status CNetFileTransferer::OnFileTransferData(const CFileTransferDataMessage& me
 	FileReceiveTasksMap::iterator it = m_FileReceiveTasks.find(message.m_RequestID);
 	if (it == m_FileReceiveTasks.end())
 	{
-		LOGERROR("Net transfer: Unsolicited file transfer data (id=%lu)", message.m_RequestID);
+		LOGERROR("Net transfer: Unsolicited file transfer data (id={})", message.m_RequestID);
 		return ERR::FAIL;
 	}
 
@@ -90,7 +91,7 @@ Status CNetFileTransferer::OnFileTransferData(const CFileTransferDataMessage& me
 
 	if (task.buffer.size() > task.length)
 	{
-		LOGERROR("Net transfer: Invalid size for file transfer data (length=%lu actual=%zu)",
+		LOGERROR("Net transfer: Invalid size for file transfer data (length={} actual={})",
 			task.length, task.buffer.size());
 		return ERR::FAIL;
 	}
@@ -130,7 +131,7 @@ Status CNetFileTransferer::OnFileTransferAck(const CFileTransferAckMessage& mess
 	FileSendTasksMap::iterator it = m_FileSendTasks.find(message.m_RequestID);
 	if (it == m_FileSendTasks.end())
 	{
-		LOGERROR("Net transfer: Unsolicited file transfer ack (id=%lu)", message.m_RequestID);
+		LOGERROR("Net transfer: Unsolicited file transfer ack (id={})", message.m_RequestID);
 		return ERR::FAIL;
 	}
 
@@ -138,7 +139,7 @@ Status CNetFileTransferer::OnFileTransferAck(const CFileTransferAckMessage& mess
 
 	if (message.m_NumPackets > task.packetsInFlight)
 	{
-		LOGERROR("Net transfer: Invalid num packets for file transfer ack (num=%lu inflight=%lu)",
+		LOGERROR("Net transfer: Invalid num packets for file transfer ack (num={} inflight={})",
 			message.m_NumPackets, task.packetsInFlight);
 		return ERR::FAIL;
 	}

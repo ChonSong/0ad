@@ -916,7 +916,8 @@ static std::vector<std::string> GetJSONData(const VfsPath& path)
 	{
 		// Some error reading directory
 		wchar_t error[200];
-		LOGERROR("Error reading directory '%s': %s", path.string8(), utf8_from_wstring(StatusDescription(ret, error, ARRAY_SIZE(error))));
+		LOGERROR("Error reading directory '{}': {}", path.string8(),
+			utf8_from_wstring(StatusDescription(ret, error, ARRAY_SIZE(error))));
 		return std::vector<std::string>();
 	}
 
@@ -928,7 +929,8 @@ static std::vector<std::string> GetJSONData(const VfsPath& path)
 		PSRETURN loadStatus = file.Load(g_VFS, p);
 		if (loadStatus != PSRETURN_OK)
 		{
-			LOGERROR("GetJSONData: Failed to load file '%s': %s", p.string8(), GetErrorString(loadStatus));
+			LOGERROR("GetJSONData: Failed to load file '{}': {}", p.string8(),
+				GetErrorString(loadStatus));
 			continue;
 		}
 
@@ -952,7 +954,7 @@ static std::string ReadJSON(const VfsPath& path)
 {
 	if (!VfsFileExists(path))
 	{
-		LOGERROR("File '%s' does not exist", path.string8());
+		LOGERROR("File '{}' does not exist", path.string8());
 		return std::string();
 	}
 
@@ -961,7 +963,7 @@ static std::string ReadJSON(const VfsPath& path)
 	PSRETURN ret = file.Load(g_VFS, path);
 	if (ret != PSRETURN_OK)
 	{
-		LOGERROR("Failed to load file '%s': %s", path.string8(), GetErrorString(ret));
+		LOGERROR("Failed to load file '{}': {}", path.string8(), GetErrorString(ret));
 		return std::string();
 	}
 

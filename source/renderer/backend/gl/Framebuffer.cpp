@@ -144,7 +144,7 @@ std::unique_ptr<CFramebuffer> CFramebuffer::Create(
 	const GLenum status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
 	if (status != GL_FRAMEBUFFER_COMPLETE_EXT)
 	{
-		LOGERROR("CFramebuffer object incomplete: 0x%04X", status);
+		LOGERROR("CFramebuffer object incomplete: 0x{:04X}", status);
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
 		return nullptr;
 	}

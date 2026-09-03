@@ -92,7 +92,10 @@ bool CObjectEntry::BuildVariation(const std::vector<const std::set<CStr>*>& comp
 		str << variation.color;
 		int r, g, b;
 		if (! (str >> r >> g >> b)) // Any trailing data is ignored
-			LOGERROR("Actor '%s' has invalid RGB color '%s'", m_Base->GetIdentifier(), variation.color);
+		{
+			LOGERROR("Actor '{}' has invalid RGB color '{}'", m_Base->GetIdentifier(),
+				variation.color);
+		}
 		else
 			m_Color = CColor(r/255.0f, g/255.0f, b/255.0f, 1.0f);
 	}
@@ -131,7 +134,8 @@ bool CObjectEntry::BuildVariation(const std::vector<const std::set<CStr>*>& comp
 			g_Renderer.GetSceneRenderer().GetParticleManager().LoadEmitterType(variation.particles)};
 		if (!particleEmitterType)
 		{
-			LOGERROR("CObjectEntry::BuildVariation(): Failed to load particles %s", variation.particles.string8());
+			LOGERROR("CObjectEntry::BuildVariation(): Failed to load particles {}",
+				variation.particles.string8());
 			return false;
 		}
 		m_Model = std::make_unique<CModelParticleEmitter>(*particleEmitterType);
@@ -155,7 +159,7 @@ bool CObjectEntry::BuildVariation(const std::vector<const std::set<CStr>*>& comp
 	CModelDefPtr modeldef (objectManager.GetMeshManager().GetMesh(m_ModelName));
 	if (!modeldef)
 	{
-		LOGERROR("CObjectEntry::BuildVariation(): Model %s failed to load", m_ModelName.string8());
+		LOGERROR("CObjectEntry::BuildVariation(): Model {} failed to load", m_ModelName.string8());
 		return false;
 	}
 
@@ -164,7 +168,7 @@ bool CObjectEntry::BuildVariation(const std::vector<const std::set<CStr>*>& comp
 	material.AddStaticUniform("objectColor", CVector4D(m_Color.r, m_Color.g, m_Color.b, m_Color.a));
 
 	if (m_Samplers.empty())
-		LOGERROR("Actor '%s' has no textures.", m_Base->GetIdentifier());
+		LOGERROR("Actor '{}' has no textures.", m_Base->GetIdentifier());
 
 	for (const CObjectBase::Samp& samp : m_Samplers)
 	{
@@ -188,8 +192,9 @@ bool CObjectEntry::BuildVariation(const std::vector<const std::set<CStr>*>& comp
 		if (std::find_if(m_Samplers.begin(), m_Samplers.end(),
 		                 [&](const CObjectBase::Samp& sampler) { return sampler.m_SamplerName == requiredSampler.name; }) == m_Samplers.end())
 		{
-			LOGERROR("Actor %s: required texture sampler %s not found (material %s)",
-				m_Base->GetIdentifier(), requiredSampler.name.string().c_str(), m_Base->m_Material.string8().c_str());
+			LOGERROR("Actor {}: required texture sampler {} not found (material {})",
+				m_Base->GetIdentifier(), requiredSampler.name.string(),
+				m_Base->m_Material.string8());
 		}
 	}
 
@@ -237,7 +242,7 @@ bool CObjectEntry::BuildVariation(const std::vector<const std::set<CStr>*>& comp
 	{
 		// start up idling
 		if (!model->SetAnimation(GetRandomAnimation("idle")))
-			LOGERROR("Failed to set idle animation in model \"%s\"", m_ModelName.string8());
+			LOGERROR("Failed to set idle animation in model \"{}\"", m_ModelName.string8());
 	}
 
 	// build props - TODO, RC - need to fix up bounds here
@@ -257,7 +262,8 @@ bool CObjectEntry::BuildVariation(const std::vector<const std::set<CStr>*>& comp
 
 		if (!oe)
 		{
-			LOGERROR("Failed to build prop model \"%s\" on actor \"%s\"", utf8_from_wstring(prop.m_ModelName), m_Base->GetIdentifier());
+			LOGERROR("Failed to build prop model \"{}\" on actor \"{}\"",
+				utf8_from_wstring(prop.m_ModelName), m_Base->GetIdentifier());
 			continue;
 		}
 
@@ -288,7 +294,8 @@ bool CObjectEntry::BuildVariation(const std::vector<const std::set<CStr>*>& comp
 				model->AddProp(proppoint, std::move(propmodel), oe, prop.m_minHeight, prop.m_maxHeight, prop.m_selectable);
 		}
 		else
-			LOGERROR("Failed to find matching prop point called \"%s\" in model \"%s\" for actor \"%s\"", ppn, m_ModelName.string8(), m_Base->GetIdentifier());
+			LOGERROR("Failed to find matching prop point called \"{}\" in model \"{}\" for actor "
+				"\"{}\"", ppn, m_ModelName.string8(), m_Base->GetIdentifier());
 	}
 
 	// Setup flags.

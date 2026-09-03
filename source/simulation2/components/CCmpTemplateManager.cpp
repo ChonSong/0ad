@@ -1,4 +1,4 @@
-/* Copyright (C) 2025 Wildfire Games.
+/* Copyright (C) 2026 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -171,7 +171,7 @@ const CParamNode* CCmpTemplateManager::GetTemplate(const std::string& templateNa
 
 			// Show error on the first failure to validate the template
 			if (!m_TemplateSchemaValidity[templateName])
-				LOGERROR("Failed to validate entity template '%s'", templateName.c_str());
+				LOGERROR("Failed to validate entity template '{}'", templateName);
 		}
 		// Refuse to return invalid templates
 		if (!m_TemplateSchemaValidity[templateName])
@@ -182,7 +182,7 @@ const CParamNode* CCmpTemplateManager::GetTemplate(const std::string& templateNa
 	if (!templateRoot.IsOk())
 	{
 		// The validator should never let this happen
-		LOGERROR("Invalid root element in entity template '%s'", templateName.c_str());
+		LOGERROR("Invalid root element in entity template '{}'", templateName);
 		return NULL;
 	}
 

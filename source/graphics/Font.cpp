@@ -176,7 +176,7 @@ bool CFont::SetFontParams(
 		FT_Stroker stroker;
 		if (FT_Error error{FT_Stroker_New(m_FreeType, &stroker)})
 		{
-			LOGERROR("Failed to create stroker: %d", error);
+			LOGERROR("Failed to create stroker: {}", error);
 			return false;
 		}
 		m_Stroker.reset(stroker);
@@ -185,7 +185,7 @@ bool CFont::SetFontParams(
 
 	if (!ConstructAtlasTexture(device))
 	{
-		LOGERROR("Failed to create font texture atlas %s", fontName);
+		LOGERROR("Failed to create font texture atlas {}", fontName);
 		return false;
 	}
 
@@ -198,7 +198,7 @@ bool CFont::AddFontFromPath(const OsPath& fontPath)
 
 	if (!VfsFileExists(fontPath))
 	{
-		LOGERROR("Font file does not exist: %s", fontPath.string8());
+		LOGERROR("Font file does not exist: {}", fontPath.string8());
 		return false;
 	}
 
@@ -206,19 +206,19 @@ bool CFont::AddFontFromPath(const OsPath& fontPath)
 	size_t fontDataSize;
 	if (g_VFS->LoadFile(fontPath, fontData, fontDataSize) != 0)
 	{
-		LOGERROR("Failed to load font file: %s", fontPath.string8());
+		LOGERROR("Failed to load font file: {}", fontPath.string8());
 		return false;
 	}
 
 	FT_Face face;
 	if (FT_Error error{FT_New_Memory_Face(m_FreeType, fontData.get(), static_cast<FT_Long>(fontDataSize), 0, &face)}; error == FT_Err_Unknown_File_Format)
 	{
-		LOGERROR("Font file format is not supported: %s", fontPath.string8());
+		LOGERROR("Font file format is not supported: {}", fontPath.string8());
 		return false;
 	}
 	else if (error)
 	{
-		LOGERROR("Failed to load font %s: %d", fontPath.string8(), error);
+		LOGERROR("Failed to load font {}: {}", fontPath.string8(), error);
 		return false;
 	}
 
@@ -228,7 +228,7 @@ bool CFont::AddFontFromPath(const OsPath& fontPath)
 	// Set the font size.
 	if (FT_Error error{FT_Set_Char_Size(face, 0, FloatToF26Dot6(m_FontSize), 0 , 0)})
 	{
-		LOGERROR("Failed to set font size %d: %d", m_FontSize, error);
+		LOGERROR("Failed to set font size {}: {}", m_FontSize, error);
 		return false;
 	}
 
@@ -299,7 +299,7 @@ bool CFont::ConstructAtlasTexture(Renderer::Backend::IDevice* device)
 
 	if (!m_Texture)
 	{
-		LOGERROR("Failed to create font texture %s", m_FontName);
+		LOGERROR("Failed to create font texture {}", m_FontName);
 		return false;
 	}
 
@@ -354,7 +354,7 @@ const CFont::GlyphData* CFont::ExtractAndGenerateGlyph(std::uint16_t codepoint)
 
 	if (FT_Error error{FT_Load_Glyph(faceToUse, glyphIndex, loadFlags)})
 	{
-		LOGERROR("Failed to load glyph %u: %d", codepoint, error);
+		LOGERROR("Failed to load glyph {}: {}", codepoint, error);
 		return nullptr;
 	}
 
@@ -362,7 +362,7 @@ const CFont::GlyphData* CFont::ExtractAndGenerateGlyph(std::uint16_t codepoint)
 	FT_Glyph glyph;
 	if (FT_Error error{FT_Get_Glyph(slot, &glyph)})
 	{
-		LOGERROR("Failed to get glyph %u: %d", codepoint, error);
+		LOGERROR("Failed to get glyph {}: {}", codepoint, error);
 		return nullptr;
 	}
 	UniqueFTGlyph glyphPtr(glyph);
@@ -392,7 +392,7 @@ const CFont::GlyphData* CFont::ExtractAndGenerateGlyph(std::uint16_t codepoint)
 		std::optional<CVector2D> offsetStroke{GenerateStrokeGlyphBitmap(glyph, codepoint, renderMode, baselineInAtlas)};
 		if (!offsetStroke.has_value())
 		{
-			LOGERROR("Failed to generate stroke glyph %u", codepoint);
+			LOGERROR("Failed to generate stroke glyph {}", codepoint);
 			return nullptr;
 		}
 
@@ -402,7 +402,7 @@ const CFont::GlyphData* CFont::ExtractAndGenerateGlyph(std::uint16_t codepoint)
 	std::optional<CVector2D> offsetGlyph{GenerateGlyphBitmap(glyph, codepoint, renderMode, offset, baselineInAtlas)};
 	if (!offsetGlyph.has_value())
 	{
-		LOGERROR("Failed to generate glyph %u", codepoint);
+		LOGERROR("Failed to generate glyph {}", codepoint);
 		return nullptr;
 	}
 	offset = offsetGlyph.value();
@@ -437,21 +437,21 @@ std::optional<CVector2D> CFont::GenerateStrokeGlyphBitmap(const FT_Glyph& glyph,
 	FT_Glyph strokedGlyph;
 	if (FT_Error error{FT_Glyph_Copy(glyph, &strokedGlyph)})
 	{
-		LOGERROR("Failed to copy glyph %u: %d", codepoint, error);
+		LOGERROR("Failed to copy glyph {}: {}", codepoint, error);
 		FT_Done_Glyph(strokedGlyph);
 		return std::nullopt;
 	}
 
 	if (FT_Error error{FT_Glyph_StrokeBorder(&strokedGlyph, m_Stroker.get(), 0, 1)})
 	{
-		LOGERROR("Failed to stroke glyph %u: %d", codepoint, error);
+		LOGERROR("Failed to stroke glyph {}: {}", codepoint, error);
 		FT_Done_Glyph(strokedGlyph);
 		return std::nullopt;
 	}
 
 	if (FT_Error error{FT_Glyph_To_Bitmap(&strokedGlyph, renderMode, nullptr, 1)})
 	{
-		LOGERROR("Failed to render glyph %u: %d", codepoint, error);
+		LOGERROR("Failed to render glyph {}: {}", codepoint, error);
 		FT_Done_Glyph(strokedGlyph);
 		return std::nullopt;
 	}
@@ -482,7 +482,7 @@ std::optional<CVector2D> CFont::GenerateGlyphBitmap(FT_Glyph& glyph, std::uint16
 {
 	if (FT_Error error{FT_Glyph_To_Bitmap(&glyph, renderMode, nullptr, 0)})
 	{
-		LOGERROR("Failed to render glyph %u: %d", codepoint, error);
+		LOGERROR("Failed to render glyph {}: {}", codepoint, error);
 		return std::nullopt;
 	}
 	FT_BitmapGlyph bitmapGlyph{reinterpret_cast<FT_BitmapGlyph>(glyph)};

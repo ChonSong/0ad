@@ -80,7 +80,7 @@ CShaderProgramPtr CShaderManager::LoadProgram(const CStr& name, const CShaderDef
 	}
 	else
 	{
-		LOGERROR("Failed to load shader '%s'", name);
+		LOGERROR("Failed to load shader '{}'", name);
 	}
 
 	m_ProgramCache[key] = program;
@@ -119,7 +119,7 @@ CShaderTechniquePtr CShaderManager::LoadEffect(CStrIntern name, const CShaderDef
 		xmlFilename, defines, PipelineStateDescCallback{});
 	if (!LoadTechnique(tech))
 	{
-		LOGERROR("Failed to load effect '%s'", name.c_str());
+		LOGERROR("Failed to load effect '{}'", name.string());
 		tech = CShaderTechniquePtr();
 	}
 
@@ -135,7 +135,7 @@ CShaderTechniquePtr CShaderManager::LoadEffect(
 	CShaderTechniquePtr technique = std::make_shared<CShaderTechnique>(xmlFilename, defines, callback);
 	if (!LoadTechnique(technique))
 	{
-		LOGERROR("Failed to load effect '%s'", name.c_str());
+		LOGERROR("Failed to load effect '{}'", name.string());
 		return {};
 	}
 	return technique;
@@ -324,8 +324,8 @@ bool CShaderManager::LoadTechnique(CShaderTechniquePtr& tech)
 						if (!passPipelineStateDesc.blendState.constant.ParseString(
 								Element.GetAttributes().GetNamedItem(at_constant)))
 						{
-							LOGERROR("Failed to parse blend constant: %s",
-								Element.GetAttributes().GetNamedItem(at_constant).c_str());
+							LOGERROR("Failed to parse blend constant: {}",
+								Element.GetAttributes().GetNamedItem(at_constant));
 						}
 					}
 				}
@@ -498,7 +498,10 @@ Status CShaderManager::ReloadChangedFile(const VfsPath& path)
 			if (std::shared_ptr<CShaderTechnique> technique = ptr.lock())
 			{
 				if (!LoadTechnique(technique))
-					LOGERROR("Failed to reload technique '%s'", technique->GetPath().string8().c_str());
+				{
+					LOGERROR("Failed to reload technique '{}'",
+						technique->GetPath().string8());
+				}
 			}
 	}
 

@@ -119,7 +119,7 @@ Renderer::Backend::Format ChooseFormatAndTransformTextureDataIfNeeded(
 		ENSURE(alpha);
 		return sRGB ? Renderer::Backend::Format::R8G8B8A8_SRGB : Renderer::Backend::Format::R8G8B8A8_UNORM;
 	default:
-		LOGERROR("Unsupported BPP: %zu", textureData.m_Bpp);
+		LOGERROR("Unsupported BPP: {}", textureData.m_Bpp);
 	}
 
 	return Renderer::Backend::Format::UNDEFINED;
@@ -477,7 +477,7 @@ public:
 		const Status loadStatus = m_VFS->LoadFile(path, fileData, fileSize);
 		if (loadStatus != INFO::OK)
 		{
-			LOGERROR("Texture failed to load; \"%s\" %s",
+			LOGERROR("Texture failed to load; \"{}\" {}",
 				texture->m_Properties.m_Path.string8(), GetStatusAsString(loadStatus).c_str());
 			texture->ResetBackendTexture(
 				nullptr, m_ErrorTexture.GetTexture()->GetBackendTexture());
@@ -490,8 +490,8 @@ public:
 		const Status decodeStatus = textureData.decode(fileData, fileSize);
 		if (decodeStatus != INFO::OK)
 		{
-			LOGERROR("Texture failed to decode; \"%s\" %s",
-				texture->m_Properties.m_Path.string8(), GetStatusAsString(decodeStatus).c_str());
+			LOGERROR("Texture failed to decode; \"{}\" {}",
+				texture->m_Properties.m_Path.string8(), GetStatusAsString(decodeStatus));
 			texture->ResetBackendTexture(
 				nullptr, m_ErrorTexture.GetTexture()->GetBackendTexture());
 			texture->m_TextureData.reset();
@@ -500,7 +500,7 @@ public:
 
 		if (!std::has_single_bit(textureData.m_Width) || !std::has_single_bit(textureData.m_Height))
 		{
-			LOGERROR("Texture should have width and height be power of two; \"%s\" %zux%zu",
+			LOGERROR("Texture should have width and height be power of two; \"{}\" {}x{}",
 				texture->m_Properties.m_Path.string8(), textureData.m_Width, textureData.m_Height);
 			texture->ResetBackendTexture(
 				nullptr, m_ErrorTexture.GetTexture()->GetBackendTexture());
@@ -537,7 +537,7 @@ public:
 
 		if (format == Renderer::Backend::Format::UNDEFINED)
 		{
-			LOGERROR("Texture failed to choose format; \"%s\"", texture->m_Properties.m_Path.string8());
+			LOGERROR("Texture failed to choose format; \"{}\"", texture->m_Properties.m_Path.string8());
 			texture->ResetBackendTexture(
 				nullptr, m_ErrorTexture.GetTexture()->GetBackendTexture());
 			texture->m_TextureData.reset();
@@ -644,7 +644,8 @@ public:
 
 			// No source file or archive cache was found, so we can't load the
 			// real texture at all - return the error texture instead
-			LOGERROR("CCacheLoader failed to find archived or source file for: \"%s\"", texture->m_Properties.m_Path.string8());
+			LOGERROR("CCacheLoader failed to find archived or source file for: \"{}\"",
+				texture->m_Properties.m_Path.string8());
 			texture->ResetBackendTexture(
 				nullptr, m_ErrorTexture.GetTexture()->GetBackendTexture());
 			return true;
@@ -721,7 +722,8 @@ public:
 				}
 				else
 				{
-					LOGERROR("Texture failed to convert: \"%s\"", texture->m_Properties.m_Path.string8());
+					LOGERROR("Texture failed to convert: \"{}\"",
+						texture->m_Properties.m_Path.string8());
 					texture->ResetBackendTexture(
 						nullptr, m_ErrorTexture.GetTexture()->GetBackendTexture());
 				}

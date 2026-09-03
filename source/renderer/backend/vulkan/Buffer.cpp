@@ -1,4 +1,4 @@
-/* Copyright (C) 2025 Wildfire Games.
+/* Copyright (C) 2026 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -121,7 +121,8 @@ std::unique_ptr<CBuffer> CBuffer::Create(
 		&buffer->m_Buffer, &buffer->m_Allocation, &buffer->m_AllocationInfo);
 	if (createBufferResult != VK_SUCCESS)
 	{
-		LOGERROR("Failed to create VkBuffer: %d (%s)", static_cast<int>(createBufferResult), Utilities::GetVkResultName(createBufferResult));
+		LOGERROR("Failed to create VkBuffer: {} ({})", static_cast<int>(createBufferResult),
+			Utilities::GetVkResultName(createBufferResult));
 		return nullptr;
 	}
 

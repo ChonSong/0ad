@@ -232,18 +232,27 @@ bool COList::HandleAdditionalChildren(const XMBData& xmb, const XMBElement& chil
 			if (attr_name == "textcolor")
 			{
 				if (!CGUI::ParseString<CGUIColor>(&m_pGUI, attr_value.FromUTF8(), column.m_TextColor))
-					LOGERROR("GUI: Error parsing '%s' (\"%s\")", attr_name.data(), attr_value.c_str());
+				{
+					LOGERROR("GUI: Error parsing '{}' (\"{}\")", attr_name.data(),
+						attr_value);
+				}
 			}
 			else if (attr_name == "textcolor_selected")
 			{
 				if (!CGUI::ParseString<CGUIColor>(&m_pGUI, attr_value.FromUTF8(), column.m_TextColorSelected))
-					LOGERROR("GUI: Error parsing '%s' (\"%s\")", attr_name.data(), attr_value.c_str());
+				{
+					LOGERROR("GUI: Error parsing '{}' (\"{}\")", attr_name.data(),
+						attr_value);
+				}
 			}
 			else if (attr_name == "hidden")
 			{
 				bool hidden = false;
 				if (!CGUI::ParseString<bool>(&m_pGUI, attr_value.FromUTF8(), hidden))
-					LOGERROR("GUI: Error parsing '%s' (\"%s\")", attr_name.data(), attr_value.c_str());
+				{
+					LOGERROR("GUI: Error parsing '{}' (\"{}\")", attr_name.data(),
+						attr_value);
+				}
 				else
 					column.m_Hidden.Set(hidden, false);
 			}
@@ -251,7 +260,10 @@ bool COList::HandleAdditionalChildren(const XMBData& xmb, const XMBElement& chil
 			{
 				float width;
 				if (!CGUI::ParseString<float>(&m_pGUI, attr_value.FromUTF8(), width))
-					LOGERROR("GUI: Error parsing '%s' (\"%s\")", attr_name.data(), attr_value.c_str());
+				{
+					LOGERROR("GUI: Error parsing '{}' (\"{}\")", attr_name.data(),
+						attr_value);
+				}
 				else
 				{
 					// Check if it's a relative value, and save as decimal if so.
@@ -279,7 +291,8 @@ bool COList::HandleAdditionalChildren(const XMBData& xmb, const XMBElement& chil
 			// only the heading is translatable for list column
 			if (attributeName.empty() || attributeName != "heading")
 			{
-				LOGERROR("GUI: translatable attribute in olist column that isn't a heading. (object: %s)", this->GetPresentableName().c_str());
+				LOGERROR("GUI: translatable attribute in olist column that isn't a heading. "
+					"(object: {})", this->GetPresentableName());
 				continue;
 			}
 

@@ -88,7 +88,8 @@ inline SPrototypeSerialization GetPrototypeInfo(const Script::Request& rq, JS::H
 		(!ret.hasNullSerialize && !ret.hasCustomDeserialize))
 	{
 		// Don't throw for this error: mods might need updating and this crashes as exceptions are not correctly handled.
-		LOGERROR("Error serializing object '%s': non-null Serialize() but no matching Deserialize().", utf8_from_wstring(ret.name));
+		LOGERROR("Error serializing object '{}': non-null Serialize() but no matching Deserialize().",
+			utf8_from_wstring(ret.name));
 	}
 
 	return ret;

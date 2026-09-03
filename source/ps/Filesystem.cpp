@@ -1,4 +1,4 @@
-/* Copyright (C) 2025 Wildfire Games.
+/* Copyright (C) 2026 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -130,7 +130,7 @@ PSRETURN CVFSFile::Load(const PIVFS& vfs, const VfsPath& filename, bool log /* =
 	if (ret != INFO::OK)
 	{
 		if (log)
-			LOGERROR("CVFSFile: file %s couldn't be opened (vfs_load: %lld)", filename.string8(), (long long)ret);
+			LOGERROR("CVFSFile: file {} couldn't be opened (vfs_load: {})", filename.string8(), ret);
 		m_Buffer.reset();
 		m_BufferSize = 0;
 		return PSRETURN_CVFSFile_LoadFailed;

@@ -77,7 +77,7 @@ FontSpec ParseFontSpec(const std::string& spec)
 	std::smatch m;
 	if (!std::regex_match(spec, m, pattern))
 	{
-		LOGERROR("Invalid font specification: %s", spec.c_str());
+		LOGERROR("Invalid font specification: {}", spec);
 		return {};
 	}
 
@@ -168,7 +168,7 @@ CFont* CFontManager::LoadFont(CStrIntern fontName, CStrIntern locale)
 
 	if (fontSpec.type.empty())
 	{
-		LOGERROR("Failed to parse font specification: %s, using default font", fontName.string().c_str());
+		LOGERROR("Failed to parse font specification: {}, using default font", fontName.string());
 		fontSpec = ParseFontSpec(str_sans_10.string());
 	}
 
@@ -227,7 +227,7 @@ CFont* CFontManager::LoadFont(CStrIntern fontName, CStrIntern locale)
 
 	if (!font.SetFontParams(m_Device, localeFontName.string(), fontSpec.size, fontSpec.stroke ? 1.0f : 0.0f, m_GUIScale))
 	{
-		LOGERROR("Failed to set font params for %s", localeFontName.string().c_str());
+		LOGERROR("Failed to set font params for {}", localeFontName.string());
 		return nullptr;
 	}
 
@@ -239,13 +239,13 @@ CFont* CFontManager::LoadFont(CStrIntern fontName, CStrIntern locale)
 			const VfsPath fntPath{path / fontPath};
 			if (!VfsFileExists(fntPath))
 			{
-				LOGERROR("Font file %s not found", fontPath.c_str());
+				LOGERROR("Font file {} not found", fontPath);
 				return nullptr;
 			}
 
 			if (!font.AddFontFromPath(fntPath))
 			{
-				LOGERROR("Failed to load font %s", fntPath.string8());
+				LOGERROR("Failed to load font {}", fntPath.string8());
 				return nullptr;
 			}
 		}

@@ -204,7 +204,7 @@ CTerrainTextureManager::LoadAlphaMap(const VfsPath& alphaMapType)
 			textures[i].decode(fileData, fileSize) != INFO::OK)
 		{
 			m_TerrainAlphas.erase(it);
-			LOGERROR("Failed to load alphamap: %s", alphaMapType.string8());
+			LOGERROR("Failed to load alphamap: {}", alphaMapType.string8());
 
 			const VfsPath standard("standard");
 			if (path != standard)

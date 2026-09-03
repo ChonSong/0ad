@@ -196,7 +196,7 @@ bool PreprocessShaderFile(
 	CVFSFile file;
 	if (file.Load(g_VFS, path) != PSRETURN_OK)
 	{
-		LOGERROR("Failed to load shader file: '%s'", path.string8());
+		LOGERROR("Failed to load shader file: '{}'", path.string8());
 		return false;
 	}
 
@@ -210,7 +210,7 @@ bool PreprocessShaderFile(
 			CVFSFile includeFile;
 			if (includeFile.Load(g_VFS, includeFilePath) != PSRETURN_OK)
 			{
-				LOGERROR("Failed to load shader include file: '%s'", includeFilePath.string8());
+				LOGERROR("Failed to load shader include file: '{}'", includeFilePath.string8());
 				return false;
 			}
 			out = includeFile.GetAsString();
@@ -258,7 +258,7 @@ bool CompileGLSL(GLuint shader, const VfsPath& file, const CStr& code)
 		if (ok)
 			LOGMESSAGE("Info when compiling shader '{}':\n{}", file.string8(), infolog.get());
 		else
-			LOGERROR("Failed to compile shader '%s':\n%s", file.string8(), infolog.get());
+			LOGERROR("Failed to compile shader '{}':\n{}", file.string8(), infolog.get());
 	}
 
 	return ok;
@@ -326,7 +326,7 @@ CShaderProgram::CShaderProgram(
 			return;
 		if (source.empty())
 		{
-			LOGERROR("Failed to preprocess shader: '%s'", path.string8());
+			LOGERROR("Failed to preprocess shader: '{}'", path.string8());
 			return;
 		}
 #if CONFIG2_GLES
@@ -398,7 +398,7 @@ bool CShaderProgram::Link(const VfsPath& path)
 		if (ok)
 			LOGMESSAGE("Info when linking program '{}':\n{}", path.string8(), infolog);
 		else
-			LOGERROR("Failed to link program '%s':\n%s", path.string8(), infolog);
+			LOGERROR("Failed to link program '{}':\n{}", path.string8(), infolog);
 
 		delete[] infolog;
 	}
@@ -574,7 +574,7 @@ bool CShaderProgram::Link(const VfsPath& path)
 
 		if (bindingSlot.elementType == 0)
 		{
-			LOGERROR("CShaderProgram::Link: unsupported uniform type: 0x%04x", static_cast<int>(type));
+			LOGERROR("CShaderProgram::Link: unsupported uniform type: 0x{:04x}", type);
 		}
 
 #if !CONFIG2_GLES
@@ -724,7 +724,8 @@ GLuint CShaderProgram::GetStorageBuffer(const int32_t bindingSlot)
 	if (bindingSlot < 0 || bindingSlot >= static_cast<int32_t>(m_BindingSlots.size()))
 		return 0;
 	if (!m_BindingSlots[bindingSlot].isStorageBuffer)
-		LOGERROR("CShaderProgramGLSL::GetStorageBuffer(): Invalid slot (expected storage buffer): '%s'", m_BindingSlots[bindingSlot].name.c_str());
+		LOGERROR("CShaderProgramGLSL::GetStorageBuffer(): Invalid slot (expected storage buffer): "
+			"'{}'", m_BindingSlots[bindingSlot].name.string());
 	return m_BindingSlots[bindingSlot].location;
 }
 
@@ -735,7 +736,8 @@ void CShaderProgram::SetUniform(const int32_t bindingSlot, const float value)
 	if (m_BindingSlots[bindingSlot].type != GL_FLOAT ||
 		m_BindingSlots[bindingSlot].size != 1)
 	{
-		LOGERROR("CShaderProgramGLSL::SetUniform(): Invalid uniform type (expected float) '%s'", m_BindingSlots[bindingSlot].name.c_str());
+		LOGERROR("CShaderProgramGLSL::SetUniform(): Invalid uniform type (expected float) '{}'",
+			m_BindingSlots[bindingSlot].name.string());
 		return;
 	}
 	glUniform1f(m_BindingSlots[bindingSlot].location, value);
@@ -750,7 +752,8 @@ void CShaderProgram::SetUniform(
 	if (m_BindingSlots[bindingSlot].type != GL_FLOAT_VEC2 ||
 		m_BindingSlots[bindingSlot].size != 1)
 	{
-		LOGERROR("CShaderProgramGLSL::SetUniform(): Invalid uniform type (expected vec2) '%s'", m_BindingSlots[bindingSlot].name.c_str());
+		LOGERROR("CShaderProgramGLSL::SetUniform(): Invalid uniform type (expected vec2) '{}'",
+			m_BindingSlots[bindingSlot].name.string());
 		return;
 	}
 	glUniform2f(m_BindingSlots[bindingSlot].location, valueX, valueY);
@@ -765,7 +768,8 @@ void CShaderProgram::SetUniform(
 	if (m_BindingSlots[bindingSlot].type != GL_FLOAT_VEC3 ||
 		m_BindingSlots[bindingSlot].size != 1)
 	{
-		LOGERROR("CShaderProgramGLSL::SetUniform(): Invalid uniform type (expected vec3) '%s'", m_BindingSlots[bindingSlot].name.c_str());
+		LOGERROR("CShaderProgramGLSL::SetUniform(): Invalid uniform type (expected vec3) '{}'",
+			m_BindingSlots[bindingSlot].name.string());
 		return;
 	}
 	glUniform3f(m_BindingSlots[bindingSlot].location, valueX, valueY, valueZ);
@@ -781,7 +785,8 @@ void CShaderProgram::SetUniform(
 	if (m_BindingSlots[bindingSlot].type != GL_FLOAT_VEC4 ||
 		m_BindingSlots[bindingSlot].size != 1)
 	{
-		LOGERROR("CShaderProgram::SetUniform(): Invalid uniform type (expected vec4) '%s'", m_BindingSlots[bindingSlot].name.c_str());
+		LOGERROR("CShaderProgram::SetUniform(): Invalid uniform type (expected vec4) '{}'",
+			m_BindingSlots[bindingSlot].name.string());
 		return;
 	}
 	glUniform4f(m_BindingSlots[bindingSlot].location, valueX, valueY, valueZ, valueW);
@@ -794,14 +799,16 @@ void CShaderProgram::SetUniform(
 		return;
 	if (m_BindingSlots[bindingSlot].elementType != GL_FLOAT)
 	{
-		LOGERROR("CShaderProgram::SetUniform(): Invalid uniform element type (expected float) '%s'", m_BindingSlots[bindingSlot].name.c_str());
+		LOGERROR("CShaderProgram::SetUniform(): Invalid uniform element type (expected float) '{}'",
+			m_BindingSlots[bindingSlot].name.string());
 		return;
 	}
 	if (m_BindingSlots[bindingSlot].size == 1 && m_BindingSlots[bindingSlot].elementCount > static_cast<GLint>(values.size()))
 	{
 		LOGERROR(
-			"CShaderProgram::SetUniform(): Invalid uniform element count (expected: %zu passed: %zu) '%s'",
-			m_BindingSlots[bindingSlot].elementCount, values.size(), m_BindingSlots[bindingSlot].name.c_str());
+			"CShaderProgram::SetUniform(): Invalid uniform element count (expected: {} passed: {}) "
+				"'{}'", m_BindingSlots[bindingSlot].elementCount, values.size(),
+				m_BindingSlots[bindingSlot].name.string());
 		return;
 	}
 	const GLint location = m_BindingSlots[bindingSlot].location;
@@ -834,7 +841,8 @@ void CShaderProgram::SetUniform(
 		glUniformMatrix4fv(location, size, GL_FALSE, values.data());
 	}
 	else
-		LOGERROR("CShaderProgram::SetUniform(): Invalid uniform type (expected float, vec2, vec3, vec4, mat4) '%s'", m_BindingSlots[bindingSlot].name.c_str());
+		LOGERROR("CShaderProgram::SetUniform(): Invalid uniform type (expected float, vec2, vec3, "
+			"vec4, mat4) '{}'", m_BindingSlots[bindingSlot].name.string());
 }
 
 void CShaderProgram::VertexAttribPointer(
@@ -957,7 +965,10 @@ std::unique_ptr<CShaderProgram> CShaderProgram::Create(CDevice* device, const CS
 					const CStr streamName = attributes.GetNamedItem(at_name);
 					const CStr attributeName = attributes.GetNamedItem(at_attribute);
 					if (attributeName.empty())
-						LOGERROR("Empty attribute name in vertex shader description '%s'", vertexFile.string8().c_str());
+					{
+						LOGERROR("Empty attribute name in vertex shader description '{}'",
+							vertexFile.string8());
+					}
 
 					VertexAttributeStream stream =
 						VertexAttributeStream::UV7;
@@ -984,7 +995,10 @@ std::unique_ptr<CShaderProgram> CShaderProgram::Create(CDevice* device, const CS
 					else if (streamName == "uv7")
 						stream = VertexAttributeStream::UV7;
 					else
-						LOGERROR("Unknown stream '%s' in vertex shader description '%s'", streamName.c_str(), vertexFile.string8().c_str());
+					{
+						LOGERROR("Unknown stream '{}' in vertex shader description '{}'",
+							streamName, vertexFile.string8());
+					}
 
 					const int attributeLocation = GetAttributeLocationFromStream(device, stream);
 					vertexAttribs[CStrIntern(attributeName)] = attributeLocation;

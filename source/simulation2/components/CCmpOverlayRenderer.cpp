@@ -145,7 +145,7 @@ public:
 	{
 		CColor colorObj(1.0f, 1.0f, 1.0f, 1.0f);
 		if (!colorObj.ParseString(color, 1))
-			LOGERROR("OverlayRenderer: Error parsing '%s'", color);
+			LOGERROR("OverlayRenderer: Error parsing '{}'", color);
 
 		CTextureProperties textureProps(textureName);
 

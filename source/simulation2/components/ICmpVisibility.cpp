@@ -1,4 +1,4 @@
-/* Copyright (C) 2025 Wildfire Games.
+/* Copyright (C) 2026 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -51,7 +51,8 @@ public:
 		case static_cast<int>(LosVisibility::VISIBLE):
 			return LosVisibility::VISIBLE;
 		default:
-			LOGERROR("Received the invalid visibility value %d from the Visibility scripted component!", visibility);
+			LOGERROR("Received the invalid visibility value {} from the Visibility scripted "
+				"component!", visibility);
 			return LosVisibility::HIDDEN;
 		}
 	}

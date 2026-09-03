@@ -39,7 +39,7 @@ const char* GetPresenceString(const gloox::Presence::PresenceType presenceType)
 	CASE(Error, "error");
 	CASE(Invalid, "invalid");
 	default:
-		LOGERROR("Unknown presence type '%d'", static_cast<int>(presenceType));
+		LOGERROR("Unknown presence type '{}'", static_cast<int>(presenceType));
 		return "";
 #undef CASE
 	}
@@ -56,7 +56,7 @@ const char* GetRoleString(const gloox::MUCRoomRole role)
 	CASE(RoleModerator, "moderator");
 	CASE(RoleInvalid, "invalid");
 	default:
-		LOGERROR("Unknown role type '%d'", static_cast<int>(role));
+		LOGERROR("Unknown role type '{}'", static_cast<int>(role));
 		return "";
 #undef CASE
 	}

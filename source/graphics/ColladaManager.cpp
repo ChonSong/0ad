@@ -54,7 +54,7 @@ namespace
 		else if (severity == LOG_WARNING)
 			LOGWARNING("{}: {}", path->string8(), text);
 		else
-			LOGERROR("%s: %s", path->string8(), text);
+			LOGERROR("{}: {}", path->string8(), text);
 	}
 
 	void ColladaOutput(void* cb_data, const char* data, unsigned int length)
@@ -114,14 +114,14 @@ public:
 		CVFSFile skeletonFile;
 		if (skeletonFile.Load(m_VFS, path) != PSRETURN_OK)
 		{
-			LOGERROR("Failed to read skeleton definitions from '%s'", path.string8());
+			LOGERROR("Failed to read skeleton definitions from '{}'", path.string8());
 			return ERR::FAIL;
 		}
 
 		int ok = set_skeleton_definitions((const char*)skeletonFile.GetBuffer(), (int)skeletonFile.GetBufferSize());
 		if (ok < 0)
 		{
-			LOGERROR("Failed to load skeleton definitions from '%s'", path.string8());
+			LOGERROR("Failed to load skeleton definitions from '{}'", path.string8());
 			return ERR::FAIL;
 		}
 
@@ -236,14 +236,14 @@ public:
 			CVFSFile skeletonFile;
 			if (skeletonFile.Load(m_VFS, path) != PSRETURN_OK)
 			{
-				LOGERROR("Failed to read skeleton definitions from '%s'", path.string8());
+				LOGERROR("Failed to read skeleton definitions from '{}'", path.string8());
 				continue;
 			}
 
 			int ok = set_skeleton_definitions((const char*)skeletonFile.GetBuffer(), (int)skeletonFile.GetBufferSize());
 			if (ok < 0)
 			{
-				LOGERROR("Failed to load skeleton definitions from '%s'", path.string8());
+				LOGERROR("Failed to load skeleton definitions from '{}'", path.string8());
 				continue;
 			}
 
@@ -295,7 +295,7 @@ public:
 				//	should never happen, unless there really is a problem
 				if (m_VFS->GetFileInfo(path, &fileInfo) != INFO::OK)
 				{
-					LOGERROR("Failed to stat '%s' for DAE caching", path.string8());
+					LOGERROR("Failed to stat '{}' for DAE caching", path.string8());
 				}
 				else
 				{

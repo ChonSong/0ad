@@ -117,7 +117,8 @@ void SkyManager::LoadAndUploadSkyTexturesIfNeeded(
 			path = VfsPath("art/textures/skies") / m_SkySet / (Path::String(images[i]) + L".dds.cached.dds");
 			if (g_VFS->LoadFile(path, file, fileSize) != INFO::OK)
 			{
-				LOGERROR("Error creating sky cubemap '%s', can't load file: '%s'.", m_SkySet.ToUTF8().c_str(), path.string8().c_str());
+				LOGERROR("Error creating sky cubemap '{}', can't load file: '{}'.",
+					m_SkySet.ToUTF8(), path.string8());
 				return;
 			}
 		}
@@ -125,19 +126,22 @@ void SkyManager::LoadAndUploadSkyTexturesIfNeeded(
 		if (textures[i].decode(file, fileSize) != INFO::OK ||
 			textures[i].transform_to((textures[i].m_Flags | TEX_BOTTOM_UP | TEX_ALPHA) & ~(TEX_DXT | TEX_MIPMAPS)) != INFO::OK)
 		{
-			LOGERROR("Error creating sky cubemap '%s', can't decode file: '%s'.", m_SkySet.ToUTF8().c_str(), path.string8().c_str());
+			LOGERROR("Error creating sky cubemap '{}', can't decode file: '{}'.", m_SkySet.ToUTF8(),
+				path.string8());
 			return;
 		}
 
 		if (!std::has_single_bit(textures[i].m_Width) || !std::has_single_bit(textures[i].m_Height))
 		{
-			LOGERROR("Error creating sky cubemap '%s', cube textures should have power of 2 sizes.", m_SkySet.ToUTF8().c_str());
+			LOGERROR("Error creating sky cubemap '{}', cube textures should have power of 2 sizes.",
+				m_SkySet.ToUTF8());
 			return;
 		}
 
 		if (textures[i].m_Width != textures[0].m_Width || textures[i].m_Height != textures[0].m_Height)
 		{
-			LOGERROR("Error creating sky cubemap '%s', cube textures have different sizes.", m_SkySet.ToUTF8().c_str());
+			LOGERROR("Error creating sky cubemap '{}', cube textures have different sizes.",
+				m_SkySet.ToUTF8());
 			return;
 		}
 	}
@@ -218,7 +222,7 @@ std::vector<CStrW> SkyManager::GetSkySets() const
 	DirectoryNames subdirectories;
 	if (g_VFS->GetDirectoryEntries(path, 0, &subdirectories) != INFO::OK)
 	{
-		LOGERROR("Error opening directory '%s'", path.string8());
+		LOGERROR("Error opening directory '{}'", path.string8());
 		return std::vector<CStrW>(1, GetSkySet()); // just return what we currently have
 	}
 

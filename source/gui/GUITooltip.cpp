@@ -110,7 +110,7 @@ void GUITooltip::ShowTooltip(IGUIObject* obj, const CVector2D& pos, const CStr& 
 	CTooltip* tooltipobj = static_cast<CTooltip*>(pGUI.FindObjectByName("__tooltip_" + style));
 	if (!tooltipobj || !tooltipobj->SettingExists("use_object"))
 	{
-		LOGERROR("Cannot find tooltip named '%s'", style.c_str());
+		LOGERROR("Cannot find tooltip named '{}'", style);
 		return;
 	}
 
@@ -127,7 +127,8 @@ void GUITooltip::ShowTooltip(IGUIObject* obj, const CVector2D& pos, const CStr& 
 		usedobj = pGUI.FindObjectByName(usedObjectName);
 		if (!usedobj)
 		{
-			LOGERROR("Cannot find object named '%s' used by tooltip '%s'", usedObjectName.c_str(), style.c_str());
+			LOGERROR("Cannot find object named '{}' used by tooltip '{}'", usedObjectName,
+				style);
 			return;
 		}
 	}
@@ -139,7 +140,8 @@ void GUITooltip::ShowTooltip(IGUIObject* obj, const CVector2D& pos, const CStr& 
 	}
 	else
 	{
-		LOGERROR("Object '%s' used by tooltip '%s' must have a caption setting!", usedobj->GetPresentableName().c_str(), style.c_str());
+		LOGERROR("Object '{}' used by tooltip '{}' must have a caption setting!",
+			usedobj->GetPresentableName(), style);
 		return;
 	}
 
@@ -155,7 +157,7 @@ void GUITooltip::HideTooltip(const CStr& style, CGUI& pGUI)
 	CTooltip* tooltipobj = static_cast<CTooltip*>(pGUI.FindObjectByName("__tooltip_" + style));
 	if (!tooltipobj || !tooltipobj->SettingExists("use_object") || !tooltipobj->SettingExists("hide_object"))
 	{
-		LOGERROR("Cannot find tooltip named '%s' or it is not a tooltip", style.c_str());
+		LOGERROR("Cannot find tooltip named '{}' or it is not a tooltip", style);
 		return;
 	}
 	const CStr& usedObjectName = tooltipobj->GetUsedObject();
@@ -168,7 +170,8 @@ void GUITooltip::HideTooltip(const CStr& style, CGUI& pGUI)
 		}
 		else
 		{
-			LOGERROR("Object named '%s' used by tooltip '%s' does not exist or does not have a caption setting!", usedObjectName.c_str(), style.c_str());
+			LOGERROR("Object named '{}' used by tooltip '{}' does not exist or does not have a "
+				"caption setting!", usedObjectName, style);
 			return;
 		}
 
@@ -186,7 +189,7 @@ static std::int32_t GetTooltipDelay(const CStr& style, CGUI& pGUI)
 
 	if (!tooltipobj)
 	{
-		LOGERROR("Cannot find tooltip object named '%s'", style.c_str());
+		LOGERROR("Cannot find tooltip object named '{}'", style);
 		return 500;
 	}
 

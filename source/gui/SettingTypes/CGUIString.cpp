@@ -200,7 +200,10 @@ void CGUIString::GenerateTextCall(const CGUI& pGUI, SFeedback& Feedback, CStrInt
 					TextCall.m_UseCustomColor = true;
 
 					if (!CGUI::ParseString<CGUIColor>(&pGUI, tag.m_TagValue, TextCall.m_Color) && pObject)
-						LOGERROR("Error parsing the value of a [color]-tag in GUI text when reading object \"%s\".", pObject->GetPresentableName().c_str());
+					{
+						LOGERROR("Error parsing the value of a [color]-tag in GUI text when "
+							"reading object \"{}\".", pObject->GetPresentableName());
+					}
 					break;
 				case TextChunk::Tag::TAG_FONT:
 					// TODO Gee: (2004-08-15) Check if Font exists?
@@ -321,7 +324,7 @@ void CGUIString::SetValue(const CStrW& str)
 			closing = false;
 			if (++p == l)
 			{
-				LOGERROR("Partial tag at end of string '%s'", utf8_from_wstring(str));
+				LOGERROR("Partial tag at end of string '{}'", utf8_from_wstring(str));
 				break;
 			}
 			if (str[p] == L'/')
@@ -329,12 +332,14 @@ void CGUIString::SetValue(const CStrW& str)
 				closing = true;
 				if (tags.empty())
 				{
-					LOGERROR("Encountered closing tag without having any open tags. At %d in '%s'", p, utf8_from_wstring(str));
+					LOGERROR("Encountered closing tag without having any open tags. At {} in "
+						"'{}'", p, utf8_from_wstring(str));
 					break;
 				}
 				if (++p == l)
 				{
-					LOGERROR("Partial closing tag at end of string '%s'", utf8_from_wstring(str));
+					LOGERROR("Partial closing tag at end of string '{}'",
+						utf8_from_wstring(str));
 					break;
 				}
 			}
@@ -347,7 +352,10 @@ void CGUIString::SetValue(const CStrW& str)
 				{
 				case L' ':
 					if (closing) // We still parse them to make error handling cleaner
-						LOGERROR("Closing tags do not support parameters (at pos %d '%s')", p, utf8_from_wstring(str));
+					{
+						LOGERROR("Closing tags do not support parameters (at pos {} '{}')", p,
+							utf8_from_wstring(str));
+					}
 
 					// parse something="something else"
 					for (++p; p < l && str[p] != L'='; ++p)
@@ -355,23 +363,29 @@ void CGUIString::SetValue(const CStrW& str)
 
 					if (p == l)
 					{
-						LOGERROR("Parameter without value at pos %d '%s'", p, utf8_from_wstring(str));
+						LOGERROR("Parameter without value at pos {} '{}'", p,
+							utf8_from_wstring(str));
 						break;
 					}
 					[[fallthrough]];
 				case L'=':
 					// parse a quoted parameter
 					if (closing) // We still parse them to make error handling cleaner
-						LOGERROR("Closing tags do not support parameters (at pos %d '%s')", p, utf8_from_wstring(str));
+					{
+						LOGERROR("Closing tags do not support parameters (at pos {} '{}')", p,
+							utf8_from_wstring(str));
+					}
 
 					if (++p == l)
 					{
-						LOGERROR("Expected parameter, got end of string '%s'", utf8_from_wstring(str));
+						LOGERROR("Expected parameter, got end of string '{}'",
+							utf8_from_wstring(str));
 						break;
 					}
 					if (str[p] != L'"')
 					{
-						LOGERROR("Unquoted parameters are not supported (at pos %d '%s')", p, utf8_from_wstring(str));
+						LOGERROR("Unquoted parameters are not supported (at pos {} '{}')", p,
+							utf8_from_wstring(str));
 						break;
 					}
 					for (++p; p < l && str[p] != L'"'; ++p)
@@ -381,7 +395,8 @@ void CGUIString::SetValue(const CStrW& str)
 						case L'\\':
 							if (++p == l)
 							{
-								LOGERROR("Escape character at end of string '%s'", utf8_from_wstring(str));
+								LOGERROR("Escape character at end of string '{}'",
+									utf8_from_wstring(str));
 								break;
 							}
 							// NOTE: We do not support \n in tag parameters
@@ -407,7 +422,8 @@ void CGUIString::SetValue(const CStrW& str)
 
 			if (!tag_.SetTagType(tag))
 			{
-				LOGERROR("Invalid tag '%s' at %d in '%s'", utf8_from_wstring(tag), p, utf8_from_wstring(str));
+				LOGERROR("Invalid tag '{}' at {} in '{}'", utf8_from_wstring(tag), p,
+					utf8_from_wstring(str));
 				break;
 			}
 			if (!closing)
@@ -430,7 +446,9 @@ void CGUIString::SetValue(const CStrW& str)
 			{
 				if (tag != tags.back())
 				{
-					LOGERROR("Closing tag '%s' does not match last opened tag '%s' at %d in '%s'", utf8_from_wstring(tag), utf8_from_wstring(tags.back()), p, utf8_from_wstring(str));
+					LOGERROR("Closing tag '{}' does not match last opened tag '{}' at {} in "
+						"'{}'", utf8_from_wstring(tag), utf8_from_wstring(tags.back()), p,
+						utf8_from_wstring(str));
 					break;
 				}
 
@@ -441,7 +459,7 @@ void CGUIString::SetValue(const CStrW& str)
 		case L'\\':
 			if (++p == l)
 			{
-				LOGERROR("Escape character at end of string '%s'", utf8_from_wstring(str));
+				LOGERROR("Escape character at end of string '{}'", utf8_from_wstring(str));
 				break;
 			}
 			if (str[p] == L'n')

@@ -415,7 +415,7 @@ QUERYHANDLER(ExpandBiomes)
 				});
 		}
 		else
-			LOGERROR("Error reading biome files in %s", toExpand);
+			LOGERROR("Error reading biome files in {}", toExpand);
 
 	}
 
@@ -506,7 +506,7 @@ BEGIN_COMMAND(ResizeMap)
 			entity_id_t ent = sim.AddEntity(deleted.templateName.FromUTF8(), deleted.entityId);
 			if (ent == INVALID_ENTITY)
 			{
-				LOGERROR("Failed to load entity template '%s'", deleted.templateName.c_str());
+				LOGERROR("Failed to load entity template '{}'", deleted.templateName);
 			}
 			else
 			{

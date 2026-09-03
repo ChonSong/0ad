@@ -1,4 +1,4 @@
-/* Copyright (C) 2025 Wildfire Games.
+/* Copyright (C) 2026 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -351,11 +351,10 @@ bool CModel::SetAnimation(CSkeletonAnim* anim, bool once)
 
 		if (anim->m_AnimDef->GetNumKeys() != m_pModelDef->GetNumBones())
 		{
-			LOGERROR("Mismatch between model's skeleton and animation's skeleton (%s.dae has %lu model bones while the animation %s has %lu animation keys.)",
-				m_pModelDef->GetName().string8().c_str() ,
-				static_cast<unsigned long>(m_pModelDef->GetNumBones()),
-				anim->m_Name.c_str(),
-				static_cast<unsigned long>(anim->m_AnimDef->GetNumKeys()));
+			LOGERROR("Mismatch between model's skeleton and animation's skeleton ({}.dae has {} "
+				"model bones while the animation {} has {} animation keys.)",
+				m_pModelDef->GetName().string8(), m_pModelDef->GetNumBones(), anim->m_Name,
+				anim->m_AnimDef->GetNumKeys());
 			return false;
 		}
 

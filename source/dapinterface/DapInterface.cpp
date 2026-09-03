@@ -110,7 +110,7 @@ namespace DAP
 				serverAddr.sin_addr.s_addr = inet_addr(server_address.c_str());
 				if (!inet_pton(AF_INET, server_address.c_str(), &serverAddr.sin_addr))
 				{
-					LOGERROR("Invalid server address: %s", server_address.c_str());
+					LOGERROR("Invalid server address: {}", server_address);
 					CloseSocket();
 					return false;
 				}

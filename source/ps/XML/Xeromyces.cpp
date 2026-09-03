@@ -50,9 +50,17 @@ static void errorHandler(void* /*userData*/,
 	if (message.length() > 0 && message[message.length()-1] == '\n')
 		message.erase(message.length()-1);
 
-	LOGERROR("CXeromyces: Parse %s: %s:%d: %s",
-		error->level == XML_ERR_WARNING ? "warning" : "error",
-		error->file, error->line, message);
+	if (error->file)
+	{
+		LOGERROR("CXeromyces: Parse {}: {}:{}: {}",
+			error->level == XML_ERR_WARNING ? "warning" : "error", error->file, error->line,
+			message);
+	}
+	else
+	{
+		LOGERROR("CXeromyces: Parse {}: {} {}",
+			error->level == XML_ERR_WARNING ? "warning" : "error", error->line, message);
+	}
 	// TODO: The (non-fatal) warnings and errors don't get stored in the XMB,
 	// so the caching is less transparent than it should be
 }
@@ -79,7 +87,7 @@ bool CXeromycesEngine::AddValidator(const PIVFS& vfs, const std::string& name, c
 	RelaxNGValidator validator;
 	if (!validator.LoadGrammarFile(vfs, grammarPath))
 	{
-		LOGERROR("CXeromyces: failed adding validator for '%s'", grammarPath.string8());
+		LOGERROR("CXeromyces: failed adding validator for '{}'", grammarPath.string8());
 		return false;
 	}
 	{
@@ -140,7 +148,8 @@ PSRETURN CXeromyces::Load(const PIVFS& vfs, const VfsPath& filename, const std::
 
 		// No source file or archive cache was found, so we can't load the
 		// XML file at all
-		LOGERROR("CCacheLoader failed to find archived or source file for: \"%s\"", filename.string8());
+		LOGERROR("CCacheLoader failed to find archived or source file for: \"{}\"",
+			filename.string8());
 		return PSRETURN_Xeromyces_XMLOpenFailed;
 	}
 
@@ -162,7 +171,7 @@ PSRETURN CXeromyces::ConvertFile(const PIVFS& vfs, const VfsPath& filename, cons
 	CVFSFile input;
 	if (input.Load(vfs, filename))
 	{
-		LOGERROR("CXeromyces: Failed to open XML file %s", filename.string8());
+		LOGERROR("CXeromyces: Failed to open XML file {}", filename.string8());
 		return PSRETURN_Xeromyces_XMLOpenFailed;
 	}
 
@@ -170,7 +179,7 @@ PSRETURN CXeromyces::ConvertFile(const PIVFS& vfs, const VfsPath& filename, cons
 		XML_PARSE_NONET|XML_PARSE_NOCDATA);
 	if (!doc)
 	{
-		LOGERROR("CXeromyces: Failed to parse XML file %s", filename.string8());
+		LOGERROR("CXeromyces: Failed to parse XML file {}", filename.string8());
 		return PSRETURN_Xeromyces_XMLParseError;
 	}
 
@@ -179,7 +188,7 @@ PSRETURN CXeromyces::ConvertFile(const PIVFS& vfs, const VfsPath& filename, cons
 		RelaxNGValidator& validator = g_Xeromyces.GetValidator(validatorName);
 		if (validator.CanValidate() && !validator.ValidateEncoded(doc))
 		{
-			LOGERROR("CXeromyces: failed to validate XML file %s", filename.string8());
+			LOGERROR("CXeromyces: failed to validate XML file {}", filename.string8());
 			return PSRETURN_Xeromyces_XMLValidationFailed;
 		}
 	}

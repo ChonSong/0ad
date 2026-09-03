@@ -267,7 +267,7 @@ bool JSI_GUIProxy<T>::get(JSContext* cx, JS::HandleObject proxy, JS::HandleValue
 		return true;
 	}
 
-	LOGERROR("Property '%s' does not exist!", propName.c_str());
+	LOGERROR("Property '{}' does not exist!", propName);
 	return false;
 }
 
@@ -324,7 +324,7 @@ bool JSI_GUIProxy<T>::set(JSContext* cx, JS::HandleObject proxy, JS::HandleId id
 	if (e->SettingExists(propName))
 		return e->m_Settings[propName]->FromJSVal(rq, vp, true) ? result.succeed() : result.fail(JSMSG_USER_DEFINED_ERROR);
 
-	LOGERROR("Property '%s' does not exist!", propName.c_str());
+	LOGERROR("Property '{}' does not exist!", propName);
 	return result.fail(JSMSG_BAD_PROP_ID);
 }
 

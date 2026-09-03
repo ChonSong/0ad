@@ -137,7 +137,7 @@ private:
 			m_Worker.LoadMetadata(path, &metadata);
 			if (metadata.isUndefined())
 			{
-				LOGERROR("Failed to create AI player: can't find %s", path.string8());
+				LOGERROR("Failed to create AI player: can't find {}", path.string8());
 				return false;
 			}
 
@@ -147,7 +147,7 @@ private:
 			JS::RootedValue ctor(rq.cx);
 			if (!Script::HasProperty(rq, metadata, "filename"))
 			{
-				LOGERROR("Failed to create AI player: %s: missing 'filename'", path.string8());
+				LOGERROR("Failed to create AI player: {}: missing 'filename'", path.string8());
 				return false;
 			}
 
@@ -162,7 +162,7 @@ private:
 
 			if (!Script::GetProperty(rq, metadata, "constructor", constructor))
 			{
-				LOGERROR("Failed to create AI player: %s: missing 'constructor'", path.string8());
+				LOGERROR("Failed to create AI player: {}: missing 'constructor'", path.string8());
 				return false;
 			}
 
@@ -170,7 +170,8 @@ private:
 			if (!Script::GetProperty(rq, objectWithConstructor, constructor.c_str(), &ctor)
 			    || ctor.isNull())
 			{
-				LOGERROR("Failed to create AI player: %s: can't find constructor '%s'", path.string8(), constructor);
+				LOGERROR("Failed to create AI player: {}: can't find constructor '{}'",
+					path.string8(), constructor);
 				return false;
 			}
 
@@ -197,7 +198,8 @@ private:
 
 			if (m_Obj.get().isNull())
 			{
-				LOGERROR("Failed to create AI player: %s: error calling constructor '%s'", path.string8(), constructor);
+				LOGERROR("Failed to create AI player: {}: error calling constructor '{}'",
+					path.string8(), constructor);
 				return false;
 			}
 			return true;
@@ -432,7 +434,8 @@ public:
 		if (!Script::GetProperty(rq, AIModule, "SharedScript", &ctor)
 		    || ctor.isUndefined())
 		{
-			LOGERROR("Failed to create shared AI component: %s: can't find constructor '%s'", path.string8(), "SharedScript");
+			LOGERROR("Failed to create shared AI component: {}: can't find constructor '{}'",
+				path.string8(), "SharedScript");
 			return false;
 		}
 
@@ -462,7 +465,8 @@ public:
 
 		if (m_SharedAIObj.get().isNull())
 		{
-			LOGERROR("Failed to create shared AI component: %s: error calling constructor '%s'", path.string8(), "SharedScript");
+			LOGERROR("Failed to create shared AI component: {}: error calling constructor '{}'",
+				path.string8(), "SharedScript");
 			return false;
 		}
 

@@ -458,7 +458,7 @@ bool CNetServerWorker::RunStep()
 	int status = enet_host_service(m_Host.get(), &event, HOST_SERVICE_TIMEOUT);
 	if (status < 0)
 	{
-		LOGERROR("CNetServerWorker: enet_host_service failed (%d)", status);
+		LOGERROR("CNetServerWorker: enet_host_service failed ({})", status);
 		// TODO: notify game that the server has shut down
 		return false;
 	}
@@ -635,7 +635,8 @@ void CNetServerWorker::HandleMessageReceive(CNetMessage* message, CNetServerSess
 
 	// Update FSM
 	if (!session->Update(message->GetType(), message))
-		LOGERROR("Net server: Error running FSM update (type=%d state=%d)", (int)message->GetType(), (int)session->GetCurrState());
+		LOGERROR("Net server: Error running FSM update (type={} state={})",
+			static_cast<int>(message->GetType()), static_cast<int>(session->GetCurrState()));
 }
 
 void CNetServerWorker::SetupSession(CNetServerSession* session)
@@ -989,8 +990,7 @@ bool CNetServerWorker::OnAuthenticate(CNetServerSession* session, CFsmEvent<CNet
 	// "[...] comparisons will be made in case-normalized canonical form."
 	if (server.m_LobbyAuth && usernameWithoutRating.LowerCase() != session->GetUserName().LowerCase())
 	{
-		LOGERROR("Net server: lobby auth: %s tried joining as %s",
-			session->GetUserName().ToUTF8(),
+		LOGERROR("Net server: lobby auth: {} tried joining as {}", session->GetUserName().ToUTF8(),
 			usernameWithoutRating.ToUTF8());
 		session->Disconnect(NDR_LOBBY_AUTH_FAILED);
 		return true;
@@ -1003,8 +1003,8 @@ bool CNetServerWorker::OnAuthenticate(CNetServerSession* session, CFsmEvent<CNet
 		// Noisy logerror because players are not supposed to be able to get the IP,
 		// so this might be someone targeting the host for some reason
 		// (or TODO a dedicated server and we do want to log anyways)
-		LOGERROR("Net server: user %s tried joining with the wrong password",
-				 session->GetUserName().ToUTF8());
+		LOGERROR("Net server: user {} tried joining with the wrong password",
+			session->GetUserName().ToUTF8());
 		session->Disconnect(NDR_SERVER_REFUSED);
 		return true;
 	}
@@ -1578,7 +1578,8 @@ void CNetServerWorker::PreStartGame(const CStr& initAttribs)
 	for (std::pair<const CStr, PlayerAssignment>& player : m_PlayerAssignments)
 		if (player.second.m_Enabled && player.second.m_PlayerID != -1 && player.second.m_Status == 0)
 		{
-			LOGERROR("Tried to start the game without player \"%s\" being ready!", utf8_from_wstring(player.second.m_Name).c_str());
+			LOGERROR("Tried to start the game without player \"{}\" being ready!",
+				utf8_from_wstring(player.second.m_Name).c_str());
 			return;
 		}
 

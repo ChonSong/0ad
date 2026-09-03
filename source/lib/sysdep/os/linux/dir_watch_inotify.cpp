@@ -1,4 +1,4 @@
-/* Copyright (C) 2025 Wildfire Games.
+/* Copyright (C) 2026 Wildfire Games.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -202,7 +202,8 @@ Status dir_watch_Add(const OsPath& path, PDirWatch& dirWatch)
 			// Check for error ?
 			int err = errno;
 			initialized = -1;
-			LOGERROR("Error initializing inotify file descriptor; hotloading will be disabled, errno=%d", err);
+			LOGERROR("Error initializing inotify file descriptor; hotloading will be disabled, "
+				"errno={}", err);
 			errno = err;
 			return StatusFromErrno();	// NOWARN
 		}
@@ -212,7 +213,8 @@ Status dir_watch_Add(const OsPath& path, PDirWatch& dirWatch)
 		if (ret != 0)
 		{
 			initialized = -1;
-			LOGERROR("Error creating inotify event loop thread; hotloading will be disabled, err=%d", ret);
+			LOGERROR("Error creating inotify event loop thread; hotloading will be disabled, err={}",
+				ret);
 			errno = ret;
 			return StatusFromErrno();	// NOWARN
 		}

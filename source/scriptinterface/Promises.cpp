@@ -51,7 +51,7 @@ void UnhandledRejectedPromise(JSContext* cx, bool, JS::HandleObject promise,
 	Script::Function::Call(rq, reason, "toString", asString);
 	std::string stack;
 	Script::GetProperty(rq, reason, "stack", stack);
-	LOGERROR("An unhandled promise got rejected:\n%s\n%s", asString, stack);
+	LOGERROR("An unhandled promise got rejected:\n{}\n{}", asString, stack);
 }
 
 void JobQueue::runJobs(JSContext*)

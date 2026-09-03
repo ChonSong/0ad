@@ -64,7 +64,7 @@ void CComponentTypeScript::HandleMessage(const CMessage& msg, bool global)
 	JS::RootedValue msgVal(rq.cx, msg.ToJSValCached(rq));
 
 	if (!Script::Function::CallVoid(rq, GetInstance(), name, msgVal))
-		LOGERROR("Script message handler %s failed", name);
+		LOGERROR("Script message handler {} failed", name);
 }
 
 void CComponentTypeScript::Serialize(ISerializer& serialize)
@@ -81,7 +81,8 @@ void CComponentTypeScript::Serialize(ISerializer& serialize)
 		Script::GetProperty(rq, GetInstance(), "entity", ent);
 		std::string name = "(error)";
 		Script::GetObjectClassName(rq, GetInstance(), name);
-		LOGERROR("Script component %s of entity %i failed to serialize: %s\nSerializing:\n%s", name, ent, err.what(), Script::ToString(rq, GetMutInstance()));
+		LOGERROR("Script component {} of entity {} failed to serialize: {}\nSerializing:\n{}",
+			name, ent, err.what(), Script::ToString(rq, GetMutInstance()));
 		// Rethrow now that we added more details
 		throw;
 	}

@@ -198,12 +198,13 @@ bool ReceiveStunResponse(ENetHost& transactionHost, std::vector<std::uint8_t>& b
 
 	if (len <= 0)
 	{
-		LOGERROR("ReceiveStunResponse: recvfrom error (%d): %s", errno, strerror(errno));
+		LOGERROR("ReceiveStunResponse: recvfrom error ({}): {}", errno, strerror(errno));
 		return false;
 	}
 
 	if (memcmp(&sender, &m_StunServer, sizeof(m_StunServer)) != 0)
-		LOGERROR("ReceiveStunResponse: Received stun response from different address: %d.%d.%d.%d:%d %s",
+		LOGERROR("ReceiveStunResponse: Received stun response from different address: {}.{}.{}.{}:{} "
+			"{}",
 			(sender.host >> 24) & 0xff,
 			(sender.host >> 16) & 0xff,
 			(sender.host >>  8) & 0xff,

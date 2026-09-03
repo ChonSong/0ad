@@ -1,4 +1,4 @@
-/* Copyright (C) 2025 Wildfire Games.
+/* Copyright (C) 2026 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -112,7 +112,7 @@ void CUnit::ReloadObject()
 	CObjectEntry* newObject = m_ObjectManager.FindObjectVariation(&m_Actor, selections, m_Seed);
 	if (!newObject)
 	{
-		LOGERROR("Error loading object variation (actor: %s)", m_Actor.GetPathname().string8());
+		LOGERROR("Error loading object variation (actor: {})", m_Actor.GetPathname().string8());
 		// Don't delete the unit, don't override our current (valid) state.
 		return;
 	}

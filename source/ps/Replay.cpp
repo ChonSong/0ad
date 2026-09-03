@@ -227,7 +227,7 @@ void CReplayPlayer::Replay(const int serializationtestturn, const int rejointest
 				JS::RootedValue attribs(rq.cx);
 				if (!Script::ParseJSON(rq, attribsStr, &attribs))
 				{
-					LOGERROR("Error parsing JSON attributes: %s", attribsStr);
+					LOGERROR("Error parsing JSON attributes: {}", attribsStr);
 					// TODO: do something cleverer than crashing.
 					ENSURE(false);
 				}
