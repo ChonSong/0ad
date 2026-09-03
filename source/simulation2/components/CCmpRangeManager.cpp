@@ -1618,12 +1618,18 @@ public:
 	{
 		// Min range must be non-negative.
 		if (minRange < entity_pos_t::Zero())
-			LOGWARNING("CCmpRangeManager: Invalid min range %f in query for entity %u", minRange.ToDouble(), source);
+		{
+			LOGWARNING("CCmpRangeManager: Invalid min range {:f} in query for entity {}",
+				minRange.ToDouble(), source);
+		}
 
 		// Max range must be non-negative, or else ALWAYS_IN_RANGE.
 		// TODO add NEVER_IN_RANGE.
 		if (maxRange < entity_pos_t::Zero() && maxRange != ALWAYS_IN_RANGE)
-			LOGWARNING("CCmpRangeManager: Invalid max range %f in query for entity %u", maxRange.ToDouble(), source);
+		{
+			LOGWARNING("CCmpRangeManager: Invalid max range {:f} in query for entity {}",
+				maxRange.ToDouble(), source);
+		}
 
 		CmpPtr<ICmpOwnership> cmpOwnership(GetSimContext(), source);
 
@@ -1663,7 +1669,7 @@ public:
 			q.ownersMask |= CalcOwnerMask(owners[i]);
 
 		if (q.ownersMask == 0)
-			LOGWARNING("CCmpRangeManager: No owners in query for entity %u", source);
+			LOGWARNING("CCmpRangeManager: No owners in query for entity {}", source);
 
 		q.interface = requiredInterface;
 		q.flagsMask = flagsMask;
@@ -1826,7 +1832,7 @@ public:
 		if (identifier == "injured")
 			return FlagMasks::Injured;
 
-		LOGWARNING("CCmpRangeManager: Invalid flag identifier %s", identifier.c_str());
+		LOGWARNING("CCmpRangeManager: Invalid flag identifier {}", identifier);
 		return FlagMasks::None;
 	}
 
@@ -1841,7 +1847,10 @@ public:
 		std::uint8_t flag = GetEntityFlagMask(identifier);
 
 		if (flag == FlagMasks::None)
-			LOGWARNING("CCmpRangeManager: Invalid flag identifier %s for entity %u", identifier.c_str(), ent);
+		{
+			LOGWARNING("CCmpRangeManager: Invalid flag identifier {} for entity {}", identifier,
+				ent);
+		}
 		else
 			it->second.SetFlag(flag, value);
 	}

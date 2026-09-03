@@ -435,16 +435,16 @@ static void FixLocales()
 		for (size_t i = 0; i < ARRAY_SIZE(LocaleEnvVars); i++)
 		{
 			if (char* envval = getenv(LocaleEnvVars[i]))
-				LOGWARNING("  %s=\"%s\"", LocaleEnvVars[i], envval);
+				LOGWARNING("  {}=\"{}\"", LocaleEnvVars[i], envval);
 			else
-				LOGWARNING("  %s=\"(unset)\"", LocaleEnvVars[i]);
+				LOGWARNING("  {}=\"(unset)\"", LocaleEnvVars[i]);
 		}
 
 		// We should set LC_ALL since it overrides LANG
 		if (setenv("LC_ALL", std::locale::classic().name().c_str(), 1))
 			debug_warn(L"Invalid locale settings, and unable to set LC_ALL env variable.");
 		else
-			LOGWARNING("Setting LC_ALL env variable to: %s", getenv("LC_ALL"));
+			LOGWARNING("Setting LC_ALL env variable to: {}", getenv("LC_ALL"));
 	}
 }
 #else

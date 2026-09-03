@@ -186,8 +186,11 @@ void CheckReplayMods(const std::vector<Mod::ModData>& replayMods)
 	for (const Mod::ModData& data : replayMods)
 		replayData.push_back(&data);
 	if (!Mod::AreModsPlayCompatible(g_Mods.GetEnabledModsData(), replayData))
-		LOGWARNING("Incompatible replay mods detected.\nThe mods of the replay are:\n%s\nThese mods are enabled:\n%s",
-			ModListToString(replayData), ModListToString(g_Mods.GetEnabledModsData()));
+	{
+		LOGWARNING("Incompatible replay mods detected.\nThe mods of the replay are:\n{}\n"
+			"These mods are enabled:\n{}", ModListToString(replayData),
+			ModListToString(g_Mods.GetEnabledModsData()));
+	}
 }
 } // anonymous namespace
 

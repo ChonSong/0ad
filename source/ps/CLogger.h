@@ -38,7 +38,8 @@ extern CLogger* g_Logger;
 	fmt::format(FMT_STRING(fmtstring), ## __VA_ARGS__).c_str(), false)
 #define LOGMESSAGERENDER(fmtstring, ...) g_Logger->WriteMessage( \
 	fmt::format(FMT_STRING(fmtstring), ## __VA_ARGS__).c_str(), true)
-#define LOGWARNING(...)       g_Logger->WriteWarning(fmt::sprintf(__VA_ARGS__).c_str())
+#define LOGWARNING(fmtstring, ...) g_Logger->WriteWarning( \
+	fmt::format(FMT_STRING(fmtstring), ## __VA_ARGS__).c_str())
 #define LOGERROR(...)         g_Logger->WriteError  (fmt::sprintf(__VA_ARGS__).c_str())
 
 /**

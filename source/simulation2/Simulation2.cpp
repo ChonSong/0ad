@@ -361,7 +361,10 @@ void CSimulation2Impl::InitRNGSeedSimulation()
 	Script::Request rq(m_ComponentManager.GetScriptInterface());
 	if (!Script::HasProperty(rq, m_MapSettings, "Seed") ||
 		!Script::GetProperty(rq, m_MapSettings, "Seed", seed))
-		LOGWARNING("CSimulation2Impl::InitRNGSeedSimulation: No seed value specified - using %d", seed);
+	{
+		LOGWARNING("CSimulation2Impl::InitRNGSeedSimulation: No seed value specified - using {}",
+			seed);
+	}
 
 	m_ComponentManager.SetRNGSeed(seed);
 }
@@ -372,7 +375,9 @@ void CSimulation2Impl::InitRNGSeedAI()
 	Script::Request rq(m_ComponentManager.GetScriptInterface());
 	if (!Script::HasProperty(rq, m_MapSettings, "AISeed") ||
 		!Script::GetProperty(rq, m_MapSettings, "AISeed", seed))
-		LOGWARNING("CSimulation2Impl::InitRNGSeedAI: No seed value specified - using %d", seed);
+	{
+		LOGWARNING("CSimulation2Impl::InitRNGSeedAI: No seed value specified - using {}", seed);
+	}
 
 	CmpPtr<ICmpAIManager> cmpAIManager(m_SimContext, SYSTEM_ENTITY);
 	if (cmpAIManager)
@@ -640,7 +645,7 @@ void CSimulation2Impl::DumpState()
 
 	if (!DirectoryExists(m_OOSLogPath))
 	{
-		LOGWARNING("OOS-log directory %s was deleted, creating it again.", m_OOSLogPath.string8().c_str());
+		LOGWARNING("OOS-log directory {} was deleted, creating it again.", m_OOSLogPath.string8());
 		CreateDirectories(m_OOSLogPath, 0700);
 	}
 

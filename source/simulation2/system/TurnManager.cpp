@@ -226,7 +226,7 @@ void CTurnManager::AddCommand(int client, int player, JS::HandleValue data, turn
 		// which is possible when cheats are enabled. Report & ignore.
 		// It seems a bad idea to error out too badly here:
 		// nefarious clients could try and send broken commands to DOS.
-		LOGWARNING("Received command for invalid turn %i (current turn is %i)", turn, m_CurrentTurn);
+		LOGWARNING("Received command for invalid turn {} (current turn is {})", turn, m_CurrentTurn);
 		return;
 	}
 

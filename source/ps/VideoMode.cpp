@@ -380,7 +380,10 @@ bool CVideoMode::SetVideoMode(int w, int h, int bpp, bool fullscreen)
 				else if (forceGLProfile == "core")
 					profile = SDL_GL_CONTEXT_PROFILE_CORE;
 				else if (forceGLProfile != "compatibility")
-					LOGWARNING("Unknown force GL profile '%s', compatibility profile is used", forceGLProfile.c_str());
+				{
+					LOGWARNING("Unknown force GL profile '{}', compatibility profile is used",
+						forceGLProfile);
+				}
 
 				if (forceGLMajorVersion < 1 || forceGLMinorVersion < 0)
 				{
@@ -434,7 +437,7 @@ bool CVideoMode::SetVideoMode(int w, int h, int bpp, bool fullscreen)
 			setenv("MVK_CONFIG_LOG_LEVEL", "2", 1);
 			if (SDL_Vulkan_LoadLibrary(fullPathToVulkanLibrary.c_str()) != 0)
 			{
-				LOGWARNING("Failed to load %s.", fullPathToVulkanLibrary.c_str());
+				LOGWARNING("Failed to load {}.", fullPathToVulkanLibrary);
 				DowngradeBackendSettingAfterCreationFailure();
 				return SetVideoMode(w, h, bpp, fullscreen);
 			}
@@ -449,7 +452,7 @@ bool CVideoMode::SetVideoMode(int w, int h, int bpp, bool fullscreen)
 			// SDL might fail to create a window in case of missing a Vulkan driver.
 			if (m_Backend == Renderer::Backend::Backend::VULKAN)
 			{
-				LOGWARNING("Failed to create a Vulkan window: %s", SDL_GetError());
+				LOGWARNING("Failed to create a Vulkan window: {}", SDL_GetError());
 				DowngradeBackendSettingAfterCreationFailure();
 				return SetVideoMode(w, h, bpp, fullscreen);
 			}
@@ -458,7 +461,7 @@ bool CVideoMode::SetVideoMode(int w, int h, int bpp, bool fullscreen)
 			if (fullscreen)
 			{
 				LOGWARNING("Failed to set the video mode to fullscreen for the chosen resolution "
-					"%dx%d:%d (\"%hs\"), falling back to windowed mode",
+					"{}x{}:{} (\"{}\"), falling back to windowed mode",
 					w, h, bpp, SDL_GetError());
 				// Using default size for the window for now, as the attempted setting
 				// could be as large, or larger than the screen size.

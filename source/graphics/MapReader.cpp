@@ -971,7 +971,7 @@ void CXMLReader::ReadPaths(XMBElement parent)
 			CCinemaPath path(pathData, positionSpline, targetSpline);
 			if (path.Empty())
 			{
-				LOGWARNING("Path with name '%s' is empty", pathName.ToUTF8());
+				LOGWARNING("Path with name '{}' is empty", pathName.ToUTF8());
 				return;
 			}
 
@@ -980,10 +980,10 @@ void CXMLReader::ReadPaths(XMBElement parent)
 			if (!cmpCinemaManager->HasPath(pathName))
 				cmpCinemaManager->AddPath(path);
 			else
-				LOGWARNING("Path with name '%s' already exists", pathName.ToUTF8());
+				LOGWARNING("Path with name '{}' already exists", pathName.ToUTF8());
 		}
 		else
-			LOGWARNING("Invalid path child with name '%s'", element.GetText());
+			LOGWARNING("Invalid path child with name '{}'", element.GetText());
 	}
 }
 
@@ -1519,7 +1519,7 @@ int CMapReader::ParseEnvironment()
 	const auto getEnvironmentProperty = [&](JS::HandleValue val, const char* prop, auto&& out)
 	{
 		if (!Script::GetProperty(rq, val, prop, std::forward<decltype(out)>(out)))
-			LOGWARNING("CMapReader::ParseEnvironment() failed to get '%s' property", prop);
+			LOGWARNING("CMapReader::ParseEnvironment() failed to get '{}' property", prop);
 	};
 
 	JS::RootedValue envObj(rq.cx);
@@ -1618,7 +1618,7 @@ int CMapReader::ParseCamera()
 	const auto getCameraProperty = [&](JS::HandleValue val, const char* prop, auto&& out)
 	{
 		if (!Script::GetProperty(rq, val, prop, std::forward<decltype(out)>(out)))
-			LOGWARNING("CMapReader::ParseCamera() failed to get '%s' property", prop);
+			LOGWARNING("CMapReader::ParseCamera() failed to get '{}' property", prop);
 	};
 
 	JS::RootedValue cameraObj(rq.cx);

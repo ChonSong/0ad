@@ -82,20 +82,22 @@ bool CGUI::ParseString<CRect>(const CGUI*, const CStrW& Value, CRect& Output)
 	{
 		if (stream.eof())
 		{
-			LOGWARNING("Too few CRect parameters (min %i). Your input: '%s'", NUM_COORDS, Value.ToUTF8().c_str());
+			LOGWARNING("Too few CRect parameters (min {}). Your input: '{}'", NUM_COORDS,
+				Value.ToUTF8());
 			return false;
 		}
 		stream >> coords[i];
 		if ((stream.rdstate() & std::wstringstream::failbit) != 0)
 		{
-			LOGWARNING("Unable to parse CRect parameters. Your input: '%s'", Value.ToUTF8().c_str());
+			LOGWARNING("Unable to parse CRect parameters. Your input: '{}'", Value.ToUTF8());
 			return false;
 		}
 	}
 
 	if (!stream.eof())
 	{
-		LOGWARNING("Too many CRect parameters (max %i). Your input: '%s'", NUM_COORDS, Value.ToUTF8().c_str());
+		LOGWARNING("Too many CRect parameters (max {}). Your input: '{}'", NUM_COORDS,
+			Value.ToUTF8());
 		return false;
 	}
 
@@ -129,13 +131,14 @@ bool CGUI::ParseString<CSize2D>(const CGUI*, const CStrW& Value, CSize2D& Output
 	{
 		if (stream.eof())
 		{
-			LOGWARNING("Too few CSize2D parameters (min %i). Your input: '%s'", NUM_COORDS, Value.ToUTF8().c_str());
+			LOGWARNING("Too few CSize2D parameters (min {}). Your input: '{}'", NUM_COORDS,
+				Value.ToUTF8());
 			return false;
 		}
 		stream >> coords[i];
 		if ((stream.rdstate() & std::wstringstream::failbit) != 0)
 		{
-			LOGWARNING("Unable to parse CSize2D parameters. Your input: '%s'", Value.ToUTF8().c_str());
+			LOGWARNING("Unable to parse CSize2D parameters. Your input: '{}'", Value.ToUTF8());
 			return false;
 		}
 	}
@@ -145,7 +148,8 @@ bool CGUI::ParseString<CSize2D>(const CGUI*, const CStrW& Value, CSize2D& Output
 
 	if (!stream.eof())
 	{
-		LOGWARNING("Too many CSize2D parameters (max %i). Your input: '%s'", NUM_COORDS, Value.ToUTF8().c_str());
+		LOGWARNING("Too many CSize2D parameters (max {}). Your input: '{}'", NUM_COORDS,
+			Value.ToUTF8());
 		return false;
 	}
 
@@ -164,13 +168,14 @@ bool CGUI::ParseString<CVector2D>(const CGUI*, const CStrW& Value, CVector2D& Ou
 	{
 		if (stream.eof())
 		{
-			LOGWARNING("Too few CVector2D parameters (min %i). Your input: '%s'", NUM_COORDS, Value.ToUTF8().c_str());
+			LOGWARNING("Too few CVector2D parameters (min {}). Your input: '{}'", NUM_COORDS,
+				Value.ToUTF8());
 			return false;
 		}
 		stream >> coords[i];
 		if ((stream.rdstate() & std::wstringstream::failbit) != 0)
 		{
-			LOGWARNING("Unable to parse CVector2D parameters. Your input: '%s'", Value.ToUTF8().c_str());
+			LOGWARNING("Unable to parse CVector2D parameters. Your input: '{}'", Value.ToUTF8());
 			return false;
 		}
 	}
@@ -180,7 +185,8 @@ bool CGUI::ParseString<CVector2D>(const CGUI*, const CStrW& Value, CVector2D& Ou
 
 	if (!stream.eof())
 	{
-		LOGWARNING("Too many CVector2D parameters (max %i). Your input: '%s'", NUM_COORDS, Value.ToUTF8().c_str());
+		LOGWARNING("Too many CVector2D parameters (max {}). Your input: '{}'", NUM_COORDS,
+			Value.ToUTF8());
 		return false;
 	}
 

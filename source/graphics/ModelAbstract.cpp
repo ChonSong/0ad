@@ -1,4 +1,4 @@
-/* Copyright (C) 2025 Wildfire Games.
+/* Copyright (C) 2026 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -67,7 +67,8 @@ void CModelAbstract::CalcSelectionBox()
 		default:
 			{
 				m_SelectionBox.SetEmpty();
-				//LOGWARNING("[ModelAbstract] Unrecognized selection shape type: %ld", m_CustomSelectionShape->m_Type);
+				// LOGWARNING("[ModelAbstract] Unrecognized selection shape type: {}",
+				//	m_CustomSelectionShape->m_Type);
 				debug_warn("[ModelAbstract] Unrecognized selection shape type");
 			}
 			break;

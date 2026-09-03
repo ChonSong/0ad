@@ -205,8 +205,8 @@ void GLAD_API_PTR OnDebugMessage(
 	}
 	else
 	{
-		LOGWARNING(
-			"OpenGL | %s: %s source: %s id %u: %s\n", debugSeverity.c_str(), debugType.c_str(), debugSource.c_str(), id, message);
+		LOGWARNING( "OpenGL | {}: {} source: {} id {}: {}\n", debugSeverity, debugType,
+			debugSource, id, message);
 	}
 }
 

@@ -99,7 +99,8 @@ bool LoadModJSON(const PIVFS& vfs, OsPath modsPath, OsPath mod, std::string& tex
 		else
 		{
 			// Print a warning - we'll keep trying, which could have adverse effects.
-			LOGWARNING("Could not write external mod.json for zipped mod '%s'. The mod should be reinstalled.", mod.string8());
+			LOGWARNING("Could not write external mod.json for zipped mod '{}'. The mod should be "
+				"reinstalled.", mod.string8());
 		}
 		return true;
 	}

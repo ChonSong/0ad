@@ -388,7 +388,7 @@ JS::Value VisualReplay::LoadReplayData(const Script::Interface& scriptInterface,
 
 	if (type != "start")
 	{
-		LOGWARNING("The replay %s doesn't begin with 'start'!", replayFile.string8().c_str());
+		LOGWARNING("The replay {} doesn't begin with 'start'!", replayFile.string8());
 		SAFE_DELETE(replayStream);
 		return JS::NullValue();
 	}

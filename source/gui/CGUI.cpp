@@ -871,7 +871,11 @@ void CGUI::Xeromyces_ReadObject(const XMBData& xmb, XMBElement element, IGUIObje
 			if (!filename.empty())
 			{
 				if (!directory.empty())
-					LOGWARNING("GUI: Include element found with file name (%s) and directory name (%s). Only the file will be processed.", utf8_from_wstring(filename), utf8_from_wstring(directory));
+				{
+					LOGWARNING("GUI: Include element found with file name ({}) and directory "
+						"name ({}). Only the file will be processed.",
+						utf8_from_wstring(filename), utf8_from_wstring(directory));
+				}
 
 				Paths.insert(filename);
 
@@ -1048,7 +1052,10 @@ void CGUI::Xeromyces_ReadSprite(const XMBData& xmb, XMBElement element)
 	CStr name = element.GetAttributes().GetNamedItem(xmb.GetAttributeID("name"));
 
 	if (m_Sprites.find(name) != m_Sprites.end())
-		LOGWARNING("GUI sprite name '%s' used more than once; first definition will be discarded", name.c_str());
+	{
+		LOGWARNING("GUI sprite name '{}' used more than once; first definition will be discarded",
+			name);
+	}
 
 	// shared_ptr to link the effect to every image, faster than copy.
 	std::shared_ptr<SGUIImageEffects> effects;
@@ -1337,7 +1344,10 @@ void CGUI::Xeromyces_ReadIcon(const XMBData& xmb, XMBElement element)
 void CGUI::ReportMissingIcon(const CStr& name) const
 {
 	if (m_MissingIconsReported.insert(name).second)
-		LOGWARNING("Trying to use an icon, imgleft or imgright-tag with an undefined icon (\"%s\").", name);
+	{
+		LOGWARNING("Trying to use an icon, imgleft or imgright-tag with an undefined icon (\"{}\").",
+			name);
+	}
 }
 
 void CGUI::Xeromyces_ReadTooltip(const XMBData& xmb, XMBElement element)

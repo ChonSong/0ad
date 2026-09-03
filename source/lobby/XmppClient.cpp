@@ -1015,7 +1015,8 @@ bool XmppClient::Impl::handleIq(const gloox::IQ& iq)
 		{
 			if (iq.from().full() != m_xpartamuppId)
 			{
-				LOGWARNING("XmppClient: Received game list response from unexpected sender: %s", iq.from().full());
+				LOGWARNING("XmppClient: Received game list response from unexpected sender: {}",
+					iq.from().full());
 				return true;
 			}
 
@@ -1030,7 +1031,8 @@ bool XmppClient::Impl::handleIq(const gloox::IQ& iq)
 		{
 			if (iq.from().full() != m_echelonId)
 			{
-				LOGWARNING("XmppClient: Received board list response from unexpected sender: %s", iq.from().full());
+				LOGWARNING("XmppClient: Received board list response from unexpected sender: {}",
+					iq.from().full());
 				return true;
 			}
 
@@ -1061,7 +1063,8 @@ bool XmppClient::Impl::handleIq(const gloox::IQ& iq)
 		{
 			if (iq.from().full() != m_echelonId)
 			{
-				LOGWARNING("XmppClient: Received profile response from unexpected sender: %s", iq.from().full());
+				LOGWARNING("XmppClient: Received profile response from unexpected sender: {}",
+					iq.from().full());
 				return true;
 			}
 

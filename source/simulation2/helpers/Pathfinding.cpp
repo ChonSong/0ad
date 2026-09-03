@@ -1,4 +1,4 @@
-/* Copyright (C) 2025 Wildfire Games.
+/* Copyright (C) 2026 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -166,7 +166,7 @@ PathfinderPassability::PathfinderPassability(pass_class_t mask, const CParamNode
 		 // If clearance isn't an integer number of navcells then we'll
 		 // probably get weird behaviour when expanding the navcell grid
 		 // by clearance, vs expanding static obstructions by clearance
-		 LOGWARNING("Pathfinder passability class has clearance %f, should be multiple of %f",
+		 LOGWARNING("Pathfinder passability class has clearance {:f}, should be multiple of {:f}",
 		 m_Clearance.ToFloat(), Pathfinding::NAVCELL_SIZE.ToFloat());
 		 }*/
 	}

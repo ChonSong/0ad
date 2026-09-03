@@ -915,7 +915,10 @@ bool CActorDef::Load(const VfsPath& pathname)
 				else if (attr.Name == at_file)
 				{
 					if (attr.Value.empty())
-						LOGWARNING("Empty actor file specified (file %s)", pathname.string8());
+					{
+						LOGWARNING("Empty actor file specified (file {})",
+							pathname.string8());
+					}
 					file = attr.Value;
 				}
 				else if (attr.Name == at_inline)
@@ -949,7 +952,10 @@ bool CActorDef::Load(const VfsPath& pathname)
 			else
 			{
 				if (actor.GetChildNodes().size() > 0)
-					LOGWARNING("Actor definition refers to file but has children elements, they will be ignored (file %s)", pathname.string8());
+				{
+					LOGWARNING("Actor definition refers to file but has children elements, they "
+						"will be ignored (file {})", pathname.string8());
+				}
 
 				// Open up an external file to load.
 				// Don't crash hard when failures happen, but log them and continue

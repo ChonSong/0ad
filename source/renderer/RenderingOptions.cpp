@@ -71,7 +71,7 @@ RenderDebugMode RenderDebugModeEnum::FromString(const CStr8& name)
 	if (name == str_RENDER_DEBUG_MODE_CUSTOM.c_str())
 		return RenderDebugMode::CUSTOM;
 
-	LOGWARNING("Unknown render debug mode %s", name.c_str());
+	LOGWARNING("Unknown render debug mode {}", name);
 	return RenderDebugMode::NONE;
 }
 

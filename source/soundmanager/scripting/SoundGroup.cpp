@@ -232,7 +232,10 @@ void CSoundGroup::UploadPropertiesAndPlay([[maybe_unused]] size_t index,
 			itemRollOff = 0;
 
 		if (sndData->IsStereo())
-			LOGWARNING("OpenAL: stereo sounds can't be positioned: %s", sndData->GetFileName().string8());
+		{
+			LOGWARNING("OpenAL: stereo sounds can't be positioned: {}",
+				sndData->GetFileName().string8());
+		}
 
 		hSound->SetLocation(CVector3D(itemDist * sin(offset), 0, -itemDist * cos(offset)));
 		hSound->SetRollOff(itemRollOff, m_MinDist, m_MaxDist);

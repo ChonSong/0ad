@@ -143,7 +143,7 @@ public:
 	{
 		if (m_Paths.find(path.GetName()) != m_Paths.end())
 		{
-			LOGWARNING("Cinema path with name '%s' already exists", path.GetName().ToUTF8());
+			LOGWARNING("Cinema path with name '{}' already exists", path.GetName().ToUTF8());
 			return;
 		}
 		m_Paths[path.GetName()] = path;
@@ -153,7 +153,7 @@ public:
 	{
 		if (!HasPath(name))
 		{
-			LOGWARNING("Cinema path with name '%s' doesn't exist", name.ToUTF8());
+			LOGWARNING("Cinema path with name '{}' doesn't exist", name.ToUTF8());
 			return;
 		}
 		m_PathQueue.remove_if([name](const CCinemaPath& path) { return path.GetName() == name; });
@@ -179,7 +179,7 @@ public:
 	{
 		if (!HasPath(name))
 		{
-			LOGWARNING("Cinema path with name '%s' doesn't exist", name.ToUTF8());
+			LOGWARNING("Cinema path with name '{}' doesn't exist", name.ToUTF8());
 			return;
 		}
 		m_PathQueue.push_back(m_Paths[name]);

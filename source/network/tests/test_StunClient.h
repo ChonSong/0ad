@@ -75,7 +75,7 @@ public:
 		ENetAddress addr { ENET_HOST_ANY, ENET_PORT_ANY };
 		ENetHost* host = enet_host_create(&addr, 1, 1, 0, 0);
 		StunClient::FindPublicIP(*host, ip, port);
-		LOGWARNING("%s %i", ip.c_str(), port);
+		LOGWARNING("{} {}", ip, port);
 		CConfigDB::Shutdown();
 	}
 };

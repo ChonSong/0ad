@@ -86,7 +86,7 @@ CTerrainPropertiesPtr CTerrainProperties::FromXML(const CTerrainPropertiesPtr& p
 		}
 		else
 		{
-			LOGWARNING("TerrainProperties: Loading %s: Unexpected node %s\n",
+			LOGWARNING("TerrainProperties: Loading {}: Unexpected node {}\n",
 				pathname.string8(),
 				XeroFile.GetElementString(child.GetNodeName()));
 			// Keep reading - typos shouldn't be showstoppers

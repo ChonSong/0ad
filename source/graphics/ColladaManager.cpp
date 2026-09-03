@@ -52,7 +52,7 @@ namespace
 		if (severity == LOG_INFO)
 			LOGMESSAGE("{}: {}", path->string8(), text);
 		else if (severity == LOG_WARNING)
-			LOGWARNING("%s: %s", path->string8(), text);
+			LOGWARNING("{}: {}", path->string8(), text);
 		else
 			LOGERROR("%s: %s", path->string8(), text);
 	}

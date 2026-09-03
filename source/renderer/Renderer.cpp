@@ -856,7 +856,8 @@ void CRenderer::RenderBigScreenShot(const bool needsPresent)
 	const int tileHeight{g_ConfigDB.Get("screenshot.tileheight", 256)};
 	if (tiles <= 0 || tileWidth <= 0 || tileHeight <= 0 || tileWidth * tiles % 4 != 0 || tileHeight * tiles % 4 != 0)
 	{
-		LOGWARNING("Invalid big screenshot size: tiles=%d tileWidth=%d tileHeight=%d", tiles, tileWidth, tileHeight);
+		LOGWARNING("Invalid big screenshot size: tiles={} tileWidth={} tileHeight={}", tiles,
+			tileWidth, tileHeight);
 		return;
 	}
 
@@ -864,7 +865,7 @@ void CRenderer::RenderBigScreenShot(const bool needsPresent)
 	{
 		LOGWARNING(
 			"The window size is too small for a big screenshot, increase the"
-			" window size %dx%d or decrease the tile size %dx%d",
+			" window size {}x{} or decrease the tile size {}x{}",
 			g_VideoMode.GetWindowWidth(), g_VideoMode.GetWindowHeight(), tileWidth, tileHeight);
 		return;
 	}

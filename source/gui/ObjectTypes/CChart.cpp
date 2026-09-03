@@ -145,7 +145,10 @@ void CChart::UpdateSeries()
 		CChartData& data = m_Series[i];
 
 		if (i < m_SeriesColor->m_Items.size() && !data.m_Color.ParseString(m_pGUI, m_SeriesColor->m_Items[i].GetOriginalString().ToUTF8(), 0))
-			LOGWARNING("GUI: Error parsing 'series_color' (\"%s\")", utf8_from_wstring(m_SeriesColor->m_Items[i].GetOriginalString()));
+		{
+			LOGWARNING("GUI: Error parsing 'series_color' (\"{}\")",
+				utf8_from_wstring(m_SeriesColor->m_Items[i].GetOriginalString()));
+		}
 
 		data.m_Points = m_SeriesSetting->m_Series[i];
 	}

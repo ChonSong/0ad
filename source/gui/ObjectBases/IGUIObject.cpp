@@ -300,7 +300,10 @@ bool IGUIObject::ApplyStyle(const CStr& StyleName)
 		if (SettingExists(p.first))
 			m_Settings.at(p.first)->FromString(p.second, true);
 		else if (StyleName != "default")
-			LOGWARNING("GUI object has no setting \"%s\", but the style \"%s\" defines it", p.first, StyleName.c_str());
+		{
+			LOGWARNING("GUI object has no setting \"{}\", but the style \"{}\" defines it",
+				p.first, StyleName);
+		}
 	}
 	return true;
 }

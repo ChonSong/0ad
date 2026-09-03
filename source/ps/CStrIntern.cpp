@@ -1,4 +1,4 @@
-/* Copyright (C) 2025 Wildfire Games.
+/* Copyright (C) 2026 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -33,7 +33,7 @@ public:
 	CStrInternInternals(const char* str, size_t len)
 		: data(str, str+len), hash(fnv_hash(str, len))
 	{
-// 		LOGWARNING("New interned string '%s'", data.c_str());
+// 		LOGWARNING("New interned string '{}'", data);
 	}
 
 	CStrInternInternals(const CStrInternInternals& b) = default;

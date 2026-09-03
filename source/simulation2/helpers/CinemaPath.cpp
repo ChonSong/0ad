@@ -57,7 +57,7 @@ CCinemaPath::CCinemaPath(const CCinemaData& data, const TNSpline& spline, const 
 		DistModePtr = &CCinemaPath::EaseOutIn;
 	else
 	{
-		LOGWARNING("Cinematic mode not found for '%s'", data.m_Mode.ToUTF8().c_str());
+		LOGWARNING("Cinematic mode not found for '{}'", data.m_Mode.ToUTF8());
 		DistModePtr = &CCinemaPath::EaseInOut;
 	}
 
@@ -73,13 +73,14 @@ CCinemaPath::CCinemaPath(const CCinemaData& data, const TNSpline& spline, const 
 		DistStylePtr = &CCinemaPath::EaseSine;
 	else
 	{
-		LOGWARNING("Cinematic style not found for '%s'", data.m_Style.ToUTF8().c_str());
+		LOGWARNING("Cinematic style not found for '{}'", data.m_Style.ToUTF8());
 		DistStylePtr = &CCinemaPath::EaseDefault;
 	}
 
 	if (m_Timescale <= fixed::FromInt(0))
 	{
-		LOGWARNING("Invalid cinema path timescale specified: %f. It must be greater than 0.", m_Timescale.ToFloat());
+		LOGWARNING("Invalid cinema path timescale specified: {:f}. It must be greater than 0.",
+			m_Timescale.ToFloat());
 		m_Timescale = fixed::FromInt(1);
 	}
 }
@@ -117,7 +118,10 @@ const CStrW& CCinemaPath::GetName() const
 void CCinemaPath::SetTimescale(fixed scale)
 {
 	if (scale <= fixed::FromInt(0))
-		LOGWARNING("Invalid cinema path timescale specified: %f. It must be greater than 0.", scale.ToFloat());
+	{
+		LOGWARNING("Invalid cinema path timescale specified: {:f}. It must be greater than 0.",
+			scale.ToFloat());
+	}
 	else
 		m_Timescale = scale;
 }

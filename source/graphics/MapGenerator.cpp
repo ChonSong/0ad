@@ -434,7 +434,7 @@ Script::StructuredClone RunMapGenerationScript(const StopToken stopToken, std::a
 			if (tempProgress < currentProgress)
 			{
 				LOGWARNING("The random map script tried to reduce the loading progress from "
-					"%d to %d.", currentProgress, tempProgress);
+					"{} to {}.", currentProgress, tempProgress);
 				return;
 			}
 			progress.store(tempProgress);

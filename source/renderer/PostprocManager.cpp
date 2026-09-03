@@ -201,14 +201,14 @@ void CPostprocManager::InitializePBR()
 		if (m_Device->IsFramebufferFormatSupported(Renderer::Backend::Format::R32G32B32A32_SFLOAT))
 			m_FramebufferColorFormat = Renderer::Backend::Format::R32G32B32A32_SFLOAT;
 		else
-			LOGWARNING("%s is unsupported", framebufferFormatName);
+			LOGWARNING("{} is unsupported", framebufferFormatName);
 	}
 	else if (framebufferFormatName == "r11g11b10")
 	{
 		if (m_Device->IsFramebufferFormatSupported(Renderer::Backend::Format::B10G11R11_UFLOAT))
 			m_FramebufferColorFormat = Renderer::Backend::Format::B10G11R11_UFLOAT;
 		else
-			LOGWARNING("%s is unsupported", framebufferFormatName);
+			LOGWARNING("{} is unsupported", framebufferFormatName);
 	}
 
 	if (m_Device->GetCapabilities().computeShaders)
@@ -887,7 +887,7 @@ void CPostprocManager::UpdateAntiAliasingTechnique()
 		        std::end(m_AllowedSampleCounts))
 		{
 			m_MultisampleCount = std::min(4u, m_Device->GetCapabilities().maxSampleCount);
-			LOGWARNING("Wrong MSAA sample count: %s.", m_AAName.EscapeToPrintableASCII().c_str());
+			LOGWARNING("Wrong MSAA sample count: {}.", m_AAName.EscapeToPrintableASCII());
 		}
 		m_UsingMultisampleBuffer = true;
 		CreateMultisampleBuffer();
@@ -1085,7 +1085,7 @@ void CPostprocManager::RecalculateSize(const uint32_t width, const uint32_t heig
 	m_Scale = g_ConfigDB.Get("renderer.scale", m_Scale);
 	if (m_Scale < 0.25f || m_Scale > 2.0f)
 	{
-		LOGWARNING("Invalid renderer scale: %0.2f", m_Scale);
+		LOGWARNING("Invalid renderer scale: {:0.2f}", m_Scale);
 		m_Scale = 1.0f;
 	}
 	m_UnscaledWidth = width;

@@ -195,7 +195,11 @@ bool CGUISimpleSetting<CGUISize>::DoFromJSVal(const Script::Request& rq, JS::Han
 	}
 
 	if (JS_InstanceOf(rq.cx, obj, &JSI_GUISize::JSI_class, nullptr))
-		ONCE(LOGWARNING("Assigning an GUISize to CGUISize is deprecated. Please use the object.size = {left:number, top:number, right:number, bottom:number} format instead. This support will be removed in a future version."));
+	{
+		ONCE(LOGWARNING("Assigning an GUISize to CGUISize is deprecated. Please use the object.size = "
+			"{{left:number, top:number, right:number, bottom:number}} format instead. This support "
+			"will be removed in a future version."));
+	}
 
 	bool atLeastOnePropertySet{false};
 	CRect pixel{};

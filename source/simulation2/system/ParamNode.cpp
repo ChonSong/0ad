@@ -140,7 +140,7 @@ void CParamNode::ApplyLayer(const XMBData& xmb, const XMBElement& element, const
 			else if (attr.Value == "mul_round")
 				op = MUL_ROUND;
 			else
-				LOGWARNING("Invalid op '%ls'", attr.Value);
+				LOGWARNING("Invalid op '{}'", attr.Value);
 		}
 	}
 	for (XMBAttribute attr : element.GetAttributes())
@@ -174,7 +174,7 @@ void CParamNode::ApplyLayer(const XMBData& xmb, const XMBElement& element, const
 							sourceIdentifier ? (" in '" +
 								utf8_from_wstring(sourceIdentifier) + "'") : ""};
 						LOGWARNING("[ParamNode] Could not remove token "
-							"'%s' from node '%s'%s; not present in "
+							"'{}' from node '{}'{}; not present in "
 							"list nor inherited (possible typo?)",
 							std::string_view{newToken}.substr(1), name,
 							identifier);

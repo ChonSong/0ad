@@ -119,7 +119,7 @@ static void LoadConfigBindings(CConfigDB& configDB)
 				SDL_Scancode scancode = FindScancode(it->c_str());
 				if (!scancode)
 				{
-					LOGWARNING("Hotkey mapping used invalid key '%s'", hotkey.c_str());
+					LOGWARNING("Hotkey mapping used invalid key '{}'", hotkey);
 					continue;
 				}
 

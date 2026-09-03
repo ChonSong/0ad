@@ -103,7 +103,7 @@ public:
 			status = g_VFS->LoadFile(sourcePath, shapeFile, size);
 		if (status != INFO::OK)
 		{
-			LOGWARNING("Mouse event mask texture not found ('%s')", spec);
+			LOGWARNING("Mouse event mask texture not found ('{}')", spec);
 			return nullptr;
 		}
 		Tex tex;
@@ -188,6 +188,6 @@ bool CGUIMouseEventMask::DoFromString(const CStrW& Value)
 			LOGERROR("Could not create shape for: %s", spec);
 	}
 	else
-		LOGWARNING("Unknown clickable shape: %s", spec);
+		LOGWARNING("Unknown clickable shape: {}", spec);
 	return false;
 }

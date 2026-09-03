@@ -1141,7 +1141,10 @@ void CPatchRData::RenderBlends(
 			// TODO: move enabling blend to XML.
 			const CStrIntern shaderEffect = bestTex->GetMaterial().GetShaderEffect(materialPass);
 			if (shaderEffect != str_terrain_base && shaderEffect != str_terrain_base_reflections && shaderEffect != str_terrain_base_wireframe)
-				ONCE(LOGWARNING("Shader effect '%s' doesn't support semi-transparent terrain rendering.", shaderEffect.c_str()));
+			{
+				ONCE(LOGWARNING("Shader effect '{}' doesn't support semi-transparent terrain "
+					"rendering.", shaderEffect.string()));
+			}
 			layer.m_ShaderTech = g_Renderer.GetShaderManager().LoadEffect([](const CStrIntern shaderEffect)
 				{
 					if (shaderEffect == str_terrain_base)

@@ -306,7 +306,7 @@ JS::Value SavedGames::GetSavedGames(const Script::Interface& scriptInterface)
 		if (!archiveReader)
 		{
 			// Triggered by e.g. the file being open in another program
-			LOGWARNING("Failed to read saved game '%s'", realPath.string8());
+			LOGWARNING("Failed to read saved game '{}'", realPath.string8());
 			continue; // skip this file
 		}
 

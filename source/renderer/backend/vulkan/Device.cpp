@@ -169,7 +169,7 @@ VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(
 				return (hideRule.flags & messageType) && message.find(hideRule.pattern) != std::string_view::npos;
 			});
 		if (it == std::end(hideRules))
-			LOGWARNING("Vulkan: %s", callbackData->pMessage);
+			LOGWARNING("Vulkan: {}", callbackData->pMessage);
 		else if (!it->skip)
 			LOGMESSAGE("Vulkan: {}", callbackData->pMessage);
 	}
@@ -403,7 +403,7 @@ std::unique_ptr<CDevice> CDevice::Create(SDL_Window* window)
 				return availableDevice.index == static_cast<uint32_t>(deviceIndexOverride);
 			});
 		if (chosenDeviceIt == device->m_AvailablePhysicalDevices.end())
-			LOGWARNING("Device with override index %d not found.", deviceIndexOverride);
+			LOGWARNING("Device with override index {} not found.", deviceIndexOverride);
 	}
 	if (chosenDeviceIt == device->m_AvailablePhysicalDevices.end())
 	{

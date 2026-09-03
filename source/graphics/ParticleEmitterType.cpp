@@ -362,7 +362,7 @@ int CParticleEmitterType::GetVariableID(const std::string& name)
 	if (name == "color.r")			return VAR_COLOR_R;
 	if (name == "color.g")			return VAR_COLOR_G;
 	if (name == "color.b")			return VAR_COLOR_B;
-	LOGWARNING("Particle sets unknown variable '%s'", name.c_str());
+	LOGWARNING("Particle sets unknown variable '{}'", name);
 	return -1;
 }
 

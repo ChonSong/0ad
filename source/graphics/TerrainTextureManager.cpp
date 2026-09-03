@@ -82,7 +82,7 @@ CTerrainTextureEntry* CTerrainTextureManager::FindTexture(const CStr& tag_)
 		if (textureEntry->GetTag() == tag)
 			return textureEntry.get();
 
-	LOGWARNING("CTerrainTextureManager: Couldn't find terrain %s using fallback texture", tag.c_str());
+	LOGWARNING("CTerrainTextureManager: Couldn't find terrain {} using fallback texture", tag);
 
 	// If the texture is not found, return a default texture.
 	// This is a fallback texture, so it should not be used in the editor.
