@@ -231,7 +231,7 @@ std::unique_ptr<CSwapChain> CSwapChain::Create(
 				device->GetVkDevice(), swapChain->m_SwapChain, &imageCount, swapChain->m_Images.data());
 		}
 	} while (getSwapchainImagesResult == VK_INCOMPLETE);
-	LOGMESSAGE("SwapChain image count: %u (min: %u)", imageCount, swapChainCreateInfo.minImageCount);
+	LOGMESSAGE("SwapChain image count: {} (min: {})", imageCount, swapChainCreateInfo.minImageCount);
 	ENSURE_VK_SUCCESS(getSwapchainImagesResult);
 	ENSURE(imageCount > 0);
 

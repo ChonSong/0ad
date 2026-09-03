@@ -160,7 +160,7 @@ namespace DAP
 					continue;
 				}
 
-				LOGMESSAGE("Accepted connection from %s", inet_ntoa(clientAddr.sin_addr));
+				LOGMESSAGE("Accepted connection from {}", inet_ntoa(clientAddr.sin_addr));
 				std::lock_guard<std::mutex> lock{m_ConnectionLock};
 				this->HandleClient();
 				LOGMESSAGE("Client Disconnected");
@@ -178,7 +178,7 @@ namespace DAP
 				if (bytesRead <= 0)
 					break;
 				message.append(buffer, static_cast<unsigned int>(bytesRead));
-				LOGMESSAGE("Received message: %s", message.c_str());
+				LOGMESSAGE("Received message: {}", message);
 
 				while (!message.empty())
 				{
@@ -215,7 +215,7 @@ namespace DAP
 
 					// Return DAP message with protocol headers.
 					const std::string dapResponse{"Content-Length: " + std::to_string(response.size()) + "\r\n\r\n" + response};
-					LOGMESSAGE("Sending response to client: %s", dapResponse.c_str());
+					LOGMESSAGE("Sending response to client: {}", dapResponse);
 					send(m_ClientSocket, dapResponse.c_str(), dapResponse.size(), 0);
 
 					// Validate if there more messages.
@@ -406,7 +406,7 @@ namespace DAP
 
 			// Send to socket client.
 			const std::string dapResponse{"Content-Length: " + std::to_string(ret.size()) + "\r\n\r\n" + ret};
-			LOGMESSAGE("Sending event to client: %s", ret.c_str());
+			LOGMESSAGE("Sending event to client: {}", ret);
 			m_SocketImpl->SendToClient(dapResponse);
 		}
 	}

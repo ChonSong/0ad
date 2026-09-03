@@ -317,11 +317,11 @@ bool CConfigDB::Reload(EConfigNamespace ns)
 		// Handle missing files quietly
 		if (g_VFS->GetFileInfo(m_ConfigFile[ns], NULL) < 0)
 		{
-			LOGMESSAGE("Cannot find config file \"%s\" - ignoring", m_ConfigFile[ns].string8());
+			LOGMESSAGE("Cannot find config file \"{}\" - ignoring", m_ConfigFile[ns].string8());
 			return false;
 		}
 
-		LOGMESSAGE("Loading config file \"%s\"", m_ConfigFile[ns].string8());
+		LOGMESSAGE("Loading config file \"{}\"", m_ConfigFile[ns].string8());
 		Status ret = g_VFS->LoadFile(m_ConfigFile[ns], buffer, buflen);
 		if (ret != INFO::OK)
 		{
@@ -369,7 +369,7 @@ bool CConfigDB::Reload(EConfigNamespace ns)
 				continue;
 			}
 
-			LOGMESSAGE("Found config header '%s'", header.c_str());
+			LOGMESSAGE("Found config header '{}'", header);
 			header.push_back('.');
 			while (++pos < filebufend && *pos != '\n' && *pos != ';')
 				if (*pos != ' ' && *pos != '\r')
@@ -445,16 +445,16 @@ bool CConfigDB::Reload(EConfigNamespace ns)
 			CStr key(header + name);
 			newMap[key] = values;
 			if (g_UnloggedEntries.find(key) != g_UnloggedEntries.end())
-				LOGMESSAGE("Loaded config string \"%s\"", key);
+				LOGMESSAGE("Loaded config string \"{}\"", key);
 			else if (values.empty())
-				LOGMESSAGE("Loaded config string \"%s\" = (empty)", key);
+				LOGMESSAGE("Loaded config string \"{}\" = (empty)", key);
 			else
 			{
 				std::string vals;
 				for (size_t i = 0; i + 1 < newMap[key].size(); ++i)
 					vals += "\"" + EscapeString(newMap[key][i]) + "\", ";
 				vals += "\"" + EscapeString(newMap[key][values.size()-1]) + "\"";
-				LOGMESSAGE("Loaded config string \"%s\" = %s", key, vals);
+				LOGMESSAGE("Loaded config string \"{}\" = {}", key, vals);
 			}
 		}
 

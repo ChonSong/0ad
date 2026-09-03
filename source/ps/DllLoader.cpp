@@ -1,4 +1,4 @@
-/* Copyright (C) 2025 Wildfire Games.
+/* Copyright (C) 2026 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -202,7 +202,7 @@ void DllLoader::LogLoadError(const char* errors)
 	switch (m_LoadErrorLogMethod)
 	{
 	case CLogger::Normal:
-		LOGMESSAGE("DllLoader: %s", errors);
+		LOGMESSAGE("DllLoader: {}", errors);
 		break;
 	case CLogger::Warning:
 		LOGWARNING("DllLoader: %s", errors);

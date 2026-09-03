@@ -50,7 +50,7 @@ namespace
 		VfsPath* path = static_cast<VfsPath*>(cb_data);
 
 		if (severity == LOG_INFO)
-			LOGMESSAGE("%s: %s", path->string8(), text);
+			LOGMESSAGE("{}: {}", path->string8(), text);
 		else if (severity == LOG_WARNING)
 			LOGWARNING("%s: %s", path->string8(), text);
 		else
@@ -107,7 +107,7 @@ public:
 		if (!dll.IsLoaded() && !TryLoadDLL())
 			return ERR::FAIL;
 
-		LOGMESSAGE("Hotloading skeleton definitions from '%s'", path.string8());
+		LOGMESSAGE("Hotloading skeleton definitions from '{}'", path.string8());
 		// Set the filename for the logger to report
 		set_logger(ColladaLog, const_cast<void*>(static_cast<const void*>(&path)));
 
@@ -229,7 +229,7 @@ public:
 		bool loaded = false;
 		for (const VfsPath& path : pathnames)
 		{
-			LOGMESSAGE("Loading skeleton definitions from '%s'", path.string8());
+			LOGMESSAGE("Loading skeleton definitions from '{}'", path.string8());
 			// Set the filename for the logger to report
 			set_logger(ColladaLog, const_cast<void*>(static_cast<const void*>(&path)));
 

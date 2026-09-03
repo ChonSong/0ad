@@ -256,7 +256,7 @@ bool CompileGLSL(GLuint shader, const VfsPath& file, const CStr& code)
 		glGetShaderInfoLog(shader, length, nullptr, infolog.get());
 
 		if (ok)
-			LOGMESSAGE("Info when compiling shader '%s':\n%s", file.string8(), infolog.get());
+			LOGMESSAGE("Info when compiling shader '{}':\n{}", file.string8(), infolog.get());
 		else
 			LOGERROR("Failed to compile shader '%s':\n%s", file.string8(), infolog.get());
 	}
@@ -396,7 +396,7 @@ bool CShaderProgram::Link(const VfsPath& path)
 		glGetProgramInfoLog(m_Program, length, NULL, infolog);
 
 		if (ok)
-			LOGMESSAGE("Info when linking program '%s':\n%s", path.string8(), infolog);
+			LOGMESSAGE("Info when linking program '{}':\n{}", path.string8(), infolog);
 		else
 			LOGERROR("Failed to link program '%s':\n%s", path.string8(), infolog);
 

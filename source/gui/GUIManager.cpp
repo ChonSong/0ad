@@ -349,7 +349,8 @@ Status CGUIManager::ReloadChangedFile(const VfsPath& path)
 	for (SGUIPage& p : m_PageStack)
 		if (p.inputs.find(path) != p.inputs.end())
 		{
-			LOGMESSAGE("GUI file '%s' changed - reloading page '%s'", path.string8(), utf8_from_wstring(p.m_Name));
+			LOGMESSAGE("GUI file '{}' changed - reloading page '{}'", path.string8(),
+				utf8_from_wstring(p.m_Name));
 			p.LoadPage(m_ScriptContext);
 			// TODO: this can crash if LoadPage runs an init script which modifies the page stack and breaks our iterators
 		}

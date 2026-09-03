@@ -1,4 +1,4 @@
-/* Copyright (C) 2025 Wildfire Games.
+/* Copyright (C) 2026 Wildfire Games.
  * Copyright (C) 2013-2016 SuperTuxKart-Team.
  * This file is part of 0 A.D.
  *
@@ -154,7 +154,7 @@ bool CreateStunRequest(ENetHost& transactionHost)
 	const std::string server_name{g_ConfigDB.Get("lobby.stun.server", std::string{})};
 	const int port{g_ConfigDB.Get("lobby.stun.port", 0)};
 
-	LOGMESSAGE("StunClient: Using STUN server %s:%d\n", server_name.c_str(), port);
+	LOGMESSAGE("StunClient: Using STUN server {}:{}\n", server_name, port);
 
 	ENetAddress addr;
 	addr.port = port;
@@ -348,7 +348,7 @@ bool FindPublicIP(ENetHost& transactionHost, CStr& ip, std::uint16_t& port)
 	ip = ipStr;
 	port = m_PublicAddress.port;
 
-	LOGMESSAGE("StunClient: external IP address is %s:%i", ip.c_str(), port);
+	LOGMESSAGE("StunClient: external IP address is {}:{}", ip, port);
 
 	return true;
 }

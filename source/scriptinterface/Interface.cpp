@@ -178,7 +178,7 @@ bool logmsg(JSContext* cx, unsigned int argc, JS::Value* vp)
 	std::wstring str;
 	if (!Script::FromJSVal(rq, args[0], str))
 		return false;
-	LOGMESSAGE("%s", utf8_from_wstring(str));
+	LOGMESSAGE("{}", utf8_from_wstring(str));
 	args.rval().setUndefined();
 	return true;
 }
@@ -602,7 +602,7 @@ bool Interface::SetGlobal_(const char* name, JS::HandleValue value, bool replace
 				return false;
 			}
 
-			LOGMESSAGE("Hotloading new value for global \"%s\".", name);
+			LOGMESSAGE("Hotloading new value for global \"{}\".", name);
 			ENSURE(JS_DeleteProperty(rq.cx, global, name));
 		}
 	}

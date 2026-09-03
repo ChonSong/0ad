@@ -301,7 +301,7 @@ bool CNetClient::TryToConnectWithSTUN(std::string serverAddressOrHostname, std::
 		port = enetClient->address.port;
 	}
 
-	LOGMESSAGE("NetClient: connecting to server at %s:%i", m_ServerAddressOrHostname, m_ServerPort);
+	LOGMESSAGE("NetClient: connecting to server at {}:{}", m_ServerAddressOrHostname, m_ServerPort);
 
 	if (!ip.empty())
 	{
@@ -674,7 +674,7 @@ void CNetClient::LoadFinished()
 		stream.read((char*)&turn, sizeof(turn));
 		turn = to_le32(turn);
 
-		LOGMESSAGE("Rejoining client deserializing state at turn %u\n", turn);
+		LOGMESSAGE("Rejoining client deserializing state at turn {}\n", turn);
 
 		bool ok = m_Game->GetSimulation2()->DeserializeState(stream);
 		ENSURE(ok);
@@ -784,7 +784,8 @@ bool CNetClient::OnAuthenticate(CNetClient* client, CFsmEvent<CNetMessage*>* eve
 
 	CAuthenticateResultMessage* message = static_cast<CAuthenticateResultMessage*>(event->GetParamRef());
 
-	LOGMESSAGE("Net: Authentication result: host=%u, %s", message->m_HostID, utf8_from_wstring(message->m_Message));
+	LOGMESSAGE("Net: Authentication result: host={}, {}", message->m_HostID,
+		utf8_from_wstring(message->m_Message));
 
 	client->m_HostID = message->m_HostID;
 	client->m_Rejoin = message->m_Code == ARC_OK_REJOINING;

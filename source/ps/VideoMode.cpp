@@ -439,7 +439,7 @@ bool CVideoMode::SetVideoMode(int w, int h, int bpp, bool fullscreen)
 				return SetVideoMode(w, h, bpp, fullscreen);
 			}
 			else
-				LOGMESSAGE("Loaded %s.", fullPathToVulkanLibrary.c_str());
+				LOGMESSAGE("Loaded {}.", fullPathToVulkanLibrary);
 		}
 #endif
 

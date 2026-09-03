@@ -993,7 +993,8 @@ bool XmppClient::Impl::handleIq(const gloox::IQ& iq)
 				return true;
 
 			if (!m_connectionDataJid.empty() && m_connectionDataJid.compare(iq.from().full()) != 0) {
-				LOGMESSAGE("XmppClient: Received connection data from invalid host: %s", iq.from().username());
+				LOGMESSAGE("XmppClient: Received connection data from invalid host: {}",
+					iq.from().username());
 				return true;
 			}
 
@@ -1077,7 +1078,8 @@ bool XmppClient::Impl::handleIq(const gloox::IQ& iq)
 		const LobbyAuth* lobbyAuth = iq.findExtension<LobbyAuth>(EXTLOBBYAUTH);
 		if (lobbyAuth)
 		{
-			LOGMESSAGE("XmppClient: Received lobby auth: %s from %s", lobbyAuth->m_Token, iq.from().username());
+			LOGMESSAGE("XmppClient: Received lobby auth: {} from {}", lobbyAuth->m_Token,
+				iq.from().username());
 
 			gloox::IQ response(gloox::IQ::Result, iq.from(), iq.id());
 			m_client.send(response);
@@ -1093,7 +1095,8 @@ bool XmppClient::Impl::handleIq(const gloox::IQ& iq)
 		const ConnectionData* cd = iq.findExtension<ConnectionData>(EXTCONNECTIONDATA);
 		if (cd)
 		{
-			LOGMESSAGE("XmppClient: Received request for connection data from %s", iq.from().username());
+			LOGMESSAGE("XmppClient: Received request for connection data from {}",
+				iq.from().username());
 			if (!g_NetServer)
 			{
 				gloox::IQ response(gloox::IQ::Result, iq.from(), iq.id());
@@ -1161,7 +1164,7 @@ bool XmppClient::Impl::handleIq(const gloox::IQ& iq)
 	else
 	{
 		CreateGUIMessage("system", "error", std::time(nullptr), "text", wstring_from_utf8(g_L10n.Translate("unknown subtype (see logs)")));
-		LOGMESSAGE("unknown subtype '%s'", tag_name(iq).c_str());
+		LOGMESSAGE("unknown subtype '{}'", tag_name(iq));
 	}
 
 	return true;

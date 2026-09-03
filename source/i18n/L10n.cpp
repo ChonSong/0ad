@@ -535,7 +535,7 @@ Status L10n::ReloadChangedFile(const VfsPath& path)
 	if (path.string().rfind(dictName) == std::string::npos)
 		return INFO::OK;
 
-	LOGMESSAGE("Hotloading translations from '%s'", path.string8());
+	LOGMESSAGE("Hotloading translations from '{}'", path.string8());
 
 	CVFSFile file;
 	if (file.Load(g_VFS, path) != PSRETURN_OK)

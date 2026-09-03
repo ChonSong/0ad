@@ -104,7 +104,7 @@ std::vector<std::string> GetAvailableValidationLayers()
 
 	for (const VkLayerProperties& layer : availableLayers)
 	{
-		LOGMESSAGE("Vulkan validation layer: '%s' (%s) v%u.%u.%u.%u",
+		LOGMESSAGE("Vulkan validation layer: '{}' ({}) v{}.{}.{}.{}",
 			layer.layerName, layer.description,
 			VK_API_VERSION_VARIANT(layer.specVersion),
 			VK_API_VERSION_MAJOR(layer.specVersion),
@@ -139,7 +139,7 @@ VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(
 	void* /*userData*/)
 {
 	if ((messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT) || (messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT))
-		LOGMESSAGE("Vulkan: %s", callbackData->pMessage);
+		LOGMESSAGE("Vulkan: {}", callbackData->pMessage);
 	else if (messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT)
 	{
 		struct HideRule
@@ -171,7 +171,7 @@ VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(
 		if (it == std::end(hideRules))
 			LOGWARNING("Vulkan: %s", callbackData->pMessage);
 		else if (!it->skip)
-			LOGMESSAGE("Vulkan: %s", callbackData->pMessage);
+			LOGMESSAGE("Vulkan: {}", callbackData->pMessage);
 	}
 	else if (messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT)
 		LOGERROR("Vulkan: %s", callbackData->pMessage);
@@ -347,21 +347,21 @@ std::unique_ptr<CDevice> CDevice::Create(SDL_Window* window)
 		GetAvailablePhysicalDevices(device->m_Instance, device->m_Surface, requiredDeviceExtensions);
 	for (const SAvailablePhysicalDevice& device : availablePhyscialDevices)
 	{
-		LOGMESSAGE("Vulkan available device: '%s' Type: %u Supported: %c",
+		LOGMESSAGE("Vulkan available device: '{}' Type: {} Supported: {}",
 			device.properties.deviceName, static_cast<uint32_t>(device.properties.deviceType),
 			IsPhysicalDeviceUnsupported(device) ? 'N' : 'Y');
-		LOGMESSAGE("  ID: %u VendorID: %u API Version: %u Driver Version: %u",
+		LOGMESSAGE("  ID: {} VendorID: {} API Version: {} Driver Version: {}",
 			device.properties.deviceID, device.properties.vendorID,
 			device.properties.apiVersion, device.properties.driverVersion);
-		LOGMESSAGE("  hasRequiredExtensions: %c hasOutputToSurfaceSupport: %c",
+		LOGMESSAGE("  hasRequiredExtensions: {} hasOutputToSurfaceSupport: {}",
 			device.hasRequiredExtensions ? 'Y' : 'N', device.hasOutputToSurfaceSupport ? 'Y' : 'N');
-		LOGMESSAGE("  graphicsQueueFamilyIndex: %u presentQueueFamilyIndex: %u families: %zu",
+		LOGMESSAGE("  graphicsQueueFamilyIndex: {} presentQueueFamilyIndex: {} families: {}",
 			device.graphicsQueueFamilyIndex, device.presentQueueFamilyIndex,
 			device.queueFamilies.size());
-		LOGMESSAGE("  maxBoundDescriptorSets: %u", device.properties.limits.maxBoundDescriptorSets);
+		LOGMESSAGE("  maxBoundDescriptorSets: {}", device.properties.limits.maxBoundDescriptorSets);
 		for (const VkSurfaceFormatKHR& surfaceFormat : device.surfaceFormats)
 		{
-			LOGMESSAGE("  Surface format: %u colorSpace: %u Supported: %c",
+			LOGMESSAGE("  Surface format: {} colorSpace: {} Supported: {}",
 				static_cast<uint32_t>(surfaceFormat.format),
 				static_cast<uint32_t>(surfaceFormat.colorSpace),
 				IsSurfaceFormatSupported(surfaceFormat) ? 'Y' : 'N');
@@ -369,14 +369,14 @@ std::unique_ptr<CDevice> CDevice::Create(SDL_Window* window)
 		for (uint32_t memoryTypeIndex = 0; memoryTypeIndex < device.memoryProperties.memoryTypeCount; ++memoryTypeIndex)
 		{
 			const VkMemoryType& type = device.memoryProperties.memoryTypes[memoryTypeIndex];
-			LOGMESSAGE("  Memory Type Index: %u Flags: %u Heap Index: %u",
-				memoryTypeIndex, static_cast<uint32_t>(type.propertyFlags), type.heapIndex);
+			LOGMESSAGE("  Memory Type Index: {} Flags: {} Heap Index: {}",
+				memoryTypeIndex, type.propertyFlags, type.heapIndex);
 		}
 		for (uint32_t memoryHeapIndex = 0; memoryHeapIndex < device.memoryProperties.memoryHeapCount; ++memoryHeapIndex)
 		{
 			const VkMemoryHeap& heap = device.memoryProperties.memoryHeaps[memoryHeapIndex];
-			LOGMESSAGE("  Memory Heap Index: %u Size: %zu Flags: %u",
-				memoryHeapIndex, static_cast<size_t>(heap.size / 1024), static_cast<uint32_t>(heap.flags));
+			LOGMESSAGE("  Memory Heap Index: {} Size: {} Flags: {}",
+				memoryHeapIndex, heap.size / 1024, heap.flags);
 		}
 	}
 	device->m_AvailablePhysicalDevices = availablePhyscialDevices;

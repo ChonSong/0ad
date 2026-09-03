@@ -225,7 +225,7 @@ void CSimulation2Impl::LoadScripts(CComponentManager& componentManager, std::set
 	{
 		if (loadedScripts)
 			loadedScripts->insert(scriptPath);
-		LOGMESSAGE("Loading simulation script '%s'", scriptPath.string8());
+		LOGMESSAGE("Loading simulation script '{}'", scriptPath.string8());
 		if (!componentManager.LoadScript(scriptPath))
 			throw CSimulation2::LoadScriptError{"Error loading " + scriptPath.string8()};
 	}
@@ -248,7 +248,7 @@ bool CSimulation2Impl::LoadTriggerScripts(CComponentManager& componentManager, J
 					continue;
 				loadedScripts->insert(scriptName);
 			}
-			LOGMESSAGE("Loading trigger script '%s'", scriptName.c_str());
+			LOGMESSAGE("Loading trigger script '{}'", scriptName);
 			if (!componentManager.LoadScript(scriptName.data()))
 				ok = false;
 		}
@@ -268,7 +268,7 @@ Status CSimulation2Impl::ReloadChangedFile(const VfsPath& path)
 	if (!VfsFileExists(path))
 		return INFO::OK;
 
-	LOGMESSAGE("Reloading simulation script '%s'", path.string8());
+	LOGMESSAGE("Reloading simulation script '{}'", path.string8());
 	if (!m_ComponentManager.LoadScript(path, true))
 		return ERR::FAIL;
 

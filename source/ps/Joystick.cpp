@@ -1,4 +1,4 @@
-/* Copyright (C) 2025 Wildfire Games.
+/* Copyright (C) 2026 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -50,7 +50,7 @@ void CJoystick::Initialise()
 
 	int numJoysticks = SDL_NumJoysticks();
 
-	LOGMESSAGE("Found %d joystick(s)", numJoysticks);
+	LOGMESSAGE("Found {} joystick(s)", numJoysticks);
 
 	for (int i = 0; i < numJoysticks; ++i)
 	{
@@ -61,7 +61,7 @@ void CJoystick::Initialise()
 			continue;
 		}
 		const char* name = SDL_JoystickName(stick);
-		LOGMESSAGE("Joystick %d: %s", i, name);
+		LOGMESSAGE("Joystick {}: {}", i, name);
 		SDL_JoystickClose(stick);
 	}
 

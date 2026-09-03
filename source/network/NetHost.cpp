@@ -1,4 +1,4 @@
-/* Copyright (C) 2025 Wildfire Games.
+/* Copyright (C) 2026 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -33,7 +33,8 @@ bool CNetHost::SendMessage(const CNetMessage* message, ENetPeer* peer, const cha
 	if (!packet)
 		return false;
 
-	LOGMESSAGE("Net: Sending message %s of size %lu to %s", message->ToString().c_str(), (unsigned long)packet->dataLength, peerName);
+	LOGMESSAGE("Net: Sending message {} of size {} to {}", message->ToString(), packet->dataLength,
+		peerName);
 
 	// Let ENet send the message to peer
 	if (enet_peer_send(peer, DEFAULT_CHANNEL, packet) < 0)

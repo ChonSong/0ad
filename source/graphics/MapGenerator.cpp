@@ -164,7 +164,7 @@ private:
 		{
 			for (const VfsPath& p : pathnames)
 			{
-				LOGMESSAGE("Loading map generator script '%s'", p.string8());
+				LOGMESSAGE("Loading map generator script '{}'", p.string8());
 
 				if (!m_ScriptInterface.LoadGlobalScriptFile(p))
 				{
@@ -394,7 +394,7 @@ Script::StructuredClone RunMapGenerationScript(const StopToken stopToken, std::a
 	}
 
 	// Load RMS
-	LOGMESSAGE("Loading RMS '%s'", script.string8());
+	LOGMESSAGE("Loading RMS '{}'", script.string8());
 	auto compileResult = scriptInterface.GetModuleLoader().LoadModule(rq, script);
 	scriptInterface.GetContext().RunJobs();
 	auto& future = *compileResult.begin();

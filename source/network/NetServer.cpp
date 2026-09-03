@@ -217,14 +217,14 @@ void CNetServerWorker::SetupUPnP(const std::uint16_t port)
 	// Cached root descriptor URL.
 	const std::string rootDescURL{g_ConfigDB.Get("network.upnprootdescurl", std::string{})};
 	if (!rootDescURL.empty())
-		LOGMESSAGE("Net server: attempting to use cached root descriptor URL: %s", rootDescURL.c_str());
+		LOGMESSAGE("Net server: attempting to use cached root descriptor URL: {}", rootDescURL);
 
 	int ret = 0;
 
 	// Try a cached URL first
 	if (!rootDescURL.empty() && UPNP_GetIGDFromUrl(rootDescURL.c_str(), &urls, &data, internalIPAddress, sizeof(internalIPAddress)) && strlen(data.first.controlurl) != 0)
 	{
-		LOGMESSAGE("Net server: using cached IGD = %s", urls.controlURL);
+		LOGMESSAGE("Net server: using cached IGD = {}", urls.controlURL);
 		ret = 1;
 	}
 	// No cached URL, or it did not respond. Try discovering the UPnP IGD for 2 seconds.
@@ -254,24 +254,27 @@ void CNetServerWorker::SetupUPnP(const std::uint16_t port)
 		LOGMESSAGE("Net server: No IGD found");
 		break;
 	case 1:
-		LOGMESSAGE("Net server: found valid IGD = %s", urls.controlURL);
+		LOGMESSAGE("Net server: found valid IGD = {}", urls.controlURL);
 		break;
 #if defined(MINIUPNPC_API_VERSION) && MINIUPNPC_API_VERSION >= 18
 	case 2:
-		LOGMESSAGE("Net server: found IGD with reserved IP = %s, will try to continue anyway", urls.controlURL);
+		LOGMESSAGE("Net server: found IGD with reserved IP = {}, will try to continue anyway",
+			urls.controlURL);
 		break;
 	case 3:
 #else
 	case 2:
 #endif
-		LOGMESSAGE("Net server: found a valid, not connected IGD = %s, will try to continue anyway", urls.controlURL);
+		LOGMESSAGE("Net server: found a valid, not connected IGD = {}, will try to continue anyway",
+			urls.controlURL);
 		break;
 #if defined(MINIUPNPC_API_VERSION) && MINIUPNPC_API_VERSION >= 18
 	case 4:
 #else
 	case 3:
 #endif
-		LOGMESSAGE("Net server: found a UPnP device unrecognized as IGD = %s, will try to continue anyway", urls.controlURL);
+		LOGMESSAGE("Net server: found a UPnP device unrecognized as IGD = {}, will try to continue "
+			"anyway", urls.controlURL);
 		break;
 	default:
 		debug_warn(L"Unrecognized return value from UPNP_GetValidIGD");
@@ -281,19 +284,20 @@ void CNetServerWorker::SetupUPnP(const std::uint16_t port)
 	ret = UPNP_GetExternalIPAddress(urls.controlURL, data.first.servicetype, externalIPAddress);
 	if (ret != UPNPCOMMAND_SUCCESS)
 	{
-		LOGMESSAGE("Net server: GetExternalIPAddress failed with code %d (%s)", ret, strupnperror(ret));
+		LOGMESSAGE("Net server: GetExternalIPAddress failed with code {} ({})", ret,
+			strupnperror(ret));
 		freeUPnP();
 		return;
 	}
-	LOGMESSAGE("Net server: ExternalIPAddress = %s", externalIPAddress);
+	LOGMESSAGE("Net server: ExternalIPAddress = {}", externalIPAddress);
 
 	// Try to setup port forwarding.
 	ret = UPNP_AddPortMapping(urls.controlURL, data.first.servicetype, psPort, psPort,
 							internalIPAddress, description, protocall, 0, leaseDuration);
 	if (ret != UPNPCOMMAND_SUCCESS)
 	{
-		LOGMESSAGE("Net server: AddPortMapping(%s, %s, %s) failed with code %d (%s)",
-			   psPort, psPort, internalIPAddress, ret, strupnperror(ret));
+		LOGMESSAGE("Net server: AddPortMapping({}, {}, {}) failed with code {} ({})",
+			psPort, psPort, internalIPAddress, ret, strupnperror(ret));
 		freeUPnP();
 		return;
 	}
@@ -310,18 +314,19 @@ void CNetServerWorker::SetupUPnP(const std::uint16_t port)
 
 	if (ret != UPNPCOMMAND_SUCCESS)
 	{
-		LOGMESSAGE("Net server: GetSpecificPortMappingEntry() failed with code %d (%s)", ret, strupnperror(ret));
+		LOGMESSAGE("Net server: GetSpecificPortMappingEntry() failed with code {} ({})", ret,
+			strupnperror(ret));
 		freeUPnP();
 		return;
 	}
 
-	LOGMESSAGE("Net server: External %s:%s %s is redirected to internal %s:%s (duration=%s)",
-				   externalIPAddress, psPort, protocall, intClient, intPort, duration);
+	LOGMESSAGE("Net server: External {}:{} {} is redirected to internal {}:{} (duration={})",
+		externalIPAddress, psPort, protocall, intClient, intPort, duration);
 
 	// Cache root descriptor URL to try to avoid discovery next time.
 	g_ConfigDB.SetValueString(CFG_USER, "network.upnprootdescurl", urls.rootdescURL);
 	g_ConfigDB.WriteValueToFile(CFG_USER, "network.upnprootdescurl", urls.rootdescURL);
-	LOGMESSAGE("Net server: cached UPnP root descriptor URL as %s", urls.rootdescURL);
+	LOGMESSAGE("Net server: cached UPnP root descriptor URL as {}", urls.rootdescURL);
 
 	freeUPnP();
 }
@@ -473,7 +478,8 @@ bool CNetServerWorker::RunStep()
 		// Report the client address
 		char hostname[256] = "(error)";
 		enet_address_get_host_ip(&event.peer->address, hostname, ARRAY_SIZE(hostname));
-		LOGMESSAGE("Net server: Received connection from %s:%u", hostname, (unsigned int)event.peer->address.port);
+		LOGMESSAGE("Net server: Received connection from {}:{}", hostname,
+			event.peer->address.port);
 
 		// Set up a session object for this peer
 
@@ -497,7 +503,7 @@ bool CNetServerWorker::RunStep()
 		CNetServerSession* session = static_cast<CNetServerSession*>(event.peer->data);
 		if (session)
 		{
-			LOGMESSAGE("Net server: Disconnected %s", DebugName(session).c_str());
+			LOGMESSAGE("Net server: Disconnected {}", DebugName(session));
 
 			// Remove the session first, so we won't send player-update messages to it
 			// when updating the FSM
@@ -528,7 +534,8 @@ bool CNetServerWorker::RunStep()
 			CNetMessage* msg = CNetMessageFactory::CreateMessage(event.packet->data, event.packet->dataLength, GetScriptInterface());
 			if (msg)
 			{
-				LOGMESSAGE("Net server: Received message %s of size %lu from %s", msg->ToString().c_str(), (unsigned long)msg->GetSerializedLength(), DebugName(session).c_str());
+				LOGMESSAGE("Net server: Received message {} of size {} from {}",
+					msg->ToString(), msg->GetSerializedLength(), DebugName(session));
 
 				HandleMessageReceive(msg, session);
 
@@ -892,7 +899,7 @@ void CNetServerWorker::SetTurnLength(std::uint32_t msecs)
 
 void CNetServerWorker::ProcessLobbyAuth(const CStr& name, const CStr& token)
 {
-	LOGMESSAGE("Net Server: Received lobby auth message from %s with %s", name, token);
+	LOGMESSAGE("Net Server: Received lobby auth message from {} with {}", name, token);
 	// Find the user with that guid
 	const auto it = std::find_if(m_Sessions.begin(), m_Sessions.end(),
 		[&](const auto& session) { return session->GetGUID() == token; });
@@ -1087,7 +1094,8 @@ bool CNetServerWorker::OnAuthenticate(CNetServerSession* session, CFsmEvent<CNet
 
 		if (!isRejoining)
 		{
-			LOGMESSAGE("Refused connection after game start from not-previously-known user \"%s\"", utf8_from_wstring(username));
+			LOGMESSAGE("Refused connection after game start from not-previously-known user \"{}\"",
+				utf8_from_wstring(username));
 			session->Disconnect(NDR_SERVER_ALREADY_IN_GAME);
 			return true;
 		}
@@ -1585,10 +1593,8 @@ void CNetServerWorker::PreStartGame(const CStr& initAttribs)
 		{
 			// We only support clients joining before or after, not during the loading screen.
 			// Therefore we have to disconnect clients who did not complete the authentication yet.
-			LOGMESSAGE("Dropping client (%s / %s / %d) not in NSS_PREGAME when starting the game",
-				session->GetUserName().ToUTF8().c_str(),
-				session->GetGUID().c_str(),
-				session->GetHostID());
+			LOGMESSAGE("Dropping client ({} / {} / {}) not in NSS_PREGAME when starting the game",
+				session->GetUserName().ToUTF8(), session->GetGUID(), session->GetHostID());
 			session->Disconnect(NDR_SERVER_LOADING);
 			continue;
 		}

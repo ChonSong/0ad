@@ -553,7 +553,7 @@ void ShadowMapInternals::CreateTexture(const uint32_t width, const uint32_t heig
 #endif
 	ENSURE(formatName);
 
-	LOGMESSAGE("Creating shadow texture (size %dx%d) (format = %s)",
+	LOGMESSAGE("Creating shadow texture (size {}x{}) (format = {})",
 		Width, Height, formatName);
 
 	if (g_RenderingOptions.GetShadowAlphaFix())

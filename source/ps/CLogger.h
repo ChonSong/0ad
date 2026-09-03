@@ -1,4 +1,4 @@
-/* Copyright (C) 2025 Wildfire Games.
+/* Copyright (C) 2026 Wildfire Games.
  * This file is part of 0 A.D.
  *
  * 0 A.D. is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
 #include "lib/code_annotation.h"
 
 #include <deque>
+#include <fmt/format.h>
 #include <fmt/printf.h>
 #include <fstream>
 #include <mutex>
@@ -33,7 +34,8 @@ class CLogger;
 extern CLogger* g_Logger;
 
 
-#define LOGMESSAGE(...)       g_Logger->WriteMessage(fmt::sprintf(__VA_ARGS__).c_str(), false)
+#define LOGMESSAGE(fmtstring, ...) g_Logger->WriteMessage( \
+	fmt::format(FMT_STRING(fmtstring), ## __VA_ARGS__).c_str(), false)
 #define LOGMESSAGERENDER(...) g_Logger->WriteMessage(fmt::sprintf(__VA_ARGS__).c_str(), true)
 #define LOGWARNING(...)       g_Logger->WriteWarning(fmt::sprintf(__VA_ARGS__).c_str())
 #define LOGERROR(...)         g_Logger->WriteError  (fmt::sprintf(__VA_ARGS__).c_str())

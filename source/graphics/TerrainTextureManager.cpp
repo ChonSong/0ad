@@ -106,7 +106,7 @@ static Status AddTextureDirCallback(const VfsPath& pathname, const uintptr_t cbD
 	AddTextureCallbackData& data = *(AddTextureCallbackData*)cbData;
 	VfsPath path = pathname / L"terrains.xml";
 	if (!VfsFileExists(path))
-		LOGMESSAGE("'%s' does not exist. Using previous properties.", path.string8());
+		LOGMESSAGE("'{}' does not exist. Using previous properties.", path.string8());
 	else
 		data.props = CTerrainProperties::FromXML(data.props, path);
 

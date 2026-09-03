@@ -206,7 +206,7 @@ static Input::Reaction MainInputHandler(const SDL_Event& ev)
 			LOGERROR("Failed to install mod %s", dropped_filedir);
 		else
 		{
-			LOGMESSAGE("Installed mod %s", installer.GetInstalledMods().front());
+			LOGMESSAGE("Installed mod {}", installer.GetInstalledMods().front());
 			Script::Interface modInterface("Engine", "Mod", g_ScriptContext);
 			g_Mods.UpdateAvailableMods(modInterface);
 			RestartEngine();

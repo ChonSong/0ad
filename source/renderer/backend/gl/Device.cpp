@@ -312,8 +312,8 @@ std::unique_ptr<IDevice> CDevice::Create(SDL_Window* window)
 	device->m_DriverInformation = GetDriverInformationImpl();
 	device->m_Extensions = GetExtensionsImpl();
 
-	LOGMESSAGE("GL device name: %s", device->m_Name.c_str());
-	LOGMESSAGE("GL version: %s", device->m_Version.c_str());
+	LOGMESSAGE("GL device name: {}", device->m_Name);
+	LOGMESSAGE("GL version: {}", device->m_Version);
 
 #if CONFIG2_GLES
 	const bool minimumRequiredGLVersionSupported{version >= GLAD_MAKE_VERSION(2, 1)};
