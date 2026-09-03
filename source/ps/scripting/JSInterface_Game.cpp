@@ -190,7 +190,7 @@ void DumpTerrainMipmap()
 	g_Game->GetWorld()->GetTerrain().GetHeightMipmap().DumpToDisk(filename);
 	OsPath realPath;
 	g_VFS->GetRealPath(filename, realPath);
-	LOGMESSAGERENDER("Terrain mipmap written to '%s'", realPath.string8());
+	LOGMESSAGERENDER("Terrain mipmap written to '{}'", realPath.string8());
 }
 
 void RegisterScriptFunctions(const Script::Request& rq)

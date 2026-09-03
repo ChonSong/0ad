@@ -639,7 +639,8 @@ bool CNetClient::HandleMessage(CNetMessage* message)
 
 				std::stringstream stream;
 
-				LOGMESSAGERENDER("Serializing game at turn %u for rejoining player", m_ClientTurnManager->GetCurrentTurn());
+				LOGMESSAGERENDER("Serializing game at turn {} for rejoining player",
+					m_ClientTurnManager->GetCurrentTurn());
 				std::uint32_t turn = to_le32(m_ClientTurnManager->GetCurrentTurn());
 				stream.write((char*)&turn, sizeof(turn));
 

@@ -560,7 +560,7 @@ void CProfileViewerInternals::SaveToFile()
 		}
 		else
 		{
-			LOGMESSAGERENDER("Profiler snapshot saved to '%s'", filePath.string8());
+			LOGMESSAGERENDER("Profiler snapshot saved to '{}'", filePath.string8());
 		}
 	}
 

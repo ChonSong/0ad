@@ -894,7 +894,7 @@ void CSimulation2::ActivateRejoinTest(turn_id_t turn)
 {
 	if (m->m_RejoinTestTurn.has_value())
 		return;
-	LOGMESSAGERENDER("Rejoin test will activate in %d turns", turn - m->m_TurnNumber);
+	LOGMESSAGERENDER("Rejoin test will activate in {} turns", turn - m->m_TurnNumber);
 	m->m_RejoinTestTurn = turn;
 }
 

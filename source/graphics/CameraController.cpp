@@ -703,39 +703,41 @@ Input::Reaction CCameraController::HandleEvent(const SDL_Event& ev)
 		else if (hotkey == "camera.scroll.speed.increase")
 		{
 			m_ViewScrollSpeed *= m_ViewScrollSpeedModifier;
-			LOGMESSAGERENDER("Scroll speed increased to %.1f", m_ViewScrollSpeed);
+			LOGMESSAGERENDER("Scroll speed increased to {:.1f}", m_ViewScrollSpeed);
 			return Input::Reaction::HANDLED;
 		}
 		else if (hotkey == "camera.scroll.speed.decrease")
 		{
 			m_ViewScrollSpeed /= m_ViewScrollSpeedModifier;
-			LOGMESSAGERENDER("Scroll speed decreased to %.1f", m_ViewScrollSpeed);
+			LOGMESSAGERENDER("Scroll speed decreased to {:.1f}", m_ViewScrollSpeed);
 			return Input::Reaction::HANDLED;
 		}
 		else if (hotkey == "camera.rotate.speed.increase")
 		{
 			m_ViewRotateXSpeed *= m_ViewRotateSpeedModifier;
 			m_ViewRotateYSpeed *= m_ViewRotateSpeedModifier;
-			LOGMESSAGERENDER("Rotate speed increased to X=%.3f, Y=%.3f", m_ViewRotateXSpeed, m_ViewRotateYSpeed);
+			LOGMESSAGERENDER("Rotate speed increased to X={:.3f}, Y={:.3f}", m_ViewRotateXSpeed,
+				m_ViewRotateYSpeed);
 			return Input::Reaction::HANDLED;
 		}
 		else if (hotkey == "camera.rotate.speed.decrease")
 		{
 			m_ViewRotateXSpeed /= m_ViewRotateSpeedModifier;
 			m_ViewRotateYSpeed /= m_ViewRotateSpeedModifier;
-			LOGMESSAGERENDER("Rotate speed decreased to X=%.3f, Y=%.3f", m_ViewRotateXSpeed, m_ViewRotateYSpeed);
+			LOGMESSAGERENDER("Rotate speed decreased to X={:.3f}, Y={:.3f}", m_ViewRotateXSpeed,
+				m_ViewRotateYSpeed);
 			return Input::Reaction::HANDLED;
 		}
 		else if (hotkey == "camera.zoom.speed.increase")
 		{
 			m_ViewZoomSpeed *= m_ViewZoomSpeedModifier;
-			LOGMESSAGERENDER("Zoom speed increased to %.1f", m_ViewZoomSpeed);
+			LOGMESSAGERENDER("Zoom speed increased to {:.1f}", m_ViewZoomSpeed);
 			return Input::Reaction::HANDLED;
 		}
 		else if (hotkey == "camera.zoom.speed.decrease")
 		{
 			m_ViewZoomSpeed /= m_ViewZoomSpeedModifier;
-			LOGMESSAGERENDER("Zoom speed decreased to %.1f", m_ViewZoomSpeed);
+			LOGMESSAGERENDER("Zoom speed decreased to {:.1f}", m_ViewZoomSpeed);
 			return Input::Reaction::HANDLED;
 		}
 		return Input::Reaction::PASS;

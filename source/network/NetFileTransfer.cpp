@@ -69,7 +69,7 @@ Status CNetFileTransferer::OnFileTransferResponse(const CFileTransferResponseMes
 	task.length = message.m_Length;
 	task.buffer.reserve(message.m_Length);
 
-	LOGMESSAGERENDER("Downloading data over network (%lu KiB) - please wait...", task.length / KiB);
+	LOGMESSAGERENDER("Downloading data over network ({} KiB) - please wait...", task.length / KiB);
 	m_LastProgressReportTime = timer_Time();
 
 	return INFO::OK;
@@ -117,7 +117,7 @@ Status CNetFileTransferer::OnFileTransferData(const CFileTransferDataMessage& me
 	double t = timer_Time();
 	if (t > m_LastProgressReportTime + 0.5)
 	{
-		LOGMESSAGERENDER("Downloading data: %.1f%% of %lu KiB",
+		LOGMESSAGERENDER("Downloading data: {:.1f}% of {} KiB",
 			100.f * task.buffer.size() / task.length, task.length / KiB);
 		m_LastProgressReportTime = t;
 	}
