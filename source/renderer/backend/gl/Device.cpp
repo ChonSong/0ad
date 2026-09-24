@@ -125,9 +125,9 @@ void GLAD_API_PTR OnDebugMessage(
 	GLenum source, GLenum type, GLuint id, GLenum severity,
 	GLsizei /*length*/, const GLchar* message, const void* /*user_param*/)
 {
-	std::string debugSource = "unknown";
-	std::string debugType = "unknown";
-	std::string debugSeverity = "unknown";
+	const char* debugSource = "unknown";
+	const char* debugType = "unknown";
+	const char* debugSeverity = "unknown";
 
 	switch (source)
 	{
@@ -201,7 +201,7 @@ void GLAD_API_PTR OnDebugMessage(
 	if (severity == GL_DEBUG_SEVERITY_NOTIFICATION)
 	{
 		debug_printf(
-			"OpenGL | %s: %s source: %s id %u: %s\n", debugSeverity.c_str(), debugType.c_str(), debugSource.c_str(), id, message);
+			"OpenGL | %s: %s source: %s id %u: %s\n", debugSeverity, debugType, debugSource, id, message);
 	}
 	else
 	{
