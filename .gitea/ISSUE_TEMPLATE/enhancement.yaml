@@ -25,3 +25,15 @@ body:
         If this is a gameplay change, please add the *Needs Design Input* label, and open a forum
         topic for discussing your proposal.<br>
         You should link that forum topic in the Issue description above.
+
+  - type: checkboxes
+    attributes:
+      label: Confirmation of authorship
+      options:
+        - label: >
+            I confirm that I authored this issue, understand its details and can vouch for its
+            accuracy. If I used an "AI" tool to create the issue, I confirm that it was only used
+            as a supervised tool adhering to the rules in [AGENTS.md](0ad/0ad/AGENTS.md).
+          required: true
+          visible: [form]
+    visible: [form]
