@@ -1,7 +1,7 @@
 {
 	"genericName": "Legionary Engineers",
 	"autoResearch": true,
-	"description": "Soldiers were well Trained to Operate Siege Engines.",
+	"description": "Soldiers were well trained to operate Siege Engines.",
 	"requirements":{
 			"civ": "rome"
 	},

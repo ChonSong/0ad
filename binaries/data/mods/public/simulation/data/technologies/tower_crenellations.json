@@ -1,6 +1,6 @@
 {
 	"genericName": "Crenellations",
-	"description": "Crenellations on the battlements allow soldiers wider range of fire in defending a keep.",
+	"description": "Crenellations on the battlements allow soldiers a wider range of fire in defending a keep.",
 	"cost": {
 		"stone": 500,
 		"metal": 250

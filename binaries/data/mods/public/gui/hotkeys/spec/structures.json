@@ -205,7 +205,7 @@
 			},
 			"structures.place.great_hall": {
 				"name": "Build Great Hall",
-				"desc": "Place  a built Great Hall on the map."
+				"desc": "Place a built Great Hall on the map."
 			},
 			"structures.place.temple_2": {
 				"name": "Build Temple of Isis",

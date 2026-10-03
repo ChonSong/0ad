@@ -1,6 +1,6 @@
 {
 	"genericName": "Harvesting Machine",
-	"description": "The Gauls invented an harvesting machine, making it much easier to harvest grain.",
+	"description": "The Gauls invented a harvesting machine, making it much easier to harvest grain.",
 	"cost": {
 		"wood": 200,
 		"metal": 100
