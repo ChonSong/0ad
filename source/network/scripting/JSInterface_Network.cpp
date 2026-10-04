@@ -83,7 +83,11 @@ void StartNetworkHost(const CStrW& playerName, const std::uint16_t serverPort, c
 
 	// Always use lobby authentication for lobby matches to prevent impersonation and smurfing, in particular through mods that implemented an UI for arbitrary or other players nicknames.
 	const bool hasLobby = !!g_XmppClient;
-	const std::string hostJID{hasLobby ? g_XmppClient->GetJID() : ""};
+	std::string hostJID;
+#if CONFIG2_LOBBY
+	if (hasLobby)
+		hostJID = g_XmppClient->GetJID();
+#endif
 
 	/**
 	 * Password security - we want 0 A.D. to protect players from malicious hosts. We assume that clients
@@ -125,6 +129,7 @@ void StartNetworkJoin(const CStrW& playerName, const CStr& serverAddress, std::u
 	g_NetClient = new CNetClient(g_Game, serverAddress, serverPort, playerName);
 }
 
+#if CONFIG2_LOBBY
 /**
  * Requires XmppClient to send iq request to the server to get server's ip and port based on passed password.
  * This is needed to not force server to share it's public ip with all potential clients in the lobby.
@@ -141,6 +146,7 @@ void StartNetworkJoinLobby(const CStrW& playerName, const CStr& hostJID, const C
 	g_Game = new CGame(true);
 	g_NetClient = new CNetClient(g_Game, playerName, hostJID, hashedPass, *g_XmppClient);
 }
+#endif // CONFIG2_LOBBY
 
 void DisconnectNetworkGame()
 {
@@ -294,7 +300,9 @@ void RegisterScriptFunctions(const Script::Request& rq)
 	Script::Function::Register<&HasNetClient>(rq, "HasNetClient");
 	Script::Function::Register<&StartNetworkHost>(rq, "StartNetworkHost");
 	Script::Function::Register<&StartNetworkJoin>(rq, "StartNetworkJoin");
+#if CONFIG2_LOBBY
 	Script::Function::Register<&StartNetworkJoinLobby>(rq, "StartNetworkJoinLobby");
+#endif
 	Script::Function::Register<&DisconnectNetworkGame>(rq, "DisconnectNetworkGame");
 	Script::Function::Register<&GetPlayerGUID>(rq, "GetPlayerGUID");
 	Script::Function::Register<&PollNetworkClient>(rq, "PollNetworkClient");

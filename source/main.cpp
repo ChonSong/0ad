@@ -439,8 +439,10 @@ static void Frame(RL::Interface* rlInterface, const int fixedFrameFrequency)
 	}
 
 	// Keep us connected to any XMPP servers
+#if CONFIG2_LOBBY
 	if (g_XmppClient)
 		g_XmppClient->recv();
+#endif
 
 	g_UserReporter.Update();
 

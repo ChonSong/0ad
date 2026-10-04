@@ -19,6 +19,7 @@
 #define NETCLIENT_H
 
 #include "lib/code_annotation.h"
+#include "lib/config2.h"
 #include "lib/external_libraries/enet.h"
 #include "network/FSM.h"
 #include "network/NetHost.h"
@@ -87,8 +88,10 @@ public:
 	 * This constructor additionally requests connection information over the
 	 * lobby.
 	 */
+#if CONFIG2_LOBBY
 	CNetClient(CGame* game, const CStrW& username, const CStr& hostJID,
 		std::string hashedPassword, XmppClient& xmppClient);
+#endif
 
 	virtual ~CNetClient();
 
@@ -106,8 +109,10 @@ public:
 	 * @param localNetwork - if true, assume we are trying to connect on the local network.
 	 * @return true on success, false on connection failure
 	 */
+#if CONFIG2_LOBBY
 	bool TryToConnectWithSTUN(std::string serverAddressOrHostname, std::uint16_t serverPort,
 		const CStr& hostJID, bool localNetwork);
+#endif
 
 	/**
 	 * Destroy the connection to the server.

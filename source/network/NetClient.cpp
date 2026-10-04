@@ -20,6 +20,7 @@
 #include "NetClient.h"
 
 #include "lib/byte_order.h"
+#include "lib/config2.h"
 #include "lib/debug.h"
 #include "lib/external_libraries/enet.h"
 #include "lib/status.h"
@@ -186,12 +187,14 @@ CNetClient::CNetClient(PrivateTag, CGame* game, std::string serverAddressOrHostn
 	SetFirstState(NCS_UNCONNECTED);
 }
 
+#if CONFIG2_LOBBY
 CNetClient::CNetClient(CGame* game, const CStrW& username, const CStr& hostJID,
 	std::string hashedPassword, XmppClient& xmppClient) :
 	CNetClient{PrivateTag{}, game, {}, 0, username, hostJID, std::move(hashedPassword)}
 {
 	xmppClient.SendIqGetConnectionData(m_HostJID, m_Password, m_UserName.ToUTF8(), false);
 }
+#endif // CONFIG2_LOBBY
 
 CNetClient::~CNetClient()
 {
@@ -228,6 +231,7 @@ void CNetClient::HandleGetServerDataFailed(const CStr& error)
 	);
 }
 
+#if CONFIG2_LOBBY
 bool CNetClient::TryToConnectWithSTUN(std::string serverAddressOrHostname, std::uint16_t serverPort,
 	const CStr& hostJID, bool localNetwork)
 {
@@ -333,6 +337,7 @@ bool CNetClient::TryToConnectWithSTUN(std::string serverAddressOrHostname, std::
 
 	return true;
 }
+#endif // CONFIG2_LOBBY
 
 
 void CNetClient::SetAndOwnSession(CNetClientSession* session)
@@ -756,9 +761,11 @@ bool CNetClient::OnHandshakeResponse(CNetClient* client, CFsmEvent<CNetMessage*>
 
 	if (message->m_Flags & PS_NETWORK_FLAG_REQUIRE_LOBBYAUTH)
 	{
+#if CONFIG2_LOBBY
 		if (g_XmppClient && !client->m_HostJID.empty())
 			g_XmppClient->SendIqLobbyAuth(client->m_HostJID, client->m_GUID);
 		else
+#endif
 		{
 			client->PushGuiMessage(
 				"type", "netstatus",

@@ -331,7 +331,9 @@ void ShutdownNetworkAndUI()
 
 	EndGame();
 
+#if CONFIG2_LOBBY
 	SAFE_DELETE(g_XmppClient);
+#endif
 
 	SAFE_DELETE(g_ModIo);
 
