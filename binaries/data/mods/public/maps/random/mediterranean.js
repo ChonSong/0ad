@@ -191,7 +191,7 @@ export function* generateMap(mapSettings)
 		g_Map.log("Flatten the initial CC area and placing playerbases");
 		for (let i = 0; i < getNumPlayers(); ++i)
 		{
-			g_Map.logger.printDuration();
+			Engine.ProfileStart("Placing base");
 			setBiome(climateZones.find(zone => zone.tileClass.has(playerPosition[i])).biome);
 
 			createArea(
@@ -200,6 +200,7 @@ export function* generateMap(mapSettings)
 				new SmoothElevationPainter(ELEVATION_SET, g_Map.getHeight(playerPosition[i]), 6));
 
 			createBase(playerIDs[i], playerPosition[i], mapSize >= 384);
+			Engine.ProfileStop();
 		}
 	}
 	yield 50;
