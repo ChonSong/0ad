@@ -8,13 +8,13 @@ set -e
 
 cd "$(dirname "$0")"
 
-PV=55fc4b2deac045ca06dc23d98426423356c507c1
+PV=5.0.0
 LIB_VERSION=${PV}+wfg0
 
 fetch()
 {
 	curl -fLo "premake-core-${PV}.tar.gz" \
-		"https://github.com/premake/premake-core/archive/${PV}.tar.gz"
+		"https://github.com/premake/premake-core/archive/refs/tags/v${PV}.tar.gz"
 }
 
 echo "Building Premake..."
