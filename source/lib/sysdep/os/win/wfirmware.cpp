@@ -1,4 +1,4 @@
-/* Copyright (C) 2015 Wildfire Games.
+/* Copyright (C) 2026 Wildfire Games.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -29,17 +29,12 @@ namespace wfirmware {
 
 TableIds GetTableIDs(Provider provider)
 {
-	WUTIL_FUNC(pEnumSystemFirmwareTables, UINT, (DWORD, PVOID, DWORD));
-	WUTIL_IMPORT_KERNEL32(EnumSystemFirmwareTables, pEnumSystemFirmwareTables);
-	if(!pEnumSystemFirmwareTables)
-		return TableIds();
-
-	const size_t tableIdsSize = pEnumSystemFirmwareTables(provider, 0, 0);
+	const size_t tableIdsSize = EnumSystemFirmwareTables(provider, 0, 0);
 	ENSURE(tableIdsSize != 0);
 	ENSURE(tableIdsSize % sizeof(TableId) == 0);
 	TableIds tableIDs(DivideRoundUp(tableIdsSize, sizeof(TableId)), 0);
 
-	const size_t bytesWritten = pEnumSystemFirmwareTables(provider, &tableIDs[0], (DWORD)tableIdsSize);
+	const size_t bytesWritten = EnumSystemFirmwareTables(provider, &tableIDs[0], (DWORD)tableIdsSize);
 	ENSURE(bytesWritten == tableIdsSize);
 
 	return tableIDs;
@@ -48,12 +43,7 @@ TableIds GetTableIDs(Provider provider)
 
 Table GetTable(Provider provider, TableId tableId)
 {
-	WUTIL_FUNC(pGetSystemFirmwareTable, UINT, (DWORD, DWORD, PVOID, DWORD));
-	WUTIL_IMPORT_KERNEL32(GetSystemFirmwareTable, pGetSystemFirmwareTable);
-	if(!pGetSystemFirmwareTable)
-		return Table();
-
-	const size_t tableSize = pGetSystemFirmwareTable(provider, tableId, 0, 0);
+	const size_t tableSize = GetSystemFirmwareTable(provider, tableId, 0, 0);
 	if(tableSize == 0)
 	{
 		DEBUG_WARN_ERR(ERR::LOGIC);
@@ -61,7 +51,7 @@ Table GetTable(Provider provider, TableId tableId)
 	}
 
 	Table table(tableSize, 0);
-	const size_t bytesWritten = pGetSystemFirmwareTable(provider, tableId, &table[0], (DWORD)tableSize);
+	const size_t bytesWritten = GetSystemFirmwareTable(provider, tableId, &table[0], (DWORD)tableSize);
 	ENSURE(bytesWritten == tableSize);
 
 	return table;

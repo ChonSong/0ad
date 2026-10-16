@@ -42,11 +42,10 @@
 
 #include <atomic>
 #include <ctime>
+#include <tuple>
 
-// (dynamic linking preserves compatibility with previous Windows versions)
-static WUTIL_FUNC(pSetFileCompletionNotificationModes, BOOL, (HANDLE, UCHAR));
-static WUTIL_FUNC(pSetFileIoOverlappedRange, BOOL, (HANDLE, PUCHAR, ULONG));
-static WUTIL_FUNC(pSetFileValidData, BOOL, (HANDLE, LONGLONG));
+static bool useSetFileIoOverlappedRange{false};
+static bool useSetFileValidData{false};
 
 // (there must be one global IOCP because aio_suspend might be called for
 // requests from different files)
@@ -189,8 +188,8 @@ struct OvlAllocator	// POD
 		// pin the page in kernel address space, which means our thread
 		// won't have to be the one to service the I/O, thus avoiding an APC.
 		// ("thread agnostic I/O")
-		if(pSetFileIoOverlappedRange)
-			WARN_IF_FALSE(pSetFileIoOverlappedRange(hFile, (PUCHAR)storage, storageSize));
+		if(useSetFileIoOverlappedRange)
+			WARN_IF_FALSE(SetFileIoOverlappedRange(hFile, (PUCHAR)storage, storageSize));
 	}
 
 	// @return OVERLAPPED initialized for I/O starting at offset,
@@ -270,14 +269,9 @@ struct FileControlBlock // POD
 
 		AttachToCompletionPort(hFile, hIOCP, (ULONG_PTR)this);
 
-		// minor optimization: avoid posting to IOCP in rare cases
-		// where the I/O completes synchronously
-		if(pSetFileCompletionNotificationModes)
-		{
-			// (for reasons as yet unknown, this fails when the file is
-			// opened for read-only access)
-			(void)pSetFileCompletionNotificationModes(hFile, FILE_SKIP_COMPLETION_PORT_ON_SUCCESS);
-		}
+		// (for reasons as yet unknown, this fails when the file is
+		// opened for read-only access)
+		std::ignore = SetFileCompletionNotificationModes(hFile, FILE_SKIP_COMPLETION_PORT_ON_SUCCESS);
 
 		return INFO::OK;
 	}
@@ -374,17 +368,15 @@ static Status waio_Init()
 {
 	fileControlBlocks.Init();
 
-	WUTIL_IMPORT_KERNEL32(SetFileCompletionNotificationModes, pSetFileCompletionNotificationModes);
-
 	// NB: using these functions when the privileges are not available would
 	// trigger warnings. since callers have to check the function pointers
 	// anyway, just refrain from setting them in such cases.
 
 	if(wutil_SetPrivilege(L"SeLockMemoryPrivilege", true) == INFO::OK)
-		WUTIL_IMPORT_KERNEL32(SetFileIoOverlappedRange, pSetFileIoOverlappedRange);
+		useSetFileIoOverlappedRange = true;
 
 	if(wutil_SetPrivilege(L"SeManageVolumePrivilege", true) == INFO::OK)
-		WUTIL_IMPORT_KERNEL32(SetFileValidData, pSetFileValidData);
+		useSetFileValidData = true;
 
 	return INFO::OK;
 }
@@ -467,7 +459,7 @@ Status waio_Preallocate(int fd, off_t size)
 	}
 
 	// avoid synchronous zero-fill (see discussion in header)
-	if(pSetFileValidData)
+	if(useSetFileValidData)
 	{
 		// this has been reported (#849) to fail with GetLastError() == 0 for
 		// both tiny and medium alignedSize, despite Administrator privileges.
@@ -477,7 +469,7 @@ Status waio_Preallocate(int fd, off_t size)
 		// verifying the filesystem is indeed FAT would be overkill; we'll just
 		// ignore the return code. however, GetLastError can be used to check
 		// whether other problems arose.
-		(void)pSetFileValidData(hFile, alignedSize);
+		std::ignore = SetFileValidData(hFile, alignedSize);
 		ENSURE(GetLastError() == 0);
 	}
 

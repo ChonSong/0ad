@@ -1,4 +1,4 @@
-/* Copyright (C) 2023 Wildfire Games.
+/* Copyright (C) 2026 Wildfire Games.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -39,38 +39,6 @@ bool wutil_IsValidHandle(H h)
 {
 	return h != 0 && h != INVALID_HANDLE_VALUE;
 }
-
-
-//-----------------------------------------------------------------------------
-// dynamic linking
-
-// define a function pointer (optionally prepend 'static')
-#define WUTIL_FUNC(varName, ret, params)\
-	ret (WINAPI* varName) params
-
-// rationale:
-// - splitting up WUTIL_FUNC and WUTIL_IMPORT is a bit verbose in
-//   the common case of a local function pointer definition,
-//   but allows one-time initialization of static variables.
-// - differentiating between procName and varName allows searching
-//   for the actual definition of the function pointer in the code.
-// - a cast would require passing in ret/params.
-// - writing a type-punned pointer breaks strict-aliasing rules.
-#define WUTIL_IMPORT(hModule, procName, varName)\
-	STMT(\
-		const FARPROC f = GetProcAddress(hModule, #procName);\
-		memcpy(&varName, &f, sizeof(FARPROC));\
-	)
-
-// note: Kernel32 is guaranteed to be loaded, so we don't
-// need to LoadLibrary and FreeLibrary.
-#define WUTIL_IMPORT_KERNEL32(procName, varName)\
-	WUTIL_IMPORT(GetModuleHandleW(L"kernel32.dll"), procName, varName)
-
-// note: ntdll is guaranteed to be loaded, so we don't
-// need to LoadLibrary and FreeLibrary.
-#define WUTIL_IMPORT_NTDLL(procName, varName)\
-	WUTIL_IMPORT(GetModuleHandleW(L"ntdll.dll"), procName, varName)
 
 //-----------------------------------------------------------------------------
 // safe allocator

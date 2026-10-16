@@ -1,4 +1,4 @@
-/* Copyright (C) 2024 Wildfire Games.
+/* Copyright (C) 2026 Wildfire Games.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -71,9 +71,12 @@ static DWORD GetNtdllVersion()
  */
 int uname(struct utsname* un)
 {
-	WUTIL_FUNC(pRtlGetVersion, NTSTATUS, (LPOSVERSIONINFOEXW));
-	WUTIL_IMPORT_NTDLL(RtlGetVersion, pRtlGetVersion);
-
+	// note: ntdll is guaranteed to be loaded, so we don't
+	// need to LoadLibrary and FreeLibrary.
+	using RtlGetVersionFunction = NTSTATUS (WINAPI*) (LPOSVERSIONINFOEXW);
+	RtlGetVersionFunction pRtlGetVersion{
+		reinterpret_cast<RtlGetVersionFunction>(
+			GetProcAddress(GetModuleHandleW(L"ntdll.dll"), "RtlGetVersion"))};
 	if (!pRtlGetVersion)
 		return -1;
 

@@ -115,19 +115,11 @@ size_t os_cpu_LargePageSize()
 
 	if(largePageSize == ~(size_t)0)
 	{
-		WUTIL_FUNC(pGetLargePageMinimum, SIZE_T, (void));
-		WUTIL_IMPORT_KERNEL32(GetLargePageMinimum, pGetLargePageMinimum);
-		if(pGetLargePageMinimum)
-		{
-			largePageSize = pGetLargePageMinimum();
-			// Note: checks disabled due to failing on Vista SP2 with old Xeon CPU
-			//	see https://gitea.wildfiregames.com/0ad/0ad/issues/2346
-			//ENSURE(largePageSize != 0);	// IA-32 and AMD64 definitely support large pages
-			//ENSURE(largePageSize > os_cpu_PageSize());
-		}
-		// no OS support for large pages
-		else
-			largePageSize = 0;
+		largePageSize = GetLargePageMinimum();
+		// Note: checks disabled due to failing on Vista SP2 with old Xeon CPU
+		//	see https://gitea.wildfiregames.com/0ad/0ad/issues/2346
+		//ENSURE(largePageSize != 0);	// IA-32 and AMD64 definitely support large pages
+		//ENSURE(largePageSize > os_cpu_PageSize());
 	}
 
 	return largePageSize;
@@ -214,23 +206,7 @@ uintptr_t wcpu_ProcessorMaskFromAffinity(DWORD_PTR processAffinity, DWORD_PTR af
 
 static void VerifyRunningOnCorrectProcessors(DWORD_PTR affinity)
 {
-	DWORD currentProcessor;
-
-	// note: NtGetCurrentProcessorNumber and RtlGetCurrentProcessorNumber aren't
-	// implemented on WinXP SP2.
-	WUTIL_FUNC(pGetCurrentProcessorNumber, DWORD, (void));
-	WUTIL_IMPORT_KERNEL32(GetCurrentProcessorNumber, pGetCurrentProcessorNumber);
-	if(pGetCurrentProcessorNumber)
-		currentProcessor = pGetCurrentProcessorNumber();
-	else
-	{
-		// note: searching for the current APIC ID or IDT address in a
-		// table won't work because initializing the table also requires
-		// this function. LSL only works on Vista (which already
-		// has GetCurrentProcessorNumber).
-		return;
-	}
-
+	const DWORD currentProcessor{GetCurrentProcessorNumber()};
 	ENSURE(IsBitSet(affinity, currentProcessor));
 }
 

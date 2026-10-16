@@ -32,7 +32,6 @@
 #include "lib/sysdep/os_cpu.h"
 #include "lib/sysdep/os/win/acpi.h"
 #include "lib/sysdep/os/win/win.h"
-#include "lib/sysdep/os/win/wutil.h"
 #include "lib/sysdep/os/win/wcpu.h"
 
 #include <bit>
@@ -95,24 +94,14 @@ static Node* FindNodeWithProcessor(size_t processor)
 
 static UCHAR HighestNodeNumber()
 {
-	WUTIL_FUNC(pGetNumaHighestNodeNumber, BOOL, (PULONG));
-	WUTIL_IMPORT_KERNEL32(GetNumaHighestNodeNumber, pGetNumaHighestNodeNumber);
-	if(!pGetNumaHighestNodeNumber)
-		return 0;	// NUMA not supported => only one node
-
-	ULONG highestNodeNumber;
-	const BOOL ok = pGetNumaHighestNodeNumber(&highestNodeNumber);
+	ULONG highestNodeNumber{0};
+	const BOOL ok = GetNumaHighestNodeNumber(&highestNodeNumber);
 	WARN_IF_FALSE(ok);
 	return (UCHAR)highestNodeNumber;
 }
 
 static void PopulateNodes()
 {
-	WUTIL_FUNC(pGetNumaNodeProcessorMask, BOOL, (UCHAR, PULONGLONG));
-	WUTIL_IMPORT_KERNEL32(GetNumaNodeProcessorMask, pGetNumaNodeProcessorMask);
-	if(!pGetNumaNodeProcessorMask)
-		return;
-
 	DWORD_PTR processAffinity, systemAffinity;
 	{
 		const BOOL ok = GetProcessAffinityMask(GetCurrentProcess(), &processAffinity, &systemAffinity);
@@ -122,9 +111,9 @@ static void PopulateNodes()
 
 	for(UCHAR nodeNumber = 0; nodeNumber <= HighestNodeNumber(); nodeNumber++)
 	{
-		ULONGLONG affinity;
+		ULONGLONG affinity{0};
 		{
-			const BOOL ok = pGetNumaNodeProcessorMask(nodeNumber, &affinity);
+			const BOOL ok = GetNumaNodeProcessorMask(nodeNumber, &affinity);
 			WARN_IF_FALSE(ok);
 		}
 		if(!affinity)
@@ -339,20 +328,12 @@ size_t numa_AvailableMemory(size_t node)
 	// note: it is said that GetNumaAvailableMemoryNode sometimes incorrectly
 	// reports zero bytes. the actual cause may however be unexpected
 	// RAM configuration, e.g. not all slots filled.
-	WUTIL_FUNC(pGetNumaAvailableMemoryNode, BOOL, (UCHAR, PULONGLONG));
-	WUTIL_IMPORT_KERNEL32(GetNumaAvailableMemoryNode, pGetNumaAvailableMemoryNode);
-	if(pGetNumaAvailableMemoryNode)
-	{
-		const UCHAR nodeNumber = NodeNumberFromNode(node);
-		ULONGLONG availableBytes;
-		const BOOL ok = pGetNumaAvailableMemoryNode(nodeNumber, &availableBytes);
-		WARN_IF_FALSE(ok);
-		const size_t availableMiB = size_t(availableBytes / MiB);
-		return availableMiB;
-	}
-	// NUMA not supported - return available system memory
-	else
-		return os_cpu_MemoryAvailable();
+	const UCHAR nodeNumber = NodeNumberFromNode(node);
+	ULONGLONG availableBytes{0};
+	const BOOL ok = GetNumaAvailableMemoryNode(nodeNumber, &availableBytes);
+	WARN_IF_FALSE(ok);
+	const size_t availableMiB = size_t(availableBytes / MiB);
+	return availableMiB;
 }
 
 
@@ -478,11 +459,6 @@ bool numa_IsMemoryInterleaved()
 static bool VerifyPages([[maybe_unused]] void* mem, [[maybe_unused]] size_t size,
 	[[maybe_unused]] size_t pageSize, [[maybe_unused]] size_t node)
 {
-	WUTIL_FUNC(pQueryWorkingSetEx, BOOL, (HANDLE, PVOID, DWORD));
-	WUTIL_IMPORT_KERNEL32(QueryWorkingSetEx, pQueryWorkingSetEx);
-	if(!pQueryWorkingSetEx)
-		return true;	// can't do anything
-
 #if WINVER >= 0x600
 	size_t largePageSize = os_cpu_LargePageSize();
 	ENSURE(largePageSize != 0); // this value is needed for later
@@ -492,7 +468,7 @@ static bool VerifyPages([[maybe_unused]] void* mem, [[maybe_unused]] size_t size
 	PSAPI_WORKING_SET_EX_INFORMATION* wsi = new PSAPI_WORKING_SET_EX_INFORMATION[numPages];
 	for(size_t i = 0; i < numPages; i++)
 		wsi[i].VirtualAddress = static_cast<std::uint8_t*>(mem) + i*pageSize;
-	pQueryWorkingSetEx(GetCurrentProcess(), wsi, DWORD(sizeof(PSAPI_WORKING_SET_EX_INFORMATION)*numPages));
+	QueryWorkingSetEx(GetCurrentProcess(), wsi, DWORD(sizeof(PSAPI_WORKING_SET_EX_INFORMATION)*numPages));
 
 	// ensure each is valid and allocated on the correct node
 	for(size_t i = 0; i < numPages; i++)
