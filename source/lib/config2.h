@@ -1,4 +1,4 @@
-/* Copyright (C) 2025 Wildfire Games.
+/* Copyright (C) 2026 Wildfire Games.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -35,12 +35,6 @@
 #ifndef CONFIG2_DAP_INTERFACE
 # define CONFIG2_DAP_INTERFACE 1
 #endif // !CONFIG2_DAP_INTERFACE
-
-// allow use of RDTSC for raw tick counts (otherwise, the slower but
-// more reliable on MP systems wall-clock will be used).
-#ifndef CONFIG2_TIMER_ALLOW_RDTSC
-# define CONFIG2_TIMER_ALLOW_RDTSC 1
-#endif
 
 // this enables/disables the actual checking done by OverrunProtector
 // (quite slow, entailing mprotect() before/after each access).

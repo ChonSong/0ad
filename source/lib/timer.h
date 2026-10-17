@@ -27,14 +27,6 @@
 #ifndef INCLUDED_TIMER
 #define INCLUDED_TIMER
 
-#include "lib/code_annotation.h"
-#include "lib/config2.h"	// CONFIG2_TIMER_ALLOW_RDTSC
-#include "lib/debug.h"
-#include "lib/sysdep/arch.h"
-
-#include <cstdint>
-#include <string>
-
 /**
  * timer_Time will subsequently return values relative to the current time.
  **/

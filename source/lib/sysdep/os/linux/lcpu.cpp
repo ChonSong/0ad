@@ -97,13 +97,6 @@ size_t os_cpu_LargePageSize()
 }
 
 
-size_t os_cpu_QueryMemorySize()
-{
-	const uint64_t memorySize = (uint64_t)sysconf(_SC_PHYS_PAGES) * os_cpu_PageSize();
-	return size_t(memorySize / MiB);
-}
-
-
 size_t os_cpu_MemoryAvailable()
 {
 	const uint64_t memoryAvailableBytes = (uint64_t)sysconf(_SC_AVPHYS_PAGES) * os_cpu_PageSize();

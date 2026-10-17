@@ -80,18 +80,6 @@ size_t os_cpu_PageSize();
 size_t os_cpu_LargePageSize();
 
 /**
- * @return the size [MB] of physical memory as reported by the OS;
- * no caching/validation is performed.
- **/
-size_t os_cpu_QueryMemorySize();
-
-/**
- * @return the size [MB] of physical memory; caches the result of
- * os_cpu_QueryMemorySize.
- **/
-size_t os_cpu_MemorySize();
-
-/**
  * @return the current amount [MB] of available memory.
  **/
 size_t os_cpu_MemoryAvailable();

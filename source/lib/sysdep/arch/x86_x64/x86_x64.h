@@ -36,10 +36,6 @@
 #error "including x86_x64.h without ARCH_X86_X64=1"
 #endif
 
-#if MSC_VERSION
-#include <intrin.h>	// __rdtsc
-#endif
-
 namespace x86_x64 {
 
 /**
@@ -146,26 +142,9 @@ enum Caps
  **/
 bool Cap(Caps cap);
 
-void GetCapBits(std::uint32_t* d0, std::uint32_t* d1, std::uint32_t* d2, std::uint32_t* d3);
-
 
 //-----------------------------------------------------------------------------
 // stateless
-
-/**
- * @return the current value of the TimeStampCounter (a counter of
- * CPU cycles since power-on, which is useful for high-resolution timing
- * but potentially differs between multiple CPUs)
- *
- * notes:
- * - a macro avoids call overhead, which is important for TIMER_ACCRUE.
- * - x64 RDTSC writes to edx:eax and clears the upper halves of rdx and rax.
- **/
-#if MSC_VERSION
-static inline std::uint64_t rdtsc() { return __rdtsc(); }
-#else
-std::uint64_t rdtsc();
-#endif
 
 /**
  * trigger a breakpoint inside this function when it is called.

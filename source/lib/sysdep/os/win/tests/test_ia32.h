@@ -1,4 +1,4 @@
-/* Copyright (C) 2010 Wildfire Games.
+/* Copyright (C) 2026 Wildfire Games.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -31,15 +31,6 @@
 class TestIA32: public CxxTest::TestSuite
 {
 public:
-	void test_rdtsc()
-	{
-		// must increase monotonously
-		const std::uint64_t c1 = x86_x64::rdtsc();
-		const std::uint64_t c2 = x86_x64::rdtsc();
-		const std::uint64_t c3 = x86_x64::rdtsc();
-		TS_ASSERT(c1 < c2 && c2 < c3);
-	}
-
 	void test_ia32_cap()
 	{
 		// make sure the really common/basic caps end up reported as true

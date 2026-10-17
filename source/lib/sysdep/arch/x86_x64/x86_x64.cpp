@@ -44,7 +44,7 @@
 #include <vector>
 
 #if MSC_VERSION
-# include <intrin.h>	// __rdtsc
+# include <intrin.h>	// __cpuidex
 #endif
 
 namespace x86_x64 {
@@ -154,16 +154,6 @@ bool Cap(Caps cap)
 		return false;
 	}
 	return IsBitSet(caps[index], bit);
-}
-
-void GetCapBits(std::uint32_t* d0, std::uint32_t* d1, std::uint32_t* d2, std::uint32_t* d3)
-{
-	ModuleInit(&capsInitState, InitCaps);
-
-	*d0 = caps[0];
-	*d1 = caps[1];
-	*d2 = caps[2];
-	*d3 = caps[3];
 }
 
 
@@ -371,19 +361,6 @@ static const char* IdentifierString()
 
 //-----------------------------------------------------------------------------
 // miscellaneous stateless functions
-
-#if !MSC_VERSION	// ensure not already defined in header
-std::uint64_t rdtsc()
-{
-#if GCC_VERSION
-	// GCC supports "portable" assembly for both x86 and x64
-	volatile std::uint32_t lo, hi;
-	__asm__ __volatile__ ("rdtsc" : "=a" (lo), "=d" (hi));
-	return u64_from_u32(hi, lo);
-#endif
-}
-#endif
-
 
 void DebugBreak()
 {

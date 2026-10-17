@@ -115,22 +115,6 @@ static void GetMemoryStatus(MEMORYSTATUSEX& mse)
 	WARN_IF_FALSE(ok);
 }
 
-size_t os_cpu_QueryMemorySize()
-{
-	MEMORYSTATUSEX mse;
-	GetMemoryStatus(mse);
-	DWORDLONG memorySize = mse.ullTotalPhys;
-
-	// Richter, "Programming Applications for Windows": the reported
-	// value doesn't include non-paged pool reserved during boot;
-	// it's not considered available to the kernel. (the amount is
-	// 528 KiB on a 512 MiB WinXP/Win2k machine). we'll round up
-	// to the nearest megabyte to fix this.
-	memorySize = round_up(memorySize, DWORDLONG(1*MiB));		// (Align<> cannot compute DWORDLONG)
-
-	return size_t(memorySize / MiB);
-}
-
 size_t os_cpu_MemoryAvailable()
 {
 	MEMORYSTATUSEX mse;

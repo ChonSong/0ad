@@ -76,18 +76,6 @@ size_t os_cpu_LargePageSize()
 }
 
 
-size_t os_cpu_QueryMemorySize()
-{
-	size_t memorySize = 0;
-	size_t len = sizeof(memorySize);
-	// Argh, the API doesn't seem to be const-correct
-	/*const*/ int mib[2] = { CTL_HW, HW_MEMSIZE };
-	sysctl(mib, 2, &memorySize, &len, nullptr, 0);
-	memorySize /= MiB;
-	return memorySize;
-}
-
-
 size_t os_cpu_MemoryAvailable()
 {
 	size_t memoryAvailable = 0;
