@@ -1,4 +1,4 @@
-/* Copyright (C) 2025 Wildfire Games.
+/* Copyright (C) 2026 Wildfire Games.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -97,25 +97,4 @@ size_t os_cpu_MemoryAvailable()
 	sysctl(mib, 2, &memoryAvailable, &len, nullptr, 0);
 	memoryAvailable /= MiB;
 	return memoryAvailable;
-}
-
-
-uintptr_t os_cpu_SetThreadAffinityMask(uintptr_t /*processorMask*/)
-{
-	// not yet implemented. when doing so, see http://developer.apple.com/releasenotes/Performance/RN-AffinityAPI/
-
-	return os_cpu_ProcessorMask();
-}
-
-
-Status os_cpu_CallByEachCPU(OsCpuCallback cb, uintptr_t cbData)
-{
-	for(size_t processor = 0; processor < os_cpu_NumProcessors(); processor++)
-	{
-		const uintptr_t processorMask = uintptr_t(1) << processor;
-		os_cpu_SetThreadAffinityMask(processorMask);
-		cb(processor, cbData);
-	}
-
-	return INFO::OK;
 }

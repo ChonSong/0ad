@@ -25,7 +25,6 @@
  */
 
 #include "precompiled.h"
-#include "lib/sysdep/os/win/wcpu.h"
 #include "lib/sysdep/os_cpu.h"
 
 #include "lib/bits.h"
@@ -138,101 +137,4 @@ size_t os_cpu_MemoryAvailable()
 	GetMemoryStatus(mse);
 	const size_t memoryAvailableMiB = size_t(mse.ullAvailPhys / MiB);
 	return memoryAvailableMiB;
-}
-
-
-//-----------------------------------------------------------------------------
-
-DWORD_PTR wcpu_AffinityFromProcessorMask(DWORD_PTR processAffinity, uintptr_t processorMask)
-{
-	DWORD_PTR affinity = 0;
-
-	size_t processor = (size_t)-1;
-	for(DWORD processorNumber = 0; processorNumber < (DWORD)os_cpu_MaxProcessors; processorNumber++)
-	{
-		if(IsBitSet(processAffinity, processorNumber))
-		{
-			++processor;	// index among the affinity's set bits
-
-			if(IsBitSet(processorMask, processor))
-				affinity |= DWORD_PTR(1) << processorNumber;
-		}
-	}
-
-	return affinity;
-}
-
-uintptr_t wcpu_ProcessorMaskFromAffinity(DWORD_PTR processAffinity, DWORD_PTR affinity)
-{
-	uintptr_t processorMask = 0;
-
-	size_t processor = (size_t)-1;
-	for(DWORD processorNumber = 0; processorNumber < (DWORD)os_cpu_MaxProcessors; processorNumber++)
-	{
-		if(IsBitSet(processAffinity, processorNumber))
-		{
-			++processor;	// now corresponds to processorNumber
-
-			if(IsBitSet(affinity, processorNumber))
-				processorMask |= uintptr_t(1) << processor;
-		}
-	}
-
-	return processorMask;
-}
-
-
-//-----------------------------------------------------------------------------
-
-static void VerifyRunningOnCorrectProcessors(DWORD_PTR affinity)
-{
-	const DWORD currentProcessor{GetCurrentProcessorNumber()};
-	ENSURE(IsBitSet(affinity, currentProcessor));
-}
-
-
-uintptr_t os_cpu_SetThreadAffinityMask(uintptr_t processorMask)
-{
-	const size_t numProcessors = os_cpu_NumProcessors();
-	// (avoid undefined result when right shift count >= number of bits)
-	ENSURE(numProcessors == sizeof(processorMask)*CHAR_BIT || (processorMask >> numProcessors) == 0);
-
-	DWORD_PTR processAffinity, systemAffinity;
-	const BOOL ok = GetProcessAffinityMask(GetCurrentProcess(), &processAffinity, &systemAffinity);
-	WARN_IF_FALSE(ok);
-
-	const DWORD_PTR affinity = wcpu_AffinityFromProcessorMask(processAffinity, processorMask);
-	const DWORD_PTR previousAffinity = SetThreadAffinityMask(GetCurrentThread(), affinity);
-	ENSURE(previousAffinity != 0);	// ensure function didn't fail
-	// (MSDN says SetThreadAffinityMask takes care of rescheduling)
-	VerifyRunningOnCorrectProcessors(affinity);
-
-	const uintptr_t previousProcessorMask = wcpu_ProcessorMaskFromAffinity(processAffinity, previousAffinity);
-	return previousProcessorMask;
-}
-
-
-Status os_cpu_CallByEachCPU(OsCpuCallback cb, uintptr_t cbData)
-{
-	// abort if we can't run on all system processors
-	DWORD_PTR processAffinity, systemAffinity;
-	{
-		const BOOL ok = GetProcessAffinityMask(GetCurrentProcess(), &processAffinity, &systemAffinity);
-		WARN_IF_FALSE(ok);
-		if(processAffinity != systemAffinity)
-			return ERR::OS_CPU_RESTRICTED_AFFINITY;	// NOWARN
-	}
-
-	const uintptr_t previousAffinity = os_cpu_SetThreadAffinityMask(os_cpu_ProcessorMask());
-
-	for(size_t processor = 0; processor < os_cpu_NumProcessors(); processor++)
-	{
-		const uintptr_t processorMask = uintptr_t(1) << processor;
-		os_cpu_SetThreadAffinityMask(processorMask);
-		cb(processor, cbData);
-	}
-
-	(void)os_cpu_SetThreadAffinityMask(previousAffinity);
-
-	return INFO::OK;
 }

@@ -32,12 +32,6 @@
 #include "lib/code_annotation.h"
 #include "lib/sysdep/os.h"
 
-static const StatusDefinition osCpuStatusDefinitions[] = {
-	{ ERR::OS_CPU_RESTRICTED_AFFINITY, L"Cannot set desired CPU affinity" }
-};
-STATUS_ADD_DEFINITIONS(osCpuStatusDefinitions);
-
-
 size_t os_cpu_MemorySize()
 {
 	static size_t memorySize;

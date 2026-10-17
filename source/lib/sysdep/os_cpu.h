@@ -33,12 +33,6 @@
 #include <cstddef>
 #include <cstdint>
 
-namespace ERR
-{
-	const Status OS_CPU_RESTRICTED_AFFINITY = -130100;
-}
-
-
 //-----------------------------------------------------------------------------
 // processor topology
 
@@ -101,52 +95,5 @@ size_t os_cpu_MemorySize();
  * @return the current amount [MB] of available memory.
  **/
 size_t os_cpu_MemoryAvailable();
-
-
-//-----------------------------------------------------------------------------
-// scheduling
-
-/**
- * restrict the current thread to a set of processors.
- *
- * @param processorMask a bit mask of acceptable processors
- * (bit index i corresponds to processor i)
- * @return the previous mask
- **/
-uintptr_t os_cpu_SetThreadAffinityMask(uintptr_t processorMask);
-
-class os_cpu_ScopedSetThreadAffinityMask
-{
-public:
-	os_cpu_ScopedSetThreadAffinityMask(uintptr_t processorMask)
-		: m_previousProcessorMask(os_cpu_SetThreadAffinityMask(processorMask))
-	{
-	}
-
-	~os_cpu_ScopedSetThreadAffinityMask()
-	{
-		(void)os_cpu_SetThreadAffinityMask(m_previousProcessorMask);
-	}
-
-private:
-	uintptr_t m_previousProcessorMask;
-};
-
-
-/**
- * called by os_cpu_CallByEachCPU.
- * @param processor ID of processor running the current thread for the
- * duration of this function.
- * @param cbData user-specified data passed through os_cpu_CallByEachCPU.
- **/
-typedef void (*OsCpuCallback)(size_t processor, uintptr_t cbData);
-
-/**
- * execute the specified function once on each processor.
- * this proceeds serially (the callback is never reentered) in increasing
- * order of processor ID.
- * fails if process affinity prevents running on all processors.
- **/
-Status os_cpu_CallByEachCPU(OsCpuCallback cb, uintptr_t cbData);
 
 #endif	// #ifndef INCLUDED_OS_CPU
