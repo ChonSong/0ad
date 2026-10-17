@@ -32,30 +32,10 @@
 #include "lib/code_annotation.h"
 #include "lib/sysdep/os.h"
 
-#if OS_WIN
-# include "lib/sysdep/os/win/wcpu.h"
-#endif
-
 static const StatusDefinition osCpuStatusDefinitions[] = {
 	{ ERR::OS_CPU_RESTRICTED_AFFINITY, L"Cannot set desired CPU affinity" }
 };
 STATUS_ADD_DEFINITIONS(osCpuStatusDefinitions);
-
-
-double os_cpu_ClockFrequency()
-{
-	static double clockFrequency;
-	if(clockFrequency != 0.0)	// already initialized
-		return clockFrequency;
-
-#if OS_WIN
-	std::uint32_t freqMhz;
-	if(wcpu_ReadFrequencyFromRegistry(freqMhz) == INFO::OK)
-		return clockFrequency = freqMhz * 1e6;
-#endif
-
-	return clockFrequency = -1.0;	// unknown
-}
 
 
 size_t os_cpu_MemorySize()

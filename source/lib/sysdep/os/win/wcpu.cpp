@@ -74,26 +74,6 @@ size_t os_cpu_NumProcessors()
 }
 
 
-//-----------------------------------------------------------------------------
-
-Status wcpu_ReadFrequencyFromRegistry(std::uint32_t& freqMhz)
-{
-	HKEY hKey;
-	if(RegOpenKeyExW(HKEY_LOCAL_MACHINE, L"HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0", 0, KEY_QUERY_VALUE, &hKey) != ERROR_SUCCESS)
-		return ERR::NOT_SUPPORTED;
-
-	DWORD size = sizeof(freqMhz);
-	LONG ret = RegQueryValueExW(hKey, L"~MHz", 0, 0, (LPBYTE)&freqMhz, &size);
-
-	RegCloseKey(hKey);
-
-	if(ret != ERROR_SUCCESS)
-		WARN_RETURN(ERR::FAIL);
-
-	return INFO::OK;
-}
-
-
 size_t os_cpu_PageSize()
 {
 	static size_t systemPageSize;

@@ -75,12 +75,6 @@ size_t os_cpu_NumProcessors();
 // CPU and memory characteristics
 
 /**
- * @return a rough estimate of the CPU clock frequency.
- * this is usually accurate to a few MHz and is faster than measurement loops.
- **/
-double os_cpu_ClockFrequency();
-
-/**
  * @return the size [bytes] of a MMU page (4096 on most IA-32 systems)
  **/
 size_t os_cpu_PageSize();

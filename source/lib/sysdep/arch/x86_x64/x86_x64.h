@@ -172,14 +172,6 @@ std::uint64_t rdtsc();
  **/
 void DebugBreak();
 
-/**
- * measure the CPU clock frequency via rdtsc and timer_Time.
- * (it follows that this must not be called from WHRT init.)
- * this takes several milliseconds (i.e. much longer than
- * os_cpu_ClockFrequency) but delivers accurate measurements.
- **/
-double ClockFrequency();
-
 }	// namespace x86_x64
 
 #endif	// #ifndef INCLUDED_X86_X64

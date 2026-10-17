@@ -31,6 +31,7 @@
 #include "lib/alignment.h"	// CACHE_ALIGNED
 #include "lib/bits.h"	// round_down
 #include "lib/module_init.h"
+#include "lib/sysdep/os_cpu.h"
 #include "lib/sysdep/os/win/wutil.h"
 #include "lib/timer.h"
 

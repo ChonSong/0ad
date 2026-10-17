@@ -1,4 +1,4 @@
-/* Copyright (C) 2010 Wildfire Games.
+/* Copyright (C) 2026 Wildfire Games.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -28,8 +28,6 @@
 #define INCLUDED_WCPU
 
 #include "lib/sysdep/os/win/win.h"
-
-extern Status wcpu_ReadFrequencyFromRegistry(std::uint32_t& freqMhz);
 
 // "affinity" and "processorNumber" are what Windows sees.
 // "processorMask" and "processor" are the idealized representation we expose

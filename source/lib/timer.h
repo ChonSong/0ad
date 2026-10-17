@@ -35,11 +35,6 @@
 #include <cstdint>
 #include <string>
 
-#if ARCH_X86_X64 && CONFIG2_TIMER_ALLOW_RDTSC
-# include "lib/sysdep/os_cpu.h"	// os_cpu_ClockFrequency
-# include "lib/sysdep/arch/x86_x64/x86_x64.h"	// x86_x64::rdtsc
-#endif
-
 /**
  * timer_Time will subsequently return values relative to the current time.
  **/
