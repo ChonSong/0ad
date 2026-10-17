@@ -30,7 +30,6 @@
 #include "lib/sysdep/arch.h"
 #include "lib/sysdep/compiler.h"
 #include "lib/sysdep/cpu.h"
-#include "lib/sysdep/numa.h"
 #include "lib/sysdep/os.h"
 #include "lib/sysdep/os_cpu.h"
 #include "lib/sysdep/sysdep.h"	// sys_OpenFile
@@ -433,10 +432,6 @@ void RunHardwareDetection(bool writeSystemInfoBeforeDetection, Renderer::Backend
 	Script::SetProperty(rq, settings, "cpu_pagesize", static_cast<std::uint32_t>(os_cpu_PageSize()));
 	Script::SetProperty(rq, settings, "cpu_largepagesize", static_cast<std::uint32_t>(os_cpu_LargePageSize()));
 	Script::SetProperty(rq, settings, "cpu_numprocs", static_cast<std::uint32_t>(os_cpu_NumProcessors()));
-
-	Script::SetProperty(rq, settings, "numa_numnodes", static_cast<std::uint32_t>(numa_NumNodes()));
-	Script::SetProperty(rq, settings, "numa_factor", numa_Factor());
-	Script::SetProperty(rq, settings, "numa_interleaved", numa_IsMemoryInterleaved());
 
 	Script::SetProperty(rq, settings, "ram_total", static_cast<std::uint32_t>(os_cpu_MemorySize()));
 	Script::SetProperty(rq, settings, "ram_total_os", static_cast<std::uint32_t>(os_cpu_QueryMemorySize()));
