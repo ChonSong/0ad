@@ -31,7 +31,6 @@
 #include "lib/alignment.h"	// CACHE_ALIGNED
 #include "lib/bits.h"	// round_down
 #include "lib/module_init.h"
-#include "lib/sysdep/numa.h"
 #include "lib/sysdep/os/win/wutil.h"
 #include "lib/timer.h"
 
@@ -89,9 +88,6 @@ void DumpStatistics()
 	debug_printf("%d commits (%d, i.e. %d%% of them via large pages)\n", totalCommits, largePageCommits, largePageRatio);
 	if(processorsWithNoCommits != 0)
 		debug_printf("  processors with no commits: %x\n", processorsWithNoCommits);
-
-	if(numa_NumNodes() > 1)
-		debug_printf("NUMA factor: %.2f\n", numa_Factor());
 }
 
 
