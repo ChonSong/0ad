@@ -277,7 +277,8 @@ void WriteSystemInfo(Renderer::Backend::IDevice* device, const utsname& un)
 		fprintf(f, "\n");
 
 	// memory
-	fprintf(f, "Memory         : %u MiB; %u MiB free\n", (unsigned)os_cpu_MemorySize(), (unsigned)os_cpu_MemoryAvailable());
+	fprintf(f, "Memory         : %u MiB; %u MiB free\n",
+		static_cast<std::uint32_t>(SDL_GetSystemRAM()), static_cast<std::uint32_t>(os_cpu_MemoryAvailable()));
 
 	// graphics
 	fprintf(f, "Video Card     : %s\n", device->GetName().c_str());
@@ -432,9 +433,6 @@ void RunHardwareDetection(bool writeSystemInfoBeforeDetection, Renderer::Backend
 	Script::SetProperty(rq, settings, "cpu_pagesize", static_cast<std::uint32_t>(os_cpu_PageSize()));
 	Script::SetProperty(rq, settings, "cpu_largepagesize", static_cast<std::uint32_t>(os_cpu_LargePageSize()));
 	Script::SetProperty(rq, settings, "cpu_numprocs", static_cast<std::uint32_t>(os_cpu_NumProcessors()));
-
-	Script::SetProperty(rq, settings, "ram_total", static_cast<std::uint32_t>(os_cpu_MemorySize()));
-	Script::SetProperty(rq, settings, "ram_total_os", static_cast<std::uint32_t>(os_cpu_QueryMemorySize()));
 
 #if ARCH_X86_X64
 	Script::SetProperty(rq, settings, "x86_vendor", static_cast<std::uint32_t>(x86_x64::Vendor()));
