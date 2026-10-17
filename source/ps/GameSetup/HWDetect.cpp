@@ -454,7 +454,7 @@ void RunHardwareDetection(bool writeSystemInfoBeforeDetection, Renderer::Backend
 	Script::SetProperty(rq, settings, "random_device_entropy", std::random_device{}.entropy());
 
 	// The version should be increased for every meaningful change.
-	const int reportVersion = 24;
+	const int reportVersion = 25;
 
 	// Send the same data to the reporting system
 	g_UserReporter.SubmitReport(
