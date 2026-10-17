@@ -417,7 +417,6 @@ void RunHardwareDetection(bool writeSystemInfoBeforeDetection, Renderer::Backend
 	Script::SetProperty(rq, settings, "cpu_identifier", std::string(cpu_IdentifierString()));
 	Script::SetProperty(rq, settings, "cpu_pagesize", static_cast<std::uint32_t>(os_cpu_PageSize()));
 	Script::SetProperty(rq, settings, "cpu_largepagesize", static_cast<std::uint32_t>(os_cpu_LargePageSize()));
-	Script::SetProperty(rq, settings, "cpu_numprocs", static_cast<std::uint32_t>(os_cpu_NumProcessors()));
 
 #if ARCH_X86_X64
 	Script::SetProperty(rq, settings, "x86_vendor", static_cast<std::uint32_t>(x86_x64::Vendor()));
