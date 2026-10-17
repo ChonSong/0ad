@@ -260,21 +260,7 @@ void WriteSystemInfo(Renderer::Backend::IDevice* device, const utsname& un)
 	fprintf(f, "OS             : %s %s (%s)\n", un.sysname, un.release, un.version);
 
 	// CPU
-	fprintf(f, "CPU            : %s, %s", un.machine, cpu_IdentifierString());
-	double cpuClock = os_cpu_ClockFrequency();	// query OS (may fail)
-#if ARCH_X86_X64
-	if(cpuClock <= 0.0)
-		cpuClock = x86_x64::ClockFrequency();	// measure (takes a few ms)
-#endif
-	if(cpuClock > 0.0)
-	{
-		if(cpuClock < 1e9)
-			fprintf(f, ", %.2f MHz\n", cpuClock*1e-6);
-		else
-			fprintf(f, ", %.2f GHz\n", cpuClock*1e-9);
-	}
-	else
-		fprintf(f, "\n");
+	fprintf(f, "CPU            : %s, %s\n", un.machine, cpu_IdentifierString());
 
 	// memory
 	fprintf(f, "Memory         : %u MiB; %u MiB free\n",
@@ -429,7 +415,6 @@ void RunHardwareDetection(bool writeSystemInfoBeforeDetection, Renderer::Backend
 #endif
 
 	Script::SetProperty(rq, settings, "cpu_identifier", std::string(cpu_IdentifierString()));
-	Script::SetProperty(rq, settings, "cpu_frequency", os_cpu_ClockFrequency());
 	Script::SetProperty(rq, settings, "cpu_pagesize", static_cast<std::uint32_t>(os_cpu_PageSize()));
 	Script::SetProperty(rq, settings, "cpu_largepagesize", static_cast<std::uint32_t>(os_cpu_LargePageSize()));
 	Script::SetProperty(rq, settings, "cpu_numprocs", static_cast<std::uint32_t>(os_cpu_NumProcessors()));
