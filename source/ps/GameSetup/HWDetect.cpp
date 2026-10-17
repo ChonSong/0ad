@@ -169,6 +169,36 @@ JS::Value MakeSDLReport(const Script::Request& rq)
 	reporter.Add("cpu_count", SDL_GetCPUCount());
 	reporter.Add("system_ram", SDL_GetSystemRAM());
 
+	reporter.Add("altivec", static_cast<int>(SDL_HasAltiVec()));
+	reporter.Add("avx", static_cast<int>(SDL_HasAVX()));
+#if SDL_VERSION_ATLEAST(2, 0, 4)
+	reporter.Add("avx2", static_cast<int>(SDL_HasAVX2()));
+#else
+	reporter.Add("avx2", "unknown");
+#endif
+#if SDL_VERSION_ATLEAST(2, 0, 9)
+	reporter.Add("avx512f", static_cast<int>(SDL_HasAVX512F()));
+#else
+	reporter.Add("avx512f", "unknown");
+#endif
+#if SDL_VERSION_ATLEAST(2, 24, 0)
+	reporter.Add("lasx", static_cast<int>(SDL_HasLASX()));
+	reporter.Add("lsx", static_cast<int>(SDL_HasLSX()));
+#else
+	reporter.Add("lasx", "unknown");
+	reporter.Add("lsx", "unknown");
+#endif
+#if SDL_VERSION_ATLEAST(2, 0, 6)
+	reporter.Add("neon", static_cast<int>(SDL_HasNEON()));
+#else
+	reporter.Add("neon", "unknown");
+#endif
+	reporter.Add("sse", static_cast<int>(SDL_HasSSE()));
+	reporter.Add("sse2", static_cast<int>(SDL_HasSSE2()));
+	reporter.Add("sse3", static_cast<int>(SDL_HasSSE3()));
+	reporter.Add("sse41", static_cast<int>(SDL_HasSSE41()));
+	reporter.Add("sse42", static_cast<int>(SDL_HasSSE42()));
+
 	return reporter.MakeReport();
 }
 
@@ -418,24 +448,10 @@ void RunHardwareDetection(bool writeSystemInfoBeforeDetection, Renderer::Backend
 	Script::SetProperty(rq, settings, "cpu_pagesize", static_cast<std::uint32_t>(os_cpu_PageSize()));
 	Script::SetProperty(rq, settings, "cpu_largepagesize", static_cast<std::uint32_t>(os_cpu_LargePageSize()));
 
-#if ARCH_X86_X64
-	Script::SetProperty(rq, settings, "x86_vendor", static_cast<std::uint32_t>(x86_x64::Vendor()));
-	Script::SetProperty(rq, settings, "x86_model", static_cast<std::uint32_t>(x86_x64::Model()));
-	Script::SetProperty(rq, settings, "x86_family", static_cast<std::uint32_t>(x86_x64::Family()));
-
-	std::uint32_t caps0, caps1, caps2, caps3;
-	x86_x64::GetCapBits(&caps0, &caps1, &caps2, &caps3);
-	Script::SetProperty(rq, settings, "x86_caps[0]", caps0);
-	Script::SetProperty(rq, settings, "x86_caps[1]", caps1);
-	Script::SetProperty(rq, settings, "x86_caps[2]", caps2);
-	Script::SetProperty(rq, settings, "x86_caps[3]", caps3);
-#endif
-
 	Script::SetProperty(rq, settings, "timer_resolution", timer_Resolution());
 
 	Script::SetProperty(rq, settings, "hardware_concurrency", std::thread::hardware_concurrency());
 	Script::SetProperty(rq, settings, "random_device_entropy", std::random_device{}.entropy());
-	Script::SetProperty(rq, settings, "neon", static_cast<int>(SDL_HasNEON()));
 
 	// The version should be increased for every meaningful change.
 	const int reportVersion = 24;
