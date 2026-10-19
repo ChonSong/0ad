@@ -24,38 +24,8 @@
 
 #include "lib/sysdep/os_cpu.h"
 #include "lib/alignment.h"
-#include "lib/bits.h"
 
 #include <sys/sysctl.h>
-
-size_t os_cpu_NumProcessors()
-{
-	static size_t numProcessors;
-
-	if(numProcessors == 0)
-	{
-		// Mac OS X doesn't have sysconf(_SC_NPROCESSORS_CONF)
-		int mib[]={CTL_HW, HW_NCPU};
-		int ncpus;
-		size_t len = sizeof(ncpus);
-		int ret = sysctl(mib, 2, &ncpus, &len, NULL, 0);
-		ENSURE(ret != -1);
-		numProcessors = (size_t)ncpus;
-	}
-
-	return numProcessors;
-}
-
-
-uintptr_t os_cpu_ProcessorMask()
-{
-	static uintptr_t processorMask;
-
-	if(!processorMask)
-		processorMask = bit_mask<uintptr_t>(os_cpu_NumProcessors());
-
-	return processorMask;
-}
 
 
 size_t os_cpu_PageSize()

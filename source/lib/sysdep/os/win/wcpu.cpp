@@ -27,50 +27,8 @@
 #include "precompiled.h"
 #include "lib/sysdep/os_cpu.h"
 
-#include "lib/bits.h"
 #include "lib/alignment.h"
-#include "lib/module_init.h"
 #include "lib/sysdep/os/win/wutil.h"
-#include "lib/sysdep/arch/x86_x64/x86_x64.h"
-
-#include <bit>
-
-
-uintptr_t os_cpu_ProcessorMask()
-{
-	static uintptr_t processorMask;
-
-	if(!processorMask)
-	{
-		const HANDLE hProcess = GetCurrentProcess();
-		DWORD_PTR processAffinity, systemAffinity;
-		const BOOL ok = GetProcessAffinityMask(hProcess, &processAffinity, &systemAffinity);
-		ENSURE(ok);
-		ENSURE(processAffinity != 0);
-		processorMask = processAffinity;
-	}
-
-	return processorMask;
-}
-
-
-size_t os_cpu_NumProcessors()
-{
-	static size_t numProcessors;
-
-	if(!numProcessors)
-	{
-		numProcessors = std::popcount(os_cpu_ProcessorMask());
-
-		// sanity check
-		SYSTEM_INFO si;
-		GetSystemInfo(&si);	// guaranteed to succeed
-		ENSURE(numProcessors <= (size_t)si.dwNumberOfProcessors);
-		ENSURE(numProcessors >= 1);
-	}
-
-	return numProcessors;
-}
 
 
 size_t os_cpu_PageSize()

@@ -24,50 +24,11 @@
 
 #include "lib/sysdep/os_cpu.h"
 #include "lib/alignment.h"
-#include "lib/bits.h"
 #include "lib/config2.h"
 #include "lib/module_init.h"
 
-#if CONFIG2_VALGRIND
-# include "valgrind.h"
-#endif
 #include <sys/param.h>
 #include <sys/sysctl.h>
-
-size_t os_cpu_NumProcessors()
-{
-	static size_t numProcessors;
-
-	if(numProcessors == 0)
-	{
-#if CONFIG2_VALGRIND
-		// Valgrind reports the number of real CPUs, but only emulates a single CPU.
-		// That causes problems when we expect all those CPUs to be distinct, so
-		// just pretend there's only one CPU
-		if (RUNNING_ON_VALGRIND)
-			numProcessors = 1;
-		else
-#endif
-		{
-			long res = sysconf(_SC_NPROCESSORS_CONF);
-			ENSURE(res != -1);
-			numProcessors = (size_t)res;
-		}
-	}
-
-	return numProcessors;
-}
-
-
-uintptr_t os_cpu_ProcessorMask()
-{
-	static uintptr_t processorMask;
-
-	if(!processorMask)
-		processorMask = bit_mask<uintptr_t>(os_cpu_NumProcessors());
-
-	return processorMask;
-}
 
 
 size_t os_cpu_PageSize()

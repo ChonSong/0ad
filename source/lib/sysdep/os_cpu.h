@@ -27,42 +27,7 @@
 #ifndef INCLUDED_OS_CPU
 #define INCLUDED_OS_CPU
 
-#include "lib/status.h"
-
-#include <climits>
 #include <cstddef>
-#include <cstdint>
-
-//-----------------------------------------------------------------------------
-// processor topology
-
-// processor ID = [0, os_cpu_NumProcessors())
-// they are a numbering of the bits of the process affinity mask where the
-// least significant nonzero bit corresponds to ID 0.
-// rationale: this spares users from having to deal with noncontiguous IDs,
-// e.g. when administrative tools are used to restrict process affinity.
-
-
-/**
- * maximum number of processors supported by the OS (determined by the
- * number of bits in an affinity mask)
- **/
-static const size_t os_cpu_MaxProcessors = sizeof(uintptr_t)*CHAR_BIT;
-
-/**
- * @return bit mask of processors that exist and are available to
- * this process.
- * its population count is by definition equal to os_cpu_NumProcessors().
- **/
-uintptr_t os_cpu_ProcessorMask();
-
-/**
- * @return the number of processors available to this process.
- *
- * note: this function is necessary because POSIX sysconf _SC_NPROCESSORS_CONF
- * is not suppored on MacOSX, else we would use that.
- **/
-size_t os_cpu_NumProcessors();
 
 
 //-----------------------------------------------------------------------------

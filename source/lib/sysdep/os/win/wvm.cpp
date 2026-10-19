@@ -41,57 +41,6 @@
 namespace vm
 {
 
-
-//-----------------------------------------------------------------------------
-// per-processor statistics
-
-// (alignment avoids false sharing)
-CACHE_ALIGNED(struct Statistics)	// POD
-{
-	// thread-safe (required due to concurrent commits)
-	void NotifyLargePageCommit()
-	{
-		++largePageCommits;
-	}
-
-	void NotifySmallPageCommit()
-	{
-		++smallPageCommits;
-	}
-
-	std::atomic<size_t> largePageCommits{ 0 };
-	std::atomic<size_t> smallPageCommits{ 0 };
-};
-static CACHE_ALIGNED(Statistics) statistics[os_cpu_MaxProcessors];
-
-void DumpStatistics()
-{
-	ENSURE(IsAligned(&statistics[0], cacheLineSize));
-	ENSURE(IsAligned(&statistics[1], cacheLineSize));
-
-	size_t smallPageCommits = 0;
-	size_t largePageCommits = 0;
-	uintptr_t processorsWithNoCommits = 0;
-	for(size_t processor = 0; processor < os_cpu_NumProcessors(); processor++)
-	{
-		const Statistics& s = statistics[processor];
-		if(s.smallPageCommits == 0 && s.largePageCommits == 0)
-			processorsWithNoCommits |= Bit<uintptr_t>(processor);
-		smallPageCommits += s.smallPageCommits;
-		largePageCommits += s.largePageCommits;
-	}
-
-	const size_t totalCommits = smallPageCommits+largePageCommits;
-	if(totalCommits == 0)	// this module wasn't used => don't print debug output
-		return;
-
-	const size_t largePageRatio = totalCommits? largePageCommits*100/totalCommits : 0;
-	debug_printf("%d commits (%d, i.e. %d%% of them via large pages)\n", totalCommits, largePageCommits, largePageRatio);
-	if(processorsWithNoCommits != 0)
-		debug_printf("  processors with no commits: %x\n", processorsWithNoCommits);
-}
-
-
 //-----------------------------------------------------------------------------
 // allocator with large-page and NUMA support
 
@@ -159,8 +108,6 @@ static void* AllocateLargeOrSmallPages(uintptr_t address, size_t size, DWORD all
 			largePageAllocationTookTooLong = true;	// avoid large pages next time
 		if(largePages)
 		{
-			if((allocationType & MEM_COMMIT) != 0)
-				statistics[processor].NotifyLargePageCommit();
 			return largePages;
 		}
 	}
@@ -169,8 +116,6 @@ static void* AllocateLargeOrSmallPages(uintptr_t address, size_t size, DWORD all
 	void* smallPages = VirtualAllocExNuma(hProcess, LPVOID(address), size, allocationType, protect, node);
 	if(smallPages)
 	{
-		if((allocationType & MEM_COMMIT) != 0)
-			statistics[processor].NotifySmallPageCommit();
 		return smallPages;
 	}
 	else
@@ -301,7 +246,8 @@ CACHE_ALIGNED(struct AddressRangeDescriptor)	// POD
 };
 
 // (array size governs the max. number of extant allocations)
-static AddressRangeDescriptor ranges[2*os_cpu_MaxProcessors];
+// It's chosen heuristically, equals twice the bit width of a 64-bit affinity mask.
+static AddressRangeDescriptor ranges[128];
 
 
 static AddressRangeDescriptor* FindDescriptor(uintptr_t address)

@@ -1,4 +1,4 @@
-/* Copyright (C) 2025 Wildfire Games.
+/* Copyright (C) 2026 Wildfire Games.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -149,9 +149,6 @@ void BeginOnDemandCommits();
  * removes the page fault handler when it reaches 0. thread-safe.
  **/
 void EndOnDemandCommits();
-
-
-void DumpStatistics();
 
 }	// namespace vm
 
